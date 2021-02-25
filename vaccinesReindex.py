@@ -5,6 +5,8 @@ import numpy as np
 
 import os, ssl
 
+print("updating re-indexed vaccine chart")
+
 # fixes ssl error on OSX???
 
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None)):

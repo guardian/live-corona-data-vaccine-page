@@ -3,6 +3,8 @@ import simplejson as json
 import pandas as pd
 from modules.syncData import syncData
 
+print("Checking covidlive")
+
 #%%
 
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
@@ -27,3 +29,7 @@ finalJson = final.to_json(orient='records')
 #%%
 
 syncData(finalJson, "2021/02/coronavirus-widget-data", "aus-vaccines.json")
+
+import vaccinesPerHundred
+import vaccinesReindex
+import vaccineGoals

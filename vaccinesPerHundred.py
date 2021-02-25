@@ -1,6 +1,9 @@
 import pandas as pd 
 from modules.yachtCharter import yachtCharter
 import datetime 
+import os, ssl
+
+print("Updating vaccines per hundred people chart")
 
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None)):
     ssl._create_default_https_context = ssl._create_unverified_context
