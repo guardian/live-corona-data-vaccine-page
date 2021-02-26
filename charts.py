@@ -1,4 +1,4 @@
-from getData import getData
+# from getData import getData
 from modules.yachtCharter import yachtCharter
 from modules.syncDoc import syncDoc
 import pandas as pd

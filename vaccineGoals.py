@@ -116,8 +116,8 @@ def makeTestingLine(df):
 	
     template = [
             {
-                "title": "Covid-19 vaccine tracker",
-                "subtitle": f"Last updated {last_date }",
+                "title": "Tracking the Covid-19 vaccine rollout in Australia",
+                "subtitle": f"Comparing the number of vaccine doses per day with the rate needed to meet the government's goals. Last updated {last_date }",
                 "footnote": "",
                 "source": "Covidlive.com.au, Department of Health",
                 "dateFormat": "%Y-%m-%d",
@@ -144,4 +144,4 @@ def makeTestingLine(df):
     yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], 
     options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="Covid-19_oz_vaccine_tracker")
 
-# makeTestingLine(combo)
+makeTestingLine(combo)
