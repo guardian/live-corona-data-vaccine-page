@@ -78,7 +78,7 @@ def makeTestingLine(df):
 	
     template = [
             {
-                "title": "Covid-19 vaccinations per hundred people",
+                "title": "Covid-19 vaccinations per hundred people, selected countries",
                 "subtitle": f"Last updated {last_date }",
                 "footnote": "",
                 "source": "Covidlive.com.au, Our World in Data ",
