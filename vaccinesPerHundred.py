@@ -3,11 +3,13 @@ from modules.yachtCharter import yachtCharter
 import datetime 
 import os, ssl
 
+#%%
 print("Updating vaccines per hundred people chart")
 
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None)):
     ssl._create_default_https_context = ssl._create_unverified_context
 
+#%%
 oz_json = 'https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/aus-vaccines.json'
 row_csv = 'https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv'
 
@@ -19,17 +21,16 @@ oz_pop = 25203000
 
 oz = pd.read_json(oz_json)
 
+#%%
 oz['REPORT_DATE'] = pd.to_datetime(oz['REPORT_DATE'])
 # oz = oz.sort_values(by ="REPORT_DATE", ascending=True)
 
 oz['total_vaccinations_per_hundred'] = (oz["VACC_DOSE_CNT"] / oz_pop) * 100
 oz['location'] = "Australia"
 oz = oz.sort_values(by="REPORT_DATE", ascending=True)
-last_date = str(oz[-1:]["LAST_UPDATED_DATE"].values[0])
-last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d %H:%M:%S")
-last_date = last_date.strftime("%Y-%m-%d")
-# print(last_date)
-
+#%%
+last_date = oz[-2:-1]["REPORT_DATE"].dt.strftime("%Y-%m-%d").values[0]
+#%%
 oz.rename(columns={"REPORT_DATE":"date"}, inplace=True)
 
 oz = oz[['location', 'date', 'total_vaccinations_per_hundred']]
