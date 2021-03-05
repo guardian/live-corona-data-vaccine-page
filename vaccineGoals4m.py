@@ -7,6 +7,7 @@ import numpy as np
 oz_json = 'https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/aus-vaccines.json'
 
 ## Dose counts
+
 onea_doses = 1400000
 oneb_doses = 14800000
 
@@ -15,22 +16,37 @@ twob_doses = 6600000 * 2
 
 two_doses = twoa_doses + twob_doses
 
-# print(f"Total: {onea_doses + oneb_doses + two_doses}")
+## Readjust doses for changing goals
+
+sixty_k = 60000
+four_mil = 4000000
+
+four_mil = four_mil - sixty_k
+
+# (Have to minus the first two goals from oneb phase)
+oneb_doses = oneb_doses + onea_doses - four_mil - sixty_k
 
 chart_truncate =  datetime.date(2021, 3, 31)
 
 rollout_begin = datetime.date(2021, 2, 22)
 rollout_end = datetime.date(2021, 10, 31)
 
-## Start date of phases
-onea_begin = rollout_begin
-oneb_begin = datetime.date(2021, 3, 31)
-two_begin = datetime.date(2021, 5, 31)
+sixty_begin = rollout_begin
+sixty_end = datetime.date(2021, 3, 1)
 
-## End date of phases 
+four_mil_begin = datetime.date(2021, 3, 1)
+four_mil_end = datetime.date(2021, 3, 31)
+
+onea_begin = rollout_begin
 onea_end = datetime.date(2021, 4, 30)
+
+# oneb_begin = datetime.date(2021, 3, 31)
+oneb_begin = datetime.date(2021, 4, 1)
 oneb_end = datetime.date(2021, 5, 31)
+
+two_begin = datetime.date(2021, 5, 31)
 two_end = rollout_end
+
 
 ## Deltas between start and end
 onea_delta = onea_end - onea_begin
@@ -42,29 +58,30 @@ oneb_delta = oneb_delta.days
 two_delta = two_end - two_begin
 two_delta = two_delta.days
 
-four_mil = 4000000
-four_mil_begin = rollout_begin
-four_mil_end = datetime.date(2021, 3, 31)
+sixty_delta = sixty_end - sixty_begin
+sixty_delta = sixty_delta.days
+
 four_mil_delta = four_mil_end - four_mil_begin 
 four_mil_delta  = four_mil_delta.days
 
 
-oneb_doses = oneb_doses + onea_doses - four_mil
-
-# phases = [["four million", four_mil, four_mil_begin, four_mil_end, four_mil_delta]]
-phases = [["four million", four_mil, four_mil_begin, four_mil_end, four_mil_delta], 
+phases = [["sixty thousand", sixty_k, sixty_begin, sixty_end, sixty_delta],
+    ["four million", four_mil, four_mil_begin, four_mil_end, four_mil_delta], 
         ["oneb", oneb_doses, oneb_begin, oneb_end, oneb_delta], 
         ["two", two_doses, two_begin, two_end, two_delta]]
+
+# phases = [["four million", four_mil, four_mil_begin, four_mil_end, four_mil_delta], 
+#         ["oneb", oneb_doses, oneb_begin, oneb_end, oneb_delta], 
+#         ["two", two_doses, two_begin, two_end, two_delta]]
 
 # phases = [["onea", onea_doses, onea_begin, onea_end, onea_delta], 
 #         ["oneb", oneb_doses, oneb_begin, oneb_end, oneb_delta], 
 #         ["two", two_doses, two_begin, two_end, two_delta]]
 
-line_title = "Vaccine target"
-
 # phases = [["onea", onea_doses, onea_begin, onea_end, onea_delta]]
 # line_title = 'Phase 1a target'
 
+line_title = "4m target"
 
 oz = pd.read_json(oz_json)
 oz['REPORT_DATE'] = pd.to_datetime(oz['REPORT_DATE'])
@@ -76,6 +93,7 @@ last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d %H:%M:%S")
 last_date = last_date.strftime("%Y-%m-%d")
 
 oz = oz[['REPORT_DATE', 'VACC_DOSE_CNT']]
+
 
 def create_frame(listo):
     ## Divide total doses for phase by number of days in phase range
@@ -121,8 +139,8 @@ combo['Vaccination gap'] = combo['Vaccination gap'].cumsum()
 combo.rename(columns={"Doses given":f"Doses given: {numberFormat(latest_count)}"}, inplace=True)
 combo = combo[['Date', f"Doses given: {numberFormat(latest_count)}", line_title]]
 
-# pd.set_option("display.max_rows", None, "display.max_columns", None)
-# print(combo)
+pd.set_option("display.max_rows", None, "display.max_columns", None)
+print(combo)
 
 def makeTestingLine(df):
 	
@@ -148,12 +166,12 @@ def makeTestingLine(df):
         ]
     key = []
     periods = []
-    labels = []
+    labels = [{"x":"2021-02-28", "y":sixty_k, "offset":100, "text":"60k target", "align":"middle"}]
 
     df.fillna("", inplace=True)
     chartData = df.to_dict('records')
 
-    yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], 
+    yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"linechart"}], 
     options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="Covid-19_oz_vaccine_tracker_4m")
 
 makeTestingLine(combo)
