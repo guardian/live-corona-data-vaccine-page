@@ -47,11 +47,11 @@ two_delta = two_end - two_begin
 two_delta = two_delta.days
 
 
-# phases = [["onea", onea_doses, onea_begin, onea_end, onea_delta], 
-#         ["oneb", oneb_doses, oneb_begin, oneb_end, oneb_delta], 
-#         ["two", two_doses, two_begin, two_end, two_delta]]
+phases = [["onea", onea_doses, onea_begin, onea_end, onea_delta], 
+        ["oneb", oneb_doses, oneb_begin, oneb_end, oneb_delta], 
+        ["two", two_doses, two_begin, two_end, two_delta]]
 
-phases = [["onea", onea_doses, onea_begin, onea_end, onea_delta]]
+# phases = [["onea", onea_doses, onea_begin, onea_end, onea_delta]]
 
 
 oz = pd.read_json(oz_json)
@@ -108,7 +108,6 @@ combo.rename(columns={"Doses given":f"Doses given: {numberFormat(latest_count)}"
 combo = combo[['Date', f"Doses given: {numberFormat(latest_count)}", 'Phase 1a target']]
 
 
-
 # pd.set_option("display.max_rows", None, "display.max_columns", None)
 # print(combo)
 
@@ -142,6 +141,6 @@ def makeTestingLine(df):
     chartData = df.to_dict('records')
 
     yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], 
-    options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="Covid-19_oz_vaccine_tracker")
+    options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="Covid-19_oz_vaccine_tracker_all_phases")
 
 makeTestingLine(combo)

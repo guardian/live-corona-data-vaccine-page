@@ -2,8 +2,10 @@ import pandas as pd
 from modules.yachtCharter import yachtCharter
 import datetime 
 import numpy as np 
-
 import os, ssl
+
+
+#%%
 
 print("updating re-indexed vaccine chart")
 
@@ -15,6 +17,8 @@ if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unveri
 oz_json = 'https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/aus-vaccines.json'
 row_csv = 'https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv'
 
+
+#%%
 oz_pop = 25203000
 # https://ourworldindata.org/grapher/population
 
@@ -22,15 +26,16 @@ oz_pop = 25203000
 
 oz = pd.read_json(oz_json)
 
+#%%
 oz['REPORT_DATE'] = pd.to_datetime(oz['REPORT_DATE'])
 # oz = oz.sort_values(by ="REPORT_DATE", ascending=True)
 
 oz['total_vaccinations_per_hundred'] = (oz["VACC_DOSE_CNT"] / oz_pop) * 100
 oz['location'] = "Australia"
 oz = oz.sort_values(by="REPORT_DATE", ascending=True)
-last_date = str(oz[-1:]["LAST_UPDATED_DATE"].values[0])
-last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d %H:%M:%S")
-last_date = last_date.strftime("%Y-%m-%d")
+last_date = oz[-2:-1]["REPORT_DATE"].dt.strftime("%Y-%m-%d").values[0]
+# last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d %H:%M:%S")
+# last_date = last_date.strftime("%Y-%m-%d")
 # print(last_date)
 
 oz.rename(columns={"REPORT_DATE":"date"}, inplace=True)
@@ -44,7 +49,7 @@ oz = oz.loc[oz['total_vaccinations_per_hundred'] > 0]
 our_world = pd.read_csv(row_csv, parse_dates=['date'])
 our_world = our_world.sort_values(by="date", ascending=True)
 
-countries = ['Israel', 'United Kingdom', 'United States', "European Union"]
+countries = ['United Kingdom', 'United States', "European Union", "South Korea", "Japan"]
 our_world = our_world.loc[our_world["location"].isin(countries)]
 
 our_world = our_world[['date','total_vaccinations_per_hundred', 'location']]
@@ -55,44 +60,46 @@ combined = our_world.append(oz)
 combined = combined.sort_values(by="date", ascending=True)
 combined['date'] = combined['date'].dt.strftime('%Y-%m-%d')
 
+#%%
 # Pivot the dataframe
 
 pivoted = combined.pivot(index="date", columns='location')['total_vaccinations_per_hundred'].reset_index()
+pivoted = pivoted.replace({'0':np.nan, 0:np.nan})
+pivoted = pivoted.ffill(axis=0)
 
+#%%
 # print(pivoted)
 
-def makeSince100Chart(df, includes):
-    includes.append("Australia")
+includes = ['United Kingdom', 'United States', "European Union","Australia", "South Korea", "Japan"]
 
-    since100 = pd.DataFrame()
+#%%
 
-    lastUpdatedInt = df.index[-1]
-    # print(lastUpdatedInt)
+sinceDayZero = pd.DataFrame()
 
-    # for col in includes:
-    #     inter = df[col].copy()
-    #     print(inter)
+for col in includes:
 
-    for col in includes:
-        # print(col)
-        start = df[col].notna().idxmax()
+	start = pivoted[col].notna().idxmax()
+	
+	tempSeries = pivoted[col][start:]
+	
+	tempSeries = tempSeries.replace({0:np.nan})
+	
+	tempSeries = tempSeries.reset_index()
+	
+	tempSeries = tempSeries.drop(['index'], axis=1)
+	
+	sinceDayZero = pd.concat([sinceDayZero, tempSeries], axis=1)
 
-        tempSeries = df[col][start:]
+upto = sinceDayZero[:31]	
 
-        tempSeries = tempSeries.replace({0:np.nan})
+#%%
 
-        tempSeries = tempSeries.reset_index()
-
-        tempSeries = tempSeries.drop(['index'], axis=1)
-
-        since100 = pd.concat([since100, tempSeries], axis=1)
-
-
-
+def makeSince100Chart(df):
+   
     template = [
             {
-                "title": "Covid-19 vaccinations per hundred people",
-                "subtitle": f"Last updated {last_date }",
+                "title": "Covid-19 vaccinations per hundred people for selected countries",
+                "subtitle": f"Showing up to the first 30 days starting from the first day of recorded vaccinations in each country or region. Last updated {last_date }",
                 "footnote": "",
                 "source": "Covidlive.com.au, Our World in Data ",
                 "dateFormat": "",
@@ -102,22 +109,23 @@ def makeSince100Chart(df, includes):
                 "minY": "",
                 "maxY": "",
                 "periodDateFormat":"",
-                "margin-left": "50",
-                "margin-top": "30",
+                "margin-left": "25",
+                "margin-top": "10",
                 "margin-bottom": "20",
-                "margin-right": "20"
+                "margin-right": "10",
+                "breaks":"no"
             }
         ]
     key = []
     periods = []
     labels = []
     chartId = [{"type":"linechart"}]
-    since100.fillna('', inplace=True)
-    since100 = since100.reset_index()
-    chartData = since100.to_dict('records')
+    df.fillna('', inplace=True)
+    df = df.reset_index()
+    chartData = df.to_dict('records')
     # print(since100.head())
 
     yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], 
-    options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="vaccines_per_hundred_reindexed")
+    options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="vaccines_per_hundred_reindexed_to_50")
 
-makeSince100Chart(pivoted, countries)
+makeSince100Chart(upto)
