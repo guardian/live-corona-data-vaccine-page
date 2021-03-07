@@ -140,7 +140,7 @@ combo.rename(columns={"Doses given":f"Doses given: {numberFormat(latest_count)}"
 combo = combo[['Date', f"Doses given: {numberFormat(latest_count)}", line_title]]
 
 pd.set_option("display.max_rows", None, "display.max_columns", None)
-print(combo)
+# print(combo)
 
 def makeTestingLine(df):
 	
