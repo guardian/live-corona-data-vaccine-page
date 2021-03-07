@@ -147,7 +147,7 @@ def makeTestingLine(df):
     template = [
             {
                 "title": "Tracking the Covid-19 vaccine rollout in Australia",
-                "subtitle": f"Comparing the number of vaccine doses per day with the rate needed to meet the government's goals. Last updated {last_date }",
+                "subtitle": f"Comparing the number of vaccine doses per day with the rate needed to meet the government's goals. Showing the goal of 60,000 doses within the first week, and 4m doses by the end of March. Last updated {last_date }",
                 "footnote": "",
                 "source": "Covidlive.com.au, Department of Health",
                 "dateFormat": "%Y-%m-%d",

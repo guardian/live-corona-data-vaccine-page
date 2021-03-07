@@ -98,19 +98,19 @@ def makeSince100Chart(df):
    
     template = [
             {
-                "title": "Covid-19 vaccinations per hundred people for selected countries",
+                "title": "Covid-19 vaccine doses per hundred people for selected countries",
                 "subtitle": f"Showing up to the first 30 days starting from the first day of recorded vaccinations in each country or region. Last updated {last_date }",
                 "footnote": "",
                 "source": "Covidlive.com.au, Our World in Data ",
                 "dateFormat": "",
                 "yScaleType":"",
                 "xAxisLabel": "Days since first vaccination",
-                "yAxisLabel": "Vaccinations per hundred people",
+                "yAxisLabel": "Doses per hundred people",
                 "minY": "",
                 "maxY": "",
                 "periodDateFormat":"",
                 "margin-left": "25",
-                "margin-top": "10",
+                "margin-top": "15",
                 "margin-bottom": "20",
                 "margin-right": "10",
                 "breaks":"no"
