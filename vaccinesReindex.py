@@ -92,6 +92,8 @@ for col in includes:
 
 upto = sinceDayZero[:31].copy()
 
+upto.to_csv('country-comparison.csv')
+
 #%%
 
 def makeSince100Chart(df):
@@ -125,6 +127,6 @@ def makeSince100Chart(df):
     chartData = df.to_dict('records')
     # print(since100.head())
 
-    # yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="vaccines_per_hundred_reindexed_to_50")
+    yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="vaccines_per_hundred_reindexed_to_50")
 
 makeSince100Chart(upto)
