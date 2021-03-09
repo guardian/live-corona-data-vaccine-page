@@ -1,4 +1,4 @@
-# from modules.yachtCharter import yachtCharter
+from modules.yachtCharter import yachtCharter
 from modules.numberFormat import numberFormat
 import pandas as pd 
 import datetime 
@@ -134,13 +134,43 @@ combo['Date'] = combo['Date'].dt.strftime('%Y-%m-%d')
 
 ## Work out vaccination gap
 combo['Vaccination gap'] = combo[line_title] - combo['Doses given']
-combo['Vaccination gap'] = combo['Vaccination gap'].cumsum()
+latest_gap = numberFormat(combo.loc[combo["REPORT_DATE"] == last_date]['Vaccination gap'].values[0])
 
 combo.rename(columns={"Doses given":f"Doses given: {numberFormat(latest_count)}"}, inplace=True)
 combo = combo[['Date', f"Doses given: {numberFormat(latest_count)}", line_title]]
 
-dropped = combo.dropna(subset=[f"Doses given: {numberFormat(latest_count)}"])
 
-dropped['gap'] = dropped[f"Doses given: {numberFormat(latest_count)}"] - dropped[line_title]
+def makeTestingLine(df):
+	
+    template = [
+            {
+                "title": "Tracking the Covid-19 vaccine rollout in Australia",
+                "subtitle": f"Comparing the number of vaccine doses per day with the rate needed to meet the government's goals. Showing the goal of 60,000 doses within the first week, and 4m doses by the end of March. Last updated {last_date}",
+                "footnote": "",
+                "source": "Covidlive.com.au, Department of Health",
+                "dateFormat": "%Y-%m-%d",
+                "yScaleType":"",
+                "xAxisLabel": "Date",
+                "yAxisLabel": "Cumulative vaccinations",
+                "minY": "0",
+                "maxY": "",
+                "x_axis_cross_y":"",
+                "periodDateFormat":"",
+                "margin-left": "50",
+                "margin-top": "30",
+                "margin-bottom": "20",
+                "margin-right": "10"
+            }
+        ]
+    key = []
+    periods = []
+    labels = [{"x":"2021-02-28", "y":sixty_k, "offset":100, "text":"60k target", "align":"middle"}, 
+    {"x":f"{last_date}", "y":f"{latest_count}", "offset":200, "text":f"Difference: {latest_gap}", "align":"middle"}]
 
-print(dropped)
+    df.fillna("", inplace=True)
+    chartData = df.to_dict('records')
+
+    yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"linechart"}], 
+    options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="Covid-19_oz_vaccine_tracker_4m_gap")
+
+makeTestingLine(combo)
