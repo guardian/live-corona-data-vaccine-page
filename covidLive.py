@@ -33,3 +33,4 @@ syncData(finalJson, "2021/02/coronavirus-widget-data", "aus-vaccines.json")
 import vaccinesPerHundred
 import vaccinesReindex
 import vaccineGoals4m
+import vaccinegap

@@ -88,7 +88,7 @@ oz['REPORT_DATE'] = pd.to_datetime(oz['REPORT_DATE'])
 oz = oz.sort_values(by="REPORT_DATE", ascending=True)
 
 latest_count = oz[-1:]['VACC_DOSE_CNT'].values[0]
-last_date = oz[-2:-1]["REPORT_DATE"].dt.strftime("%Y-%m-%d").values[0]
+last_date = oz.iloc[-1:]["REPORT_DATE"].dt.strftime("%Y-%m-%d").values[0]
 
 oz = oz[['REPORT_DATE', 'VACC_DOSE_CNT']]
 
@@ -132,7 +132,8 @@ combo['Date'] = combo['Date'].dt.strftime('%Y-%m-%d')
 
 ## Work out vaccination gap
 combo['Vaccination gap'] = combo[line_title] - combo['Doses given']
-latest_gap = numberFormat(combo.loc[combo["REPORT_DATE"] == last_date]['Vaccination gap'].values[0])
+latest_gap = combo.loc[combo["REPORT_DATE"] == last_date]['Vaccination gap'].values[0]
+middle_gap = latest_count + latest_gap/2
 
 combo.rename(columns={"Doses given":f"Doses given: {numberFormat(latest_count)}"}, inplace=True)
 combo = combo[['Date', f"Doses given: {numberFormat(latest_count)}", line_title]]
@@ -143,7 +144,7 @@ def makeTestingLine(df):
     template = [
             {
                 "title": "Tracking the Covid-19 vaccine rollout in Australia",
-                "subtitle": f"Comparing the number of vaccine doses per day with the rate needed to meet the government's goals. Showing the goal of 60,000 doses within the first week, and 4m doses by the end of March. Last updated {last_date}",
+                "subtitle": f"Comparing the current cumulative number of vaccine doses with the rate needed to meet the government's goals. Showing the goal of 60,000 doses within the first week, and 4m doses by the end of March. Last updated {last_date}",
                 "footnote": "",
                 "source": "Covidlive.com.au, Department of Health",
                 "dateFormat": "%Y-%m-%d",
@@ -162,8 +163,8 @@ def makeTestingLine(df):
         ]
     key = []
     periods = []
-    labels = [{"x":"2021-02-28", "y":sixty_k, "offset":100, "text":"60k target", "align":"middle"}, 
-    {"x":f"{last_date}", "y":f"{latest_count}", "offset":200, "text":f"Difference: {latest_gap}", "align":"middle"}]
+    labels = [{"x":"2021-02-28", "y":sixty_k, "offset":100, "text":"Goal for the first week was 60,000, we managed 31,000", "align":"middle", "direction":"top"}, 
+    {"x":f"{last_date}", "y":f"{middle_gap}", "offset":50, "text":f"The gap between current doses and where the rate needs to be to hit the October goal is currently {numberFormat(latest_gap)}", "align":"middle", "direction":"right"}]
 
     df.fillna("", inplace=True)
     chartData = df.to_dict('records')

@@ -88,7 +88,7 @@ oz['REPORT_DATE'] = pd.to_datetime(oz['REPORT_DATE'])
 oz = oz.sort_values(by="REPORT_DATE", ascending=True)
 
 latest_count = oz[-1:]['VACC_DOSE_CNT'].values[0]
-last_date = oz[-2:-1]["REPORT_DATE"].dt.strftime("%Y-%m-%d").values[0]
+last_date = oz.iloc[-1:]["REPORT_DATE"].dt.strftime("%Y-%m-%d").values[0]
 
 oz = oz[['REPORT_DATE', 'VACC_DOSE_CNT']]
 
