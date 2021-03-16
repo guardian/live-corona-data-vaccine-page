@@ -3,6 +3,11 @@ from modules.numberFormat import numberFormat
 import pandas as pd 
 import datetime 
 import numpy as np 
+import os, ssl
+
+
+if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None)):
+    ssl._create_default_https_context = ssl._create_unverified_context
 
 oz_json = 'https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/aus-vaccines.json'
 
@@ -164,7 +169,7 @@ def makeTestingLine(df):
     key = []
     periods = []
     labels = [{"x":"2021-02-28", "y":sixty_k, "offset":100, "text":"Goal for the first week was 60,000, we managed 31,000", "align":"middle", "direction":"top"}, 
-    {"x":f"{last_date}", "y":f"{middle_gap}", "offset":50, "text":f"The gap between current doses and where the rate needs to be to hit the October goal is currently {numberFormat(latest_gap)}", "align":"middle", "direction":"right"}]
+    {"x":f"{last_date}", "y":f"{middle_gap}", "offset":50, "text":f"The gap between current doses and where the rate needs to be to hit the March goal is currently {numberFormat(latest_gap)}", "align":"middle", "direction":"right"}]
 
     df.fillna("", inplace=True)
     chartData = df.to_dict('records')
