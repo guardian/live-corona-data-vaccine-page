@@ -3,6 +3,7 @@ from modules.yachtCharter import yachtCharter
 import datetime 
 import numpy as np 
 import os, ssl
+import math
 
 
 #%%
@@ -92,7 +93,20 @@ for col in includes:
 	
 	sinceDayZero = pd.concat([sinceDayZero, tempSeries], axis=1)
 
-upto = sinceDayZero[:31].copy()
+
+## Automatically work out cutoff (current number of days in rollout rounded up to nearest 10):
+
+rollout_begin = datetime.date(2021, 2, 22)
+today = datetime.datetime.today().date()
+
+days_running = today - rollout_begin
+days_running = days_running.days
+
+cut_off = math.ceil(days_running/10) * 10
+
+# Cut dataset
+
+upto = sinceDayZero[:cut_off].copy()
 
 upto.to_csv('country-comparison.csv')
 
@@ -103,7 +117,7 @@ def makeSince100Chart(df):
     template = [
             {
                 "title": "Covid-19 vaccine doses per hundred people for selected countries",
-                "subtitle": f"Showing up to the first 30 days starting from the first day of recorded vaccinations in each country or region. Last updated {last_date }",
+                "subtitle": f"Showing up to the first {cut_off} days starting from the first day of recorded vaccinations in each country or region. Last updated {last_date }",
                 "footnote": "",
                 "source": "Covidlive.com.au, Our World in Data ",
                 "dateFormat": "",
@@ -129,6 +143,6 @@ def makeSince100Chart(df):
     chartData = df.to_dict('records')
     # print(since100.head())
 
-    yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="vaccines_per_hundred_reindexed_to_50")
+    yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="vaccines_per_hundred_reindexed_to_50_testers")
 
 makeSince100Chart(upto)
