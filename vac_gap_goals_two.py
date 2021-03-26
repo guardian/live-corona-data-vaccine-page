@@ -153,11 +153,11 @@ latest_gap = combo.loc[combo["REPORT_DATE"] == last_date]['Vaccination gap'].val
 middle_gap = latest_count + latest_gap/2
 
 combo['Date'] = combo['Date'].dt.strftime('%Y-%m-%d')
-combo.rename(columns={"Doses given":f"Doses given: {numberFormat(latest_count)}"}, inplace=True)
+combo.rename(columns={"Doses given":f"Doses given: {numberFormat(latest_count)}", "Second goal":"Revised goal"}, inplace=True)
 # combo.rename(columns={"Original goal":f"Original goal: {numberFormat(goal_1)}"}, inplace=True)
 # combo.rename(columns={"Second goal":f"Second goal: {numberFormat(goal_2)}"}, inplace=True)
 
-combo = combo[['Date', f"Doses given: {numberFormat(latest_count)}", f"Original goal", f"Second goal"]]
+combo = combo[['Date', f"Doses given: {numberFormat(latest_count)}", f"Original goal", f"Revised goal"]]
 # combo = combo[['Date', "Second target needed per day", "Second goal"]]
 
 def makeTestingLine(df):
@@ -166,9 +166,9 @@ def makeTestingLine(df):
             {
                 "title": "Tracking the Covid-19 vaccine rollout in Australia",
                 "subtitle": f"""Comparing vaccine doses administered with the rate 
-                needed for the government's goals. Last updated {last_date}""",
+                needed for the government's goals. Showing trajectories based on the original goals of 60,000 in the first week, 4m doses by the end of March and the entire adult population vaccinated by October; and the <a href='https://www.health.gov.au/resources/publications/covid-19-vaccine-rollout-update-on-14-march-2021' target='_blank'>revised estimates from the Health Department</a>. Last updated {last_date}""",
                 "footnote": "",
-                "source": "Covidlive.com.au, Department of Health 14 March 2021 COVID-19 vaccine rollout update",
+                "source": "| Sources: Covidlive.com.au, Department of Health 14 March 2021 COVID-19 vaccine rollout update",
                 "dateFormat": "%Y-%m-%d",
                 "yScaleType":"",
                 "xAxisLabel": "Date",
@@ -191,11 +191,11 @@ def makeTestingLine(df):
     labels = [
     {"x":"2021-02-28", "y":sixty_k_doses, "offset":100, 
     "text":"First week goal was 60,000, we managed 31,000", "align":"middle", "direction":"top"}, 
-    {"x":f"{last_date}", "y":f"{middle_gap}", "offset":100, 
-    "text":f"Gap between doses given and required for target is {numberFormat(latest_gap)}",
+    {"x":f"{last_date}", "y":f"{middle_gap}", "offset":190, 
+    "text":f"Current gap is {numberFormat(latest_gap)}",
      "align":"middle", "direction":"right"},
     {"x": "2021-03-30", "y": 4000000, "offset": 50,
-    "text": "Goal of 4million doses in March",
+    "text": "Original goal of 4m doses by end of March",
     "align":"middle", "direction":"top"
     }]
 
