@@ -143,6 +143,6 @@ def makeSince100Chart(df):
     chartData = df.to_dict('records')
     # print(since100.head())
 
-    yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="vaccines_per_hundred_reindexed_to_50_testers")
+    yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="vaccines_per_hundred_reindexed_to_50")
 
 makeSince100Chart(upto)
