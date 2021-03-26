@@ -193,7 +193,7 @@ def makeTestingLine(df):
     "text":"First week goal was 60,000, we managed 31,000", "align":"right", "direction":"top"}, 
     {"x":f"{last_date}", "y":f"{middle_gap}", "offset":190, 
     "text":f"Current gap is {numberFormat(latest_gap)}",
-     "align":"middle", "direction":"right"},
+     "align":"right", "direction":"right"},
     {"x": "2021-03-30", "y": 4000000, "offset": 50,
     "text": "Original goal of 4m doses by end of March",
     "align":"left", "direction":"top"
