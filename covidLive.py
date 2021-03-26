@@ -30,7 +30,7 @@ finalJson = final.to_json(orient='records')
 
 syncData(finalJson, "2021/02/coronavirus-widget-data", "aus-vaccines.json")
 
-import vaccinesPerHundred
+# import vaccinesPerHundred
 import vaccinesReindex
-import vaccineGoals4m
+import vac_gap_goals_two
 import vaccinegap
