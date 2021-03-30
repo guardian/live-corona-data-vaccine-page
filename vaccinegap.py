@@ -4,7 +4,7 @@ import pandas as pd
 import datetime 
 import numpy as np 
 import os, ssl
-
+# pd.set_option("display.max_rows", None, "display.max_columns", None)
 
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None)):
     ssl._create_default_https_context = ssl._create_unverified_context
@@ -31,7 +31,7 @@ four_mil = four_mil - sixty_k
 # (Have to minus the first two goals from oneb phase)
 oneb_doses = oneb_doses + onea_doses - four_mil - sixty_k
 
-chart_truncate =  datetime.date(2021, 3, 31)
+chart_truncate =  datetime.date(2021, 4, 30)
 
 rollout_begin = datetime.date(2021, 2, 22)
 rollout_end = datetime.date(2021, 10, 31)
@@ -40,7 +40,7 @@ sixty_begin = rollout_begin
 sixty_end = datetime.date(2021, 3, 1)
 
 four_mil_begin = datetime.date(2021, 3, 1)
-four_mil_end = datetime.date(2021, 3, 31)
+four_mil_end = datetime.date(2021, 4, 1)
 
 onea_begin = rollout_begin
 onea_end = datetime.date(2021, 4, 30)
@@ -94,7 +94,6 @@ oz = oz.sort_values(by="REPORT_DATE", ascending=True)
 
 latest_count = oz[-1:]['VACC_DOSE_CNT'].values[0]
 last_date = oz.iloc[-1:]["REPORT_DATE"].dt.strftime("%Y-%m-%d").values[0]
-
 oz = oz[['REPORT_DATE', 'VACC_DOSE_CNT']]
 
 
@@ -142,7 +141,6 @@ middle_gap = latest_count + latest_gap/2
 
 combo.rename(columns={"Doses given":f"Doses given: {numberFormat(latest_count)}"}, inplace=True)
 combo = combo[['Date', f"Doses given: {numberFormat(latest_count)}", line_title]]
-
 
 def makeTestingLine(df):
 	
