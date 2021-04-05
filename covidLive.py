@@ -26,11 +26,20 @@ df_aus = df_aus[df_aus['REPORT_DATE'] >= '2021-02-14']
 final = df_aus[cols]
 finalJson = final.to_json(orient='records')
 
+## Make separate json for state-based chart
+
+states = df[['REPORT_DATE', 'LAST_UPDATED_DATE', 'CODE', 'VACC_DOSE_CNT', 'PREV_VACC_DOSE_CNT']]
+
+states = states[states['REPORT_DATE'] >= '2021-02-22']
+states_final = states.to_json(orient='records')
+
 #%%
 
 syncData(finalJson, "2021/02/coronavirus-widget-data", "aus-vaccines.json")
+syncData(states_final, "2021/02/coronavirus-widget-data", "state-vaccine-rollout.json")
 
 # import vaccinesPerHundred
 import vaccinesReindex
 import vac_gap_goals_two
 import vaccinegap
+import vac_state_charter
