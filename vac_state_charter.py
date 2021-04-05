@@ -93,6 +93,4 @@ def makeSince100Chart(df):
     # print(chartData)
     yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="state_rollout_per_hundred")
 
-print(pivoted)
-
-# makeSince100Chart(pivoted)
+makeSince100Chart(pivoted)
