@@ -65,7 +65,7 @@ def makeSince100Chart(df):
     template = [
             {
                 "title": "Australia's state vaccine rollout",
-                "subtitle": f"Showing the Covid-19 vaccine doses administered per hundred. Last updated {last_date }",
+                "subtitle": f"Showing the Covid-19 vaccine doses administered per hundred people. Last updated {last_date }.",
                 "footnote": "",
                 "source": "Covidlive.com.au, Australian Bureau of Statistics",
                 "dateFormat": "",
@@ -78,7 +78,7 @@ def makeSince100Chart(df):
                 "margin-left": "50",
                 "margin-top": "15",
                 "margin-bottom": "20",
-                "margin-right": "10",
+                "margin-right": "20",
                 "breaks":"no"
             }
         ]
@@ -93,6 +93,6 @@ def makeSince100Chart(df):
     # print(chartData)
     yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="state_rollout_per_hundred")
 
-   
+print(pivoted)
 
-makeSince100Chart(pivoted)
+# makeSince100Chart(pivoted)
