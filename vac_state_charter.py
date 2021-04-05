@@ -4,6 +4,7 @@ import os
 import ssl
 from modules.yachtCharter import yachtCharter
 import numpy as np 
+import datetime 
 
 
 state_json = "https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/state-vaccine-rollout.json"
@@ -35,7 +36,7 @@ df = df.sort_values(by="REPORT_DATE", ascending=True)
 
 
 ## Get last date for updated date in subhead
-last_date = df.iloc[-1:]["REPORT_DATE"].dt.strftime("%Y-%m-%d").values[0]
+last_date = datetime.datetime.strftime(df['REPORT_DATE'].max(), "%Y-%m-%d")
 
 # areas = [('NT', nt_pop), ('AUS', oz_pop), ('NSW', nsw_pop), ('VIC', vic_pop), ('ACT', act_pop), ('WA', wa_pop), ('SA', sa_pop), ('TAS', tas_pop), ('QLD', qld_pop)]
 areas = [('NT', nt_pop), ('NSW', nsw_pop), ('VIC', vic_pop), ('ACT', act_pop), ('WA', wa_pop), ('SA', sa_pop), ('TAS', tas_pop), ('QLD', qld_pop)]
