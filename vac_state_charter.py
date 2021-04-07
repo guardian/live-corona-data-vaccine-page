@@ -29,7 +29,7 @@ act_pop = 431.2* 1000
 # source: https://www.abs.gov.au/statistics/people/population/national-state-and-territory-population/sep-2020
 
 df = pd.read_json(state_json)
-df = df.loc[df['CODE'] != "AUS"]
+# df = df.loc[df['CODE'] != "AUS"]
 df = df[['REPORT_DATE', 'CODE', 'PREV_VACC_DOSE_CNT']]
 df['REPORT_DATE'] = pd.to_datetime(df['REPORT_DATE'])
 df = df.sort_values(by="REPORT_DATE", ascending=True)
@@ -38,8 +38,8 @@ df = df.sort_values(by="REPORT_DATE", ascending=True)
 ## Get last date for updated date in subhead
 last_date = datetime.datetime.strftime(df['REPORT_DATE'].max(), "%Y-%m-%d")
 
-# areas = [('NT', nt_pop), ('AUS', oz_pop), ('NSW', nsw_pop), ('VIC', vic_pop), ('ACT', act_pop), ('WA', wa_pop), ('SA', sa_pop), ('TAS', tas_pop), ('QLD', qld_pop)]
-areas = [('NT', nt_pop), ('NSW', nsw_pop), ('VIC', vic_pop), ('ACT', act_pop), ('WA', wa_pop), ('SA', sa_pop), ('TAS', tas_pop), ('QLD', qld_pop)]
+areas = [('NT', nt_pop), ('NSW', nsw_pop), ('VIC', vic_pop), ('ACT', act_pop), ('WA', wa_pop), ('SA', sa_pop), ('TAS', tas_pop), ('QLD', qld_pop), ('AUS', oz_pop)]
+# areas = [('NT', nt_pop), ('NSW', nsw_pop), ('VIC', vic_pop), ('ACT', act_pop), ('WA', wa_pop), ('SA', sa_pop), ('TAS', tas_pop), ('QLD', qld_pop)]
 
 
 pivoted = df.pivot(index='REPORT_DATE', columns='CODE')['PREV_VACC_DOSE_CNT'].reset_index()
@@ -58,7 +58,7 @@ pivoted.drop(columns={'REPORT_DATE'}, inplace=True)
 
 pivoted.to_csv('state-comparison.csv', index=False)
 
-colours = ['#e5005a', "#f9b000", "#ffe500", "#bbce00", "#00a194", "#61c3d9", "#ea5a0b", "#4f524a"]
+colours = ['#e5005a', "#f9b000", "#ffe500", "#bbce00", "#00a194", "#61c3d9", "#ea5a0b", "#4f524a", "#af1674"]
 display_date = datetime.datetime.strptime(last_date, "%Y-%m-%d")
 display_date = datetime.datetime.strftime(display_date, "%d/%m/%Y")
 
@@ -67,7 +67,7 @@ def makeSince100Chart(df):
     template = [
             {
                 "title": "Australia's state vaccine rollout",
-                "subtitle": f"Showing the Covid-19 vaccine doses administered per hundred people. Excludes doses administered by the federal government. Last updated {display_date}.",
+                "subtitle": f"Showing the Covid-19 vaccine doses administered per hundred people. Doses administered by the federal government are included in Australia's total. Last updated {display_date}.",
                 "footnote": "",
                 "source": "Covidlive.com.au, Australian Bureau of Statistics",
                 "dateFormat": "",
