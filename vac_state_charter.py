@@ -58,15 +58,16 @@ pivoted.drop(columns={'REPORT_DATE'}, inplace=True)
 
 pivoted.to_csv('state-comparison.csv', index=False)
 
-
-
+colours = ['#e5005a', "#f9b000", "#ffe500", "#bbce00", "#00a194", "#61c3d9", "#ea5a0b", "#4f524a"]
+display_date = datetime.datetime.strptime(last_date, "%Y-%m-%d")
+display_date = datetime.datetime.strftime(display_date, "%d/%m/%Y")
 
 def makeSince100Chart(df):
    
     template = [
             {
                 "title": "Australia's state vaccine rollout",
-                "subtitle": f"Showing the Covid-19 vaccine doses administered per hundred people. Last updated {last_date }.",
+                "subtitle": f"Showing the Covid-19 vaccine doses administered per hundred people. Excludes doses administered by the federal government. Last updated {display_date}.",
                 "footnote": "",
                 "source": "Covidlive.com.au, Australian Bureau of Statistics",
                 "dateFormat": "",
@@ -92,6 +93,8 @@ def makeSince100Chart(df):
     chartData = df.to_dict('records')
     # print(since100.head())
     # print(chartData)
-    yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="state_rollout_per_hundred")
+    # yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":"guardian", "lineLabelling":"FALSE"}], chartName="state_rollout_per_hundred_test")
+    yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":colours, "lineLabelling":"FALSE"}], chartName="state_rollout_per_hundred")
+
 
 makeSince100Chart(pivoted)
