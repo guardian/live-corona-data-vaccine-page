@@ -252,7 +252,7 @@ def makeTestingLine(df):
     # labels = []
     df.fillna("", inplace=True)
     chartData = df.to_dict('records')
-    labels = [{"x":f"{last_date}", "y":f"{middle_gap}", "offset":190, 
+    labels = [{"x":f"{last_date}", "y":f"{middle_gap}", "offset":50, 
     "text":f"Current gap is {numberFormat(latest_gap)}",
      "align":"right", "direction":"right"}]
 
