@@ -229,7 +229,7 @@ def makeTestingLine(df):
             {
                 "title": "Tracking the Covid-19 vaccine rollout in Australia",
                 "subtitle": f"""Showing doses administered as well as the federal government's <a href='https://www.theguardian.com/news/datablog/2021/feb/28/is-australias-goal-of-vaccinating-the-entire-adult-population-by-october-achievable' target='_blank'>original</a> and <a href='https://www.health.gov.au/resources/publications/covid-19-vaccine-rollout-update-on-14-march-2021' target='_blank'>revised</a> goals.<br>
-                At the 7 day rolling average of {numberFormat(latest_average)} doses, <strong>it will take <red>{months_to_go}</red> more months to vaccinate</strong> the Australian population. <br>
+                At the 7 day rolling average of {numberFormat(latest_average)} doses, <strong>it will take <red>{months_to_go}</red> more months</strong> to administer 45m doses. <br>
                 <small>Last updated {display_date}.</small>""",
                 "footnote": "",
                 "source": "Covidlive.com.au, Department of Health 14 March 2021 COVID-19 vaccine rollout update",
@@ -252,7 +252,9 @@ def makeTestingLine(df):
     # labels = []
     df.fillna("", inplace=True)
     chartData = df.to_dict('records')
-    labels = []
+    labels = [{"x":f"{last_date}", "y":f"{middle_gap}", "offset":190, 
+    "text":f"Current gap is {numberFormat(latest_gap)}",
+     "align":"right", "direction":"right"}]
 
     yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"linechart"}], 
     options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="oz_vaccine_tracker_goals_trend")
