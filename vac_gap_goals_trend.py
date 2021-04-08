@@ -160,6 +160,8 @@ combo.rename(columns={"Doses given":f"Doses given: {numberFormat(latest_count)}"
 # combo.rename(columns={"Original goal":f"Original goal: {numberFormat(goal_1)}"}, inplace=True)
 # combo.rename(columns={"Second goal":f"Second goal: {numberFormat(goal_2)}"}, inplace=True)
 
+
+
 combo = combo[['Date', f"Doses given: {numberFormat(latest_count)}", f"Original goal", f"Revised rollout"]]
 
 ## Work out rolling average
@@ -168,6 +170,8 @@ how_many_days = 7
 
 combo['Incremental'] = combo[f"Doses given: {numberFormat(latest_count)}"].diff(periods=1)
 combo[f'{how_many_days} day rolling average'] = combo['Incremental'].rolling(how_many_days).mean()
+
+# print(combo)
 
 ## Get latest rolling average and use it to extrapolate trend
 averager = combo.dropna()
@@ -179,10 +183,26 @@ combo.loc[combo['Date'] > last_date, 'Trend'] = latest_average
 combo['Trend'] = round(combo['Trend'].cumsum())
 combo.loc[combo['Date'] <= last_date, 'Trend'] = np.nan
 
-# Work out herd immunity
-# source: https://www.abs.gov.au/statistics/people/population/national-state-and-territory-population/sep-2020
-oz_pop = 25693.1 * 1000
-herd_immunity = (oz_pop*2) * 0.85
+# # Work out herd immunity
+# # source: https://www.abs.gov.au/statistics/people/population/national-state-and-territory-population/sep-2020
+# oz_pop = 25693.1 * 1000
+# herd_immunity = (oz_pop*2) * 0.85
+
+# rollout_begin = datetime.date(2021, 2, 22)
+# today = datetime.datetime.today().date()
+
+# days_running = today - rollout_begin
+# days_running = days_running.days
+
+
+# num_days = (herd_immunity-latest_count)/latest_average
+# # num_days =  round(num_days - days_running)
+
+# end_date = today + datetime.timedelta(days=num_days)
+# months_to_go = (end_date.year - today.year) * 12 + end_date.month - today.month
+
+# Work out time to 45 million
+goal = 45000000
 
 rollout_begin = datetime.date(2021, 2, 22)
 today = datetime.datetime.today().date()
@@ -190,13 +210,11 @@ today = datetime.datetime.today().date()
 days_running = today - rollout_begin
 days_running = days_running.days
 
-
-num_days = (herd_immunity-latest_count)/(combo[f'{how_many_days} day rolling average'].max() - days_running)
-# num_days =  round(num_days - days_running)
+# Work out number of days to finish given latest average
+num_days = round((goal-latest_count)/latest_average)
 
 end_date = today + datetime.timedelta(days=num_days)
 months_to_go = (end_date.year - today.year) * 12 + end_date.month - today.month
-
 
 combo = combo[['Date', f"Doses given: {numberFormat(latest_count)}", 'Original goal', 'Revised rollout','Trend']]
 
@@ -211,7 +229,7 @@ def makeTestingLine(df):
             {
                 "title": "Tracking the Covid-19 vaccine rollout in Australia",
                 "subtitle": f"""Showing doses administered as well as the federal government's <a href='https://www.theguardian.com/news/datablog/2021/feb/28/is-australias-goal-of-vaccinating-the-entire-adult-population-by-october-achievable' target='_blank'>original</a> and <a href='https://www.health.gov.au/resources/publications/covid-19-vaccine-rollout-update-on-14-march-2021' target='_blank'>revised</a> goals.<br>
-                At the 7 day rolling average of {numberFormat(latest_average)} doses, <strong>it will take <red>{months_to_go}</red> more months to vaccinate</strong> 85% of the Australian population. <br>
+                At the 7 day rolling average of {numberFormat(latest_average)} doses, <strong>it will take <red>{months_to_go}</red> more months to vaccinate</strong> the Australian population. <br>
                 <small>Last updated {display_date}.</small>""",
                 "footnote": "",
                 "source": "Covidlive.com.au, Department of Health 14 March 2021 COVID-19 vaccine rollout update",
@@ -234,9 +252,7 @@ def makeTestingLine(df):
     # labels = []
     df.fillna("", inplace=True)
     chartData = df.to_dict('records')
-    labels = [{"x":f"{last_date}", "y":f"{middle_gap}", "offset":50, 
-    "text":f"Current gap is {numberFormat(latest_gap)}",
-     "align":"right", "direction":"right"}]
+    labels = []
 
     yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"linechart"}], 
     options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="oz_vaccine_tracker_goals_trend")
