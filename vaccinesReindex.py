@@ -17,6 +17,7 @@ if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unveri
 
 oz_json = 'https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/aus-vaccines.json'
 row_csv = 'https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv'
+uk_json = 'https://raw.githubusercontent.com/guardian/interactive-covid-uk-tracker/master/assets/vaxx-data/vaxx-data-2020.json?token=AEFY5Q5MX26YEWK6X6UWGV3APYWLU'
 
 
 #%%
@@ -47,15 +48,46 @@ oz = oz[['location', 'date', 'total_vaccinations_per_hundred']]
 
 oz = oz.loc[oz['total_vaccinations_per_hundred'] > 0]
 
-# Sort out everyone else from Our World in Data
+
+## Load Our World 
 
 our_world = pd.read_csv(row_csv, parse_dates=['date'])
 our_world = our_world.sort_values(by="date", ascending=True)
 
-countries = ['United Kingdom', 'United States', "European Union", "South Korea", "Japan"]
+## Work out UK
+
+graun_uk = pd.read_json(uk_json)
+owid_uk = our_world.loc[our_world['location'] == "United Kingdom"]
+
+graun_uk['allDosesByPublishDate'] = graun_uk['allDosesByPublishDate'].cumsum()
+graun_uk.columns = ['date', 'total_vaccinations']
+
+owid_uk = owid_uk.loc[owid_uk['date'] > "2021-01-10"]
+
+owid_uk = owid_uk[['date', 'total_vaccinations']]
+
+uk = graun_uk.append(owid_uk)
+
+## Work out UK dose per hundred
+uk_pop = 66650000
+## https://ourworldindata.org/grapher/population
+
+uk['location'] = "United Kingdom"
+uk['total_vaccinations_per_hundred'] = (uk['total_vaccinations'] / uk_pop) * 100
+uk = uk[['date','total_vaccinations_per_hundred', 'location']]
+
+
+# Sort out everyone else from Our World in Data
+
+
+countries = ['United States', "European Union", "South Korea", "Japan"]
 our_world = our_world.loc[our_world["location"].isin(countries)]
 
 our_world = our_world[['date','total_vaccinations_per_hundred', 'location']]
+
+
+our_world = our_world.append(uk)
+
 
 # Append Australia to rest of the world
 
@@ -109,6 +141,7 @@ cut_off = math.ceil(days_running/10) * 10
 upto = sinceDayZero[:cut_off].copy()
 
 upto.to_csv('country-comparison.csv')
+
 
 #%%
 
