@@ -17,8 +17,6 @@ if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unveri
 
 oz_json = 'https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/aus-vaccines.json'
 row_csv = 'https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv'
-uk_json = 'https://raw.githubusercontent.com/guardian/interactive-covid-uk-tracker/master/assets/vaxx-data/vaxx-data-2020.json?token=AEFY5Q5MX26YEWK6X6UWGV3APYWLU'
-
 
 #%%
 oz_pop = 25203000
@@ -56,7 +54,7 @@ our_world = our_world.sort_values(by="date", ascending=True)
 
 ## Work out UK
 
-graun_uk = pd.read_json(uk_json)
+graun_uk = pd.read_json('vaxx-data-2020.json')
 owid_uk = our_world.loc[our_world['location'] == "United Kingdom"]
 
 graun_uk['allDosesByPublishDate'] = graun_uk['allDosesByPublishDate'].cumsum()
