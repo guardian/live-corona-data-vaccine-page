@@ -1,0 +1,47 @@
+<html>
+    <head>
+        <title>Interactive atom template</title>
+        <style>
+            body {
+                background-color: #eaeaea;
+            }
+            .atoms {
+                max-width: 620px;
+                margin: auto;
+            }
+            h2 {
+                font-family: "Guardian Headline Full";
+                font-size: 36px;
+                font-weight: 600;
+            }
+            a {
+                display: block;
+                border: 1px solid #dcdcdc;
+                padding: 24px 10px;
+                margin-bottom: 12px;
+                background-color: #fff;
+                font-family: "Guardian Headline Full";
+                font-size: 24px;
+                font-weight: 600;
+                color: black;   
+                text-decoration: none;
+                transition: transform 0.1666s ease-in-out;
+            }
+            a:hover {
+                transform: scale(1.05);
+            }
+            @font-face{font-family:"Guardian Headline Full";src:url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-Light.woff2") format("woff2"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-Light.woff") format("woff"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-Light.ttf") format("truetype");font-weight:300;font-style:normal}@font-face{font-family:"Guardian Headline Full";src:url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-LightItalic.woff2") format("woff2"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-LightItalic.woff") format("woff"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-LightItalic.ttf") format("truetype");font-weight:300;font-style:italic}@font-face{font-family:"Guardian Headline Full";src:url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-Regular.woff2") format("woff2"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-Regular.woff") format("woff"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-Regular.ttf") format("truetype");font-weight:400;font-style:normal}@font-face{font-family:"Guardian Headline Full";src:url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-RegularItalic.woff2") format("woff2"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-RegularItalic.woff") format("woff"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-RegularItalic.ttf") format("truetype");font-weight:400;font-style:italic}@font-face{font-family:"Guardian Headline Full";src:url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-Medium.woff2") format("woff2"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-Medium.woff") format("woff"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-Medium.ttf") format("truetype");font-weight:500;font-style:normal}@font-face{font-family:"Guardian Headline Full";src:url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-MediumItalic.woff2") format("woff2"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-MediumItalic.woff") format("woff"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-MediumItalic.ttf") format("truetype");font-weight:500;font-style:italic}@font-face{font-family:"Guardian Headline Full";src:url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-Semibold.woff2") format("woff2"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-Semibold.woff") format("woff"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-Semibold.ttf") format("truetype");font-weight:600;font-style:normal}@font-face{font-family:"Guardian Headline Full";src:url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-SemiboldItalic.woff2") format("woff2"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-SemiboldItalic.woff") format("woff"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-SemiboldItalic.ttf") format("truetype");font-weight:600;font-style:italic}@font-face{font-family:"Guardian Headline Full";src:url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-Bold.woff2") format("woff2"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-Bold.woff") format("woff"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-Bold.ttf") format("truetype");font-weight:700;font-style:normal}@font-face{font-family:"Guardian Headline Full";src:url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-BoldItalic.woff2") format("woff2"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-BoldItalic.woff") format("woff"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-BoldItalic.ttf") format("truetype");font-weight:700;font-style:italic}@font-face{font-family:"Guardian Headline Full";src:url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-Black.woff2") format("woff2"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-Black.woff") format("woff"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-Black.ttf") format("truetype");font-weight:900;font-style:normal}@font-face{font-family:"Guardian Headline Full";src:url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-BlackItalic.woff2") format("woff2"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-BlackItalic.woff") format("woff"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-headline/noalts-not-hinted/GHGuardianHeadline-BlackItalic.ttf") format("truetype");font-weight:900;font-style:italic}@font-face{font-family:"Guardian Titlepiece";src:url("https://assets.guim.co.uk/static/frontend/fonts/guardian-titlepiece/noalts-not-hinted/GTGuardianTitlepiece-Bold.woff2") format("woff2"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-titlepiece/noalts-not-hinted/GTGuardianTitlepiece-Bold.woff") format("woff"),url("https://assets.guim.co.uk/static/frontend/fonts/guardian-titlepiece/noalts-not-hinted/GTGuardianTitlepiece-Bold.ttf") format("truetype");font-weight:700;font-style:normal}
+        </style>
+    </head>
+    <body>
+        <div class="atoms">
+            <h2>Templates</h2>
+            <a href="./interactive.html">Interactive</a>
+            <a href="./immersive.html">Immersive interactive</a>
+            <a href="./webview.html">Android front webview</a>
+            <a href="./front.html">Web front</a>
+            <a href="./blank.html">Blank</a>
+            <a href="./article.html">Article</a>
+        </div>
+    </body>
+</html>
