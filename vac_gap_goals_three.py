@@ -149,11 +149,11 @@ goal_1 = round(int(combo.loc[combo['Date'] == np.datetime64(chart_truncate)]['Or
 
 # Work out vaccination gap
 # combo['Vaccination gap'] = combo["Original goal"] - combo['Doses given']
-combo['Vaccination gap'] = combo["Second goal"] - combo['Doses given']
-latest_gap = combo.loc[combo["REPORT_DATE"] == last_date]['Vaccination gap'].values[0]
-middle_gap = latest_count + latest_gap/2
+# combo['Vaccination gap'] = combo["Second goal"] - combo['Doses given']
+# latest_gap = combo.loc[combo["REPORT_DATE"] == last_date]['Vaccination gap'].values[0]
+# middle_gap = latest_count + latest_gap/2
 
-## Truncate dataset at the end of April
+## Truncate dataset
 combo = combo.loc[combo['Date'] <= np.datetime64(chart_truncate)]
 
 combo['Date'] = combo['Date'].dt.strftime('%Y-%m-%d')
@@ -231,26 +231,53 @@ eoy_days = eoy_days.days
 
 first_doses_per_day_eoy = first_goal / eoy_days
 
-# print(first_doses_per_day_eoy)
+## Calculate how many doses had been administered on the 15th of April
+# https://www.pm.gov.au/media/opening-remarks-gp-round-table
 
+
+# Calculate number of doses at the prime ministers announcement
+doses_at_15 = combo.loc[combo["Date"] == "2021-04-15"][f"Doses given: {numberFormat(latest_count)}"].values[0]
+
+# Calculate how many days into the rollout that was
+days_at_15_days_til_end = datetime.date(2021, 4, 15) - rollout_begin
+days_at_15_days_til_end = days_at_15_days_til_end.days
+
+# Calculate how many days between begin and 1st nov
 til_nov_one = datetime.date(2021, 11, 1) - rollout_begin
 til_nov_one = til_nov_one.days
 
+# Calculate how many doses needed per day til 1st nov given daily vaccination rate
 second_doses_til_nov_one = first_doses_per_day_eoy * til_nov_one
 
-doses_left = (first_goal + second_doses_til_nov_one) - latest_count
+# Find out how many doses are still required given the ones administered by 15th April
+doses_left = (first_goal + second_doses_til_nov_one) - doses_at_15
 
-daily_til_year_end = doses_left / (eoy_days - days_running)
+# Calculate how many doses required daily between 15th April and eoy
+daily_til_year_end = doses_left / (eoy_days - days_at_15_days_til_end)
 
+# Add this to dataframe
 combo['First dose by EOY'] = round(daily_til_year_end)
 
-combo.loc[combo['Date'] <= last_date, 'First dose by EOY'] = combo['Incremental']
+# Fill in before 15th April with actual doses administered
+combo.loc[combo['Date'] <= "2021-04-15", 'First dose by EOY'] = combo['Incremental']
 
+# Calculate cum sum
 combo['First dose by EOY'] = combo['First dose by EOY'].cumsum()
 
-combo.loc[combo['Date'] < last_date, 'First dose by EOY'] = np.nan
+# Work out gap
+combo['Vaccination gap'] = combo['First dose by EOY'] - combo[f"Doses given: {numberFormat(latest_count)}"]
+latest_gap = combo.loc[combo["Date"] == last_date]['Vaccination gap'].values[0]
 
-combo = combo[['Date', f"Doses given: {numberFormat(latest_count)}", 'Original goal', 'First dose by EOY', 'Revised rollout','Trend']]
+# print(combo['Vaccination gap'])
+# print(latest_gap)
+
+# Lop off before 15th April data for chart
+combo.loc[combo['Date'] < "2021-04-15", 'First dose by EOY'] = np.nan
+
+
+combo = combo[['Date', f"Doses given: {numberFormat(latest_count)}", 'First dose by EOY','Original goal', 'Revised rollout','Trend']]
+combo.columns = ['Date', f"Doses given: {numberFormat(latest_count)}", 'Current goal','Original goal', 'Revised goal','Trend']
+
 # combo = combo[['Date', f"Doses given: {numberFormat(latest_count)}", 'First dose by EOY','Trend']]
 
 display_date = datetime.datetime.strptime(last_date, "%Y-%m-%d")
@@ -261,11 +288,12 @@ def makeTestingLine(df):
     template = [
             {
                 "title": "Tracking the Covid-19 vaccine rollout in Australia",
-                "subtitle": f"""Showing doses administered as well as the federal government's <a href='https://www.theguardian.com/news/datablog/2021/feb/28/is-australias-goal-of-vaccinating-the-entire-adult-population-by-october-achievable' target='_blank'>original</a> and <a href='https://www.health.gov.au/resources/publications/covid-19-vaccine-rollout-update-on-14-march-2021' target='_blank'>revised</a> goals.<br>
+                "subtitle": f"""Showing doses administered as well as the federal government's <a href='https://www.theguardian.com/news/datablog/2021/feb/28/is-australias-goal-of-vaccinating-the-entire-adult-population-by-october-achievable' target='_blank'>original</a>, <a href='https://www.health.gov.au/resources/publications/covid-19-vaccine-rollout-update-on-14-march-2021' target='_blank'>revised</a> and <a href='https://www.pm.gov.au/media/opening-remarks-gp-round-table' target='_blank'>current</a> goals.<br>
                 At the 7 day rolling average of {numberFormat(latest_average)} doses, <strong>it will take <red>{months_to_go}</red> more months</strong> to administer 45m doses. <br>
+                The current vaccination gap is <b style="color:rgb(245, 189, 44)">{numberFormat(latest_gap)} doses</b>.<br>
                 <small>Last updated {display_date}.</small>""",
-                "footnote": "",
-                "source": "Covidlive.com.au, Department of Health 14 March 2021 COVID-19 vaccine rollout update",
+                "footnote": "Current goal is calculated as a first dose for every Australian by the end of the year. Calculation starts as of the Prime Minister's press conference on the 15th of April. Target includes a second dose for those who receive their first shot before the 1st of November.",
+                "source": "| Sources: Covidlive.com.au, Department of Health 14 March 2021 COVID-19 vaccine rollout update",
                 "dateFormat": "%Y-%m-%d",
                 "yScaleType":"",
                 "xAxisLabel": "Date",
@@ -290,6 +318,6 @@ def makeTestingLine(df):
     #  "align":"right", "direction":"right"}]
 
     yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"linechart"}],
-    options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="oz_vaccine_tracker_goals_trend_two_trend_test")
+    options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="oz_vaccine_tracker_goals_trend_three_trend")
 
 makeTestingLine(combo)
