@@ -242,8 +242,8 @@ doses_at_15 = combo.loc[combo["Date"] == "2021-04-15"][f"Doses given: {numberFor
 days_at_15_days_til_end = datetime.date(2021, 4, 15) - rollout_begin
 days_at_15_days_til_end = days_at_15_days_til_end.days
 
-# Calculate how many days between begin and 1st nov
-til_nov_one = datetime.date(2021, 11, 1) - rollout_begin
+# Calculate how many days between begin and 1st Oct
+til_nov_one = datetime.date(2021, 10, 1) - rollout_begin
 til_nov_one = til_nov_one.days
 
 # Calculate how many doses needed per day til 1st nov given daily vaccination rate
@@ -292,7 +292,7 @@ def makeTestingLine(df):
                 At the 7 day rolling average of {numberFormat(latest_average)} doses, <strong>it will take <red>{months_to_go}</red> more months</strong> to administer 45m doses. <br>
                 The current vaccination gap is <b style="color:rgb(245, 189, 44)">{numberFormat(latest_gap)} doses</b>.<br>
                 <small>Last updated {display_date}.</small>""",
-                "footnote": "Current goal is calculated as a first dose for every Australian by the end of the year. Calculation starts as of the Prime Minister's press conference on the 15th of April. Target includes a second dose for those who receive their first shot before the 1st of November.",
+                "footnote": "Current goal is calculated as a first dose for every Australian by the end of the year. Calculation starts as of the Prime Minister's press conference on the 15th of April. Target includes a second dose for those who receive their first shot before the 1st of October.",
                 "source": "| Sources: Covidlive.com.au, Department of Health 14 March 2021 COVID-19 vaccine rollout update",
                 "dateFormat": "%Y-%m-%d",
                 "yScaleType":"",
