@@ -40,7 +40,6 @@ syncData(states_final, "2021/02/coronavirus-widget-data", "state-vaccine-rollout
 
 # import vaccinesPerHundred
 import vaccinesReindex
-import vac_gap_goals_two
 import vaccinegap
 import vac_state_charter
 import vac_gap_goals_trend
