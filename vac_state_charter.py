@@ -1,10 +1,10 @@
-import pandas as pd 
+import pandas as pd
 import requests
 import os
 import ssl
 from modules.yachtCharter import yachtCharter
-import numpy as np 
-import datetime 
+import numpy as np
+import datetime
 
 
 state_json = "https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/state-vaccine-rollout.json"
@@ -63,7 +63,7 @@ display_date = datetime.datetime.strptime(last_date, "%Y-%m-%d")
 display_date = datetime.datetime.strftime(display_date, "%d/%m/%Y")
 
 def makeSince100Chart(df):
-   
+
     template = [
             {
                 "title": "Australia's state vaccine rollout",
