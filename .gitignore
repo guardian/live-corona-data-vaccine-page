@@ -3,3 +3,4 @@
 __pycache__/
 __pycache__
 scraperwiki.sqlite
+country-comparison.csv
