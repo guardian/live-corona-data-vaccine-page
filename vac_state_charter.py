@@ -30,6 +30,17 @@ act_pop = 431.2* 1000
 
 df = pd.read_json(state_json)
 # df = df.loc[df['CODE'] != "AUS"]
+df.fillna({"PREV_VACC_AGED_CARE_CNT":0, "PREV_VACC_GP_CNT":0}, inplace=True)
+# REV_VACC_AGED_CARE_CNT  PREV_VACC_GP_CNT
+## Subtract aged care and gps from everyone but Aus
+non_aus = df.loc[df['CODE'] != "AUS"].copy()
+non_aus['PREV_VACC_DOSE_CNT'] = non_aus['PREV_VACC_DOSE_CNT'] - non_aus['PREV_VACC_AGED_CARE_CNT']
+non_aus['PREV_VACC_DOSE_CNT'] = non_aus['PREV_VACC_DOSE_CNT'] - non_aus['PREV_VACC_GP_CNT']
+aus = df.loc[df['CODE'] == "AUS"].copy()
+
+df = non_aus.append(aus)
+
+# print(df)
 df = df[['REPORT_DATE', 'CODE', 'PREV_VACC_DOSE_CNT']]
 df['REPORT_DATE'] = pd.to_datetime(df['REPORT_DATE'])
 df = df.sort_values(by="REPORT_DATE", ascending=True)
@@ -62,12 +73,15 @@ colours = ['#e5005a', "#f9b000", "#ffe500", "#bbce00", "#00a194", "#61c3d9", "#e
 display_date = datetime.datetime.strptime(last_date, "%Y-%m-%d")
 display_date = datetime.datetime.strftime(display_date, "%d/%m/%Y")
 
+print(pivoted)
+print(pivoted.columns)
+
 def makeSince100Chart(df):
 
     template = [
             {
                 "title": "Australia's state vaccine rollout",
-                "subtitle": f"Showing the Covid-19 vaccine doses administered per hundred people. Doses administered by the federal government are included in Australia's total. Last updated {display_date}.",
+                "subtitle": f"Showing the Covid-19 vaccine doses administered per hundred people. Doses administered by GPs and aged care included in Australia's total. Last updated {display_date}.",
                 "footnote": "",
                 "source": "Covidlive.com.au, Australian Bureau of Statistics",
                 "dateFormat": "",
@@ -93,7 +107,7 @@ def makeSince100Chart(df):
     chartData = df.to_dict('records')
     # print(since100.head())
     # print(chartData)
-    # yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":"guardian", "lineLabelling":"FALSE"}], chartName="state_rollout_per_hundred_test")
+    # yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":colours, "lineLabelling":"FALSE"}], chartName="state_rollout_per_hundred_test")
     yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":colours, "lineLabelling":"FALSE"}], chartName="state_rollout_per_hundred")
 
 
