@@ -81,7 +81,7 @@ def makeSince100Chart(df):
     template = [
             {
                 "title": "Australia's state vaccine rollout",
-                "subtitle": f"Showing the Covid-19 vaccine doses administered per hundred people. Doses administered by GPs and aged care are included in Australia's total. Last updated {display_date}.",
+                "subtitle": f"Showing the Covid-19 vaccine doses administered per hundred people. State totals don't include doses administered by GPs or in aged and disability care. Last updated {display_date}.",
                 "footnote": "",
                 "source": "Covidlive.com.au, Australian Bureau of Statistics",
                 "dateFormat": "",
