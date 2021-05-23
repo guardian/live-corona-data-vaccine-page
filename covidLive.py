@@ -28,7 +28,8 @@ finalJson = final.to_json(orient='records')
 
 ## Make separate json for state-based chart
 
-states = df[['REPORT_DATE', 'LAST_UPDATED_DATE', 'CODE', 'VACC_DOSE_CNT', 'PREV_VACC_DOSE_CNT']]
+states = df[['REPORT_DATE', 'LAST_UPDATED_DATE', 'CODE', 'VACC_DOSE_CNT', 'PREV_VACC_DOSE_CNT', 
+'PREV_VACC_AGED_CARE_CNT', 'PREV_VACC_GP_CNT']]
 
 states = states[states['REPORT_DATE'] >= '2021-02-24']
 states_final = states.to_json(orient='records')
