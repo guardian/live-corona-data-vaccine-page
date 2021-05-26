@@ -4,7 +4,7 @@ import os
 
 AWS_KEY = os.environ['AWS_ACCESS_KEY_ID']
 AWS_SECRET = os.environ['AWS_SECRET_ACCESS_KEY']
-AWS_SESSION = os.environ['AWS_SESSION_TOKEN']
+# AWS_SESSION = os.environ['AWS_SESSION_TOKEN']
 
 def syncData(jsonObject,id):
 
@@ -16,7 +16,7 @@ def syncData(jsonObject,id):
 	session = boto3.Session(
 	aws_access_key_id=AWS_KEY,
 	aws_secret_access_key=AWS_SECRET,
-	aws_session_token = AWS_SESSION
+	# aws_session_token = AWS_SESSION
 	)
 	s3 = session.resource('s3')
 
