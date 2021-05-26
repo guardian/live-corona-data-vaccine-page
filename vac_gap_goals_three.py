@@ -172,11 +172,15 @@ how_many_days = 7
 combo['Incremental'] = combo[f"Doses given: {numberFormat(latest_count)}"].diff(periods=1)
 combo[f'{how_many_days} day rolling average'] = combo['Incremental'].rolling(how_many_days).mean()
 
-# print(combo)
-
 ## Get latest rolling average and use it to extrapolate trend
 averager = combo.dropna()
+averager = combo.loc[~combo[f"Doses given: {numberFormat(latest_count)}"].isna()]
+## THIS IS WHERE I FIXED TO CORRECT THE MOVING AVERAGE
+
 latest_average = averager[-1:][f'{how_many_days} day rolling average'].values[0]
+print(latest_average)
+
+
 
 combo['Trend'] = combo['Incremental']
 combo.loc[combo['Date'] == first_date, 'Trend'] = 20
@@ -282,6 +286,8 @@ combo.columns = ['Date', f"Doses given: {numberFormat(latest_count)}", 'Current 
 
 display_date = datetime.datetime.strptime(last_date, "%Y-%m-%d")
 display_date = datetime.datetime.strftime(display_date, "%d/%m/%Y")
+
+# print(combo)
 
 def makeTestingLine(df):
 
