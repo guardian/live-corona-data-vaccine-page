@@ -73,8 +73,8 @@ colours = ['#e5005a', "#f9b000", "#ffe500", "#bbce00", "#00a194", "#61c3d9", "#e
 display_date = datetime.datetime.strptime(last_date, "%Y-%m-%d")
 display_date = datetime.datetime.strftime(display_date, "%d/%m/%Y")
 
-print(pivoted)
-print(pivoted.columns)
+# print(pivoted)
+# print(pivoted.columns)
 
 def makeSince100Chart(df):
 
