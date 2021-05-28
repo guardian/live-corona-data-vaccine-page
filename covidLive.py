@@ -72,5 +72,6 @@ syncData(aus_cases_finalJson, "2021/02/coronavirus-widget-data", "oz-covid-cases
 import vac_gap_goals_three
 import vac_state_charter
 import vaccinesReindex
+import daily_covid_cases
 
 #%%

@@ -6,8 +6,8 @@ import numpy as np
 import requests
 from datetime import datetime
 
-test = ""
-# test = "-test"
+# test = ""
+test = "-test"
 
 state_order = ['NSW','VIC',	'QLD','SA', 'WA','TAS',	'ACT','NT']
 state_order2 = ['NSW','VIC','QLD','SA', 'WA','TAS',	'ACT']
@@ -94,7 +94,6 @@ deaths_df = deaths_df.fillna(method='ffill')
 deaths_df = deaths_df.fillna(0)
 states_df = states_df[state_order2]
 
-
 total_cum = pd.DataFrame()
 total_cum['Total'] = states_df.sum(axis=1)
 total_cum['pct_change'] = total_cum['Total'].pct_change()
@@ -115,6 +114,7 @@ deaths_total.index = deaths_total.index.strftime('%Y-%m-%d')
 restack_states_daily = states_df_daily.stack().reset_index()
 
 restack_states_daily = restack_states_daily.rename(columns={"level_0":"Date","level_1":"State",0:"Cases"})
+
 
 
 #%%
@@ -138,7 +138,7 @@ total_cum.index = total_cum.index.strftime('%Y-%m-%d')
 # total_cum.to_csv('data-output/total-cumulative.csv')
 
 
-#%%
+# #%%
 
 def makeCumulativeChart(df):
 	
@@ -182,9 +182,9 @@ def makeCumulativeChart(df):
 
 	yachtCharter(template=template, data=chartData, chartId=chartId, chartName="australian-covid-cases-2020", key=key)
 
-makeCumulativeChart(states_df)
+# makeCumulativeChart(states_df)
 	
-#%%
+# #%%
 
 def makeDailyStatesChart(df):
 	
@@ -218,9 +218,9 @@ def makeDailyStatesChart(df):
 
 	yachtCharter(template=template, data=chartData, chartId=chartId, chartName="australian-states-daily-covid-cases-2020")
 
-makeDailyStatesChart(restack_states_daily)
+# makeDailyStatesChart(restack_states_daily)
 
-#%%
+# #%%
 
 def makeTotalDeathBars(df):
 
@@ -257,7 +257,7 @@ def makeTotalDeathBars(df):
 
 	yachtCharter(template=template, data=chartData, chartId=chartId, chartName="aus-total-corona-deaths{test}".format(test=test), key=key)
 
-makeTotalDeathBars(deaths_total)
+# makeTotalDeathBars(deaths_total)
 
 #%%
 def makeNationalBars(df):
@@ -296,4 +296,5 @@ def makeNationalBars(df):
 
 	yachtCharter(template=template, data=chartData, chartId=chartId, chartName="aus-national-total-corona-cases{test}".format(test=test), key=key)
 
-makeNationalBars(daily_total)
+
+# makeNationalBars(daily_total)
