@@ -86,8 +86,8 @@ def makeLineChart(df):
 
     template = [
             {
-                "title": "Covid-19 vaccine doses per hundred people for selected countries",
-                "subtitle": f"Showing the vaccine rollout to date in each country or region. Latest data as of {latest_date}.",
+                "title": "Covid-19 vaccine rollout to date for selected countries",
+                "subtitle": f"Showing vaccine doses administered per hundred people to date in each country or region. Latest data as of {latest_date}.",
                 "footnote": "",
                 "source": "Our World in Data",
                 "dateFormat": "%Y-%m-%d",
