@@ -5,6 +5,8 @@ import numpy as np
 import os, ssl
 import math
 
+here = os.path.dirname(__file__)
+
 
 #%%
 
@@ -54,7 +56,7 @@ our_world = our_world.sort_values(by="date", ascending=True)
 
 ## Work out UK
 
-graun_uk = pd.read_json('vaxx-data-2020.json')
+graun_uk = pd.read_json(f'{here}/vaxx-data-2020.json')
 owid_uk = our_world.loc[our_world['location'] == "United Kingdom"]
 
 graun_uk['allDosesByPublishDate'] = graun_uk['allDosesByPublishDate'].cumsum()
@@ -103,7 +105,7 @@ pivoted = pivoted.ffill(axis=0)
 #%%
 # print(pivoted)
 
-includes = ['United Kingdom', 'United States', "European Union","Australia", "South Korea", "Japan"]
+includes = ["Australia",'United States', "European Union","South Korea", "Japan", 'United Kingdom']
 
 #%%
 

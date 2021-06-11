@@ -73,5 +73,6 @@ import vac_gap_goals_three
 import vac_state_charter
 import vaccinesReindex
 import daily_covid_cases
+import vac_global_per_hund
 
 #%%
