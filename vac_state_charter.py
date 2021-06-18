@@ -6,6 +6,9 @@ from modules.yachtCharter import yachtCharter
 import numpy as np
 import datetime
 
+# testo = "_test"
+testo = ''
+
 
 state_json = "https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/state-vaccine-rollout.json"
 
@@ -38,6 +41,9 @@ non_aus['PREV_VACC_DOSE_CNT'] = non_aus['PREV_VACC_DOSE_CNT'] - non_aus['PREV_VA
 non_aus['PREV_VACC_DOSE_CNT'] = non_aus['PREV_VACC_DOSE_CNT'] - non_aus['PREV_VACC_GP_CNT']
 aus = df.loc[df['CODE'] == "AUS"].copy()
 
+# print(aus)
+# print(aus.columns)
+
 df = non_aus.append(aus)
 
 # print(df)
@@ -45,6 +51,8 @@ df = df[['REPORT_DATE', 'CODE', 'PREV_VACC_DOSE_CNT']]
 df['REPORT_DATE'] = pd.to_datetime(df['REPORT_DATE'])
 df = df.sort_values(by="REPORT_DATE", ascending=True)
 
+# print(df)
+# print(df.columns)
 
 ## Get last date for updated date in subhead
 last_date = datetime.datetime.strftime(df['REPORT_DATE'].max(), "%Y-%m-%d")
@@ -81,7 +89,7 @@ def makeSince100Chart(df):
     template = [
             {
                 "title": "Australia's state vaccine rollout",
-                "subtitle": f"Showing the Covid-19 vaccine doses administered per hundred people. State totals don't include doses administered by GPs or in aged and disability care. Last updated {display_date}.",
+                "subtitle": f"Showing the Covid-19 vaccine doses administered per hundred people. The Australian total includes doses administered by GPs or in aged and disability care. State totals only show doses administered at state vaccination hubs and centres. Last updated {display_date}.",
                 "footnote": "",
                 "source": "Covidlive.com.au, Australian Bureau of Statistics",
                 "dateFormat": "",
@@ -108,7 +116,7 @@ def makeSince100Chart(df):
     # print(since100.head())
     # print(chartData)
     # yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":colours, "lineLabelling":"FALSE"}], chartName="state_rollout_per_hundred_test")
-    yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":colours, "lineLabelling":"FALSE"}], chartName="state_rollout_per_hundred")
+    yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":colours, "lineLabelling":"FALSE"}], chartName=f"state_rollout_per_hundred{testo}")
 
 
 makeSince100Chart(pivoted)
