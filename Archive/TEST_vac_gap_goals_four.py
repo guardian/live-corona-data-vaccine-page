@@ -1,18 +1,23 @@
+#%%
+
 from modules.yachtCharter import yachtCharter
 from modules.numberFormat import numberFormat
 import pandas as pd
 import datetime
 import numpy as np
 import os, ssl
+import math
 pd.set_option("display.max_rows", None, "display.max_columns", None)
+
+#%%
 
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None)):
     ssl._create_default_https_context = ssl._create_unverified_context
 
 oz_json = 'https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/aus-vaccines.json'
 
-# test = "_test"
-test = ""
+test = "_test"
+# test = ''
 
 def second_builder(start, listers, which):
     # To calculate number of days for the date range
@@ -42,7 +47,9 @@ rollout_begin = datetime.date(2021, 2, 22)
 rollout_end = datetime.date(2021, 10, 31)
 
 # chart_truncate =  datetime.date(2021, 5, 31)
-chart_truncate =  datetime.date(2021, 7, 31)
+chart_truncate =  datetime.date(2021, 6, 30)
+
+#%%
 
 ### ORIGINAL GOAL
 
@@ -89,6 +96,8 @@ original_rollout = [(sixty_k_doses, sixty_delta), (four_mil_doses, four_mil_delt
 
 original_target = second_builder(rollout_begin, original_rollout, "Original")
 
+#%%
+
 ### SECOND GOAL
 #source for following: https://www.health.gov.au/resources/publications/covid-19-vaccine-rollout-update-on-14-march-2021
 
@@ -124,6 +133,8 @@ second_target['Date'] = pd.to_datetime(second_target['Date'])
 
 combo_targets = pd.merge(original_target, second_target, on="Date", how="left")
 
+#%%
+
 ## READ IN ACTUAL VACCINATIONS
 
 oz = pd.read_json(oz_json)
@@ -156,7 +167,7 @@ goal_1 = round(int(combo.loc[combo['Date'] == np.datetime64(chart_truncate)]['Or
 # middle_gap = latest_count + latest_gap/2
 
 ## Truncate dataset
-combo = combo.loc[combo['Date'] <= np.datetime64(chart_truncate)]
+# combo = combo.loc[combo['Date'] <= np.datetime64(chart_truncate)]
 
 combo['Date'] = combo['Date'].dt.strftime('%Y-%m-%d')
 combo.rename(columns={"Doses given":f"Doses given: {numberFormat(latest_count)}", "Second goal":"Revised rollout"}, inplace=True)
@@ -166,6 +177,8 @@ combo.rename(columns={"Doses given":f"Doses given: {numberFormat(latest_count)}"
 
 
 combo = combo[['Date', f"Doses given: {numberFormat(latest_count)}", f"Original goal", f"Revised rollout"]]
+
+#%%
 
 ## Work out rolling average
 
@@ -209,6 +222,8 @@ combo.loc[combo['Date'] < last_date, 'Trend'] = np.nan
 # end_date = today + datetime.timedelta(days=num_days)
 # months_to_go = (end_date.year - today.year) * 12 + end_date.month - today.month
 
+#%%
+
 # Work out time to 45 million
 goal = 45000000
 
@@ -227,6 +242,7 @@ months_to_go = (end_date.year - today.year) * 12 + end_date.month - today.month
 # combo = combo[['Date', f"Doses given: {numberFormat(latest_count)}", 'Original goal', 'Revised rollout','Trend']]
 
 # print(combo)
+#%%
 
 ### Work out trendline for first vaccines by EOY
 
@@ -286,11 +302,187 @@ combo.columns = ['Date', f"Doses given: {numberFormat(latest_count)}", 'Current 
 
 # combo = combo[['Date', f"Doses given: {numberFormat(latest_count)}", 'First dose by EOY','Trend']]
 
+
+#%%
+
+## Work out previous vaccine doses available
+
+previous_vaccines = [
+# [datetime.date(2021, 2, 22), 20], 
+[datetime.date(2021, 4, 4), 1905294], 
+[datetime.date(2021, 4, 11), 2447865], 
+[datetime.date(2021, 4, 18), 3025852], 
+[datetime.date(2021, 4, 25), 3601029], 
+[datetime.date(2021, 5, 2), 4086946], 
+[datetime.date(2021, 5, 9), 4622610], 
+[datetime.date(2021, 5, 16), 5540846], 
+[datetime.date(2021, 5, 23), 6416656], 
+[datetime.date(2021, 5, 30), 7168372], 
+[datetime.date(2021, 6, 6), 8097906], 
+[datetime.date(2021, 6, 13), 9148616],
+]
+import numpy as np 
+def prev_vac(listo):
+    first_listo = []
+    count_1 = 0
+    count_2 = 1
+    while count_2 < len(listo):
+        first_date = listo[count_1][0]
+        second_date = listo[count_2][0]
+        inter = pd.date_range(start=first_date, end=second_date)
+        inter = inter.to_frame(name="Date", index=False)
+
+        first_date = np.datetime64(first_date)
+        second_date = np.datetime64(second_date)
+
+        inter['Date'] = pd.to_datetime(inter['Date'])
+        inter.loc[inter['Date'] == first_date, 'Available'] = listo[count_1][1]
+        inter.loc[inter['Date'] == second_date, 'Available'] = listo[count_2][1]
+        inter['Available'] = inter['Available'].interpolate(method='linear')
+
+        first_listo.append(inter)
+
+        count_1 += 1
+        count_2 += 1
+
+    inter_final = pd.concat(first_listo)
+    inter_final = inter_final.drop_duplicates(subset=["Date"])
+
+    inter_final['Incremental'] = inter_final['Available'].diff(periods=1)
+    inter_final['Rolling'] = inter_final['Incremental'].rolling(window=7).mean()
+    
+    latest_rolling = inter_final.loc[inter_final['Date'] == inter_final['Date'].max()]['Rolling'].values[0]
+
+    inter_latest_date = listo[-1][0]
+    inter_latest_date = np.datetime64(inter_latest_date)
+
+    inter_latest_value = inter_final.loc[inter_final["Date"] == inter_final["Date"].max()]['Available'].values[0]
+
+    inter = pd.date_range(start=inter_latest_date, end=datetime.date(2021, 6, 30))
+    inter = inter.to_frame(name="Date", index=False)
+    inter['Available'] = latest_rolling
+
+    inter['Date'] = pd.to_datetime(inter['Date'])
+    inter.loc[inter['Date'] == inter_latest_date, 'Available'] = inter_latest_value
+    inter['Available'] = inter['Available'].cumsum()
+
+    inter_final = inter_final.append(inter)
+    inter_final = inter_final.drop_duplicates(subset=["Date"])
+
+    inter_final = inter_final[['Date', "Available"]]
+
+    return inter_final
+
+
+
+    # print(inter_latest_date.round())
+
+prev_doses = prev_vac(previous_vaccines)
+
+
+#%%
+
+#### ADDING HORIZONS
+
+# Source: https://www.health.gov.au/sites/default/files/documents/2021/06/covid-19-vaccination-covid-vaccination-allocations-horizons.pdf
+
+## Horizon 1
+horizon_one_begin = datetime.date(2021, 7, 1)
+horizon_one_end = datetime.date(2021, 8, 31)
+horizon_one_delta = horizon_one_end - horizon_one_begin
+horizon_one_weeks = round(horizon_one_delta.days/7)
+# States:
+astra_one = 2200000
+pfizer_one = 650000
+vaccines_one = astra_one + pfizer_one
+
+horizon_one_vaccines = vaccines_one * horizon_one_weeks 
+horizon_one_vaccines_per_day = horizon_one_vaccines / horizon_one_delta.days
+
+## Horizon 2
+horizon_two_begin = horizon_one_end + datetime.timedelta(days=1)
+horizon_two_end = datetime.date(2021, 9, 30)
+horizon_two_delta = horizon_two_end - horizon_two_begin
+horizon_two_weeks = round(horizon_two_delta.days/7)
+
+astra_two = 880000
+pfizer_two = 930000
+moderna_two = 87000
+
+horizon_two_vaccines = (astra_two + pfizer_two + moderna_two) * horizon_two_weeks
+horizon_two_vaccines_per_day = horizon_two_vaccines / horizon_two_delta.days
+
+# Horizon 3
+
+horizon_three_begin = horizon_two_end + datetime.timedelta(days=1)
+horizon_three_end = datetime.date(2021, 12, 31)
+horizon_three_delta = horizon_three_end - horizon_three_begin
+horizon_three_weeks = round(horizon_three_delta.days/7)
+
+pfizer_three = 1700000
+moderna_three = 430000
+
+horizon_three_vaccines = (pfizer_three + moderna_three) * horizon_three_weeks
+horizon_three_vaccines_per_day = horizon_three_vaccines / horizon_three_delta.days
+
+horizon_rollout = [(horizon_one_vaccines, horizon_one_delta.days + 1), (horizon_two_vaccines, horizon_two_delta.days + 1), 
+(horizon_three_vaccines, horizon_three_delta.days + 1)]
+
+def third_builder(start, listers, which, previous):
+    # To calculate number of days for the date range
+    num_days = 0
+    listo = []
+    for tupple in listers:
+        num_days += tupple[1]
+        # Divide total in phase by number of days in phase
+        inter = [(tupple[0]//tupple[1]) for x in range(0, tupple[1])]
+        listo.append(inter)
+    # Flatten list of lists
+    divided = [item for sublist in listo for item in sublist]
+    # Create date range
+    dates = [start + datetime.timedelta(days=x) for x in range(0, num_days)]
+    # Zip together
+    zipped = list(zip(dates, divided))
+    # Make dataframe
+    inter = pd.DataFrame(zipped)
+    #Rename
+    inter.rename(columns={0:"Date", 1:f"Incremental"}, inplace=True)
+
+    previous['Incremental'] = previous['Available'].diff(periods=1)
+
+    inter_combo = previous.append(inter)
+    inter_combo['Date'] = pd.to_datetime(inter_combo['Date'])
+    inter_combo.loc[inter_combo['Date'] == "2021-04-04", 'Incremental'] = 1905294.0
+    inter_combo['Vaccines available cumulative'] = inter_combo['Incremental'].cumsum()
+
+    inter_combo = inter_combo[['Date', "Vaccines available cumulative"]]
+
+    return inter_combo
+horizons = third_builder(horizon_one_begin, horizon_rollout, "Horizons", prev_doses)
+
+print(horizons)
+
+combo['Date'] = pd.to_datetime(combo['Date'])
+horizons['Date'] = pd.to_datetime(horizons['Date'])
+
+print(horizons)
+print(horizons.columns)
+
+final = combo.merge(horizons, on="Date", how="left")
+final['Date'] = final['Date'].dt.strftime('%Y-%m-%d')
+# print(combo)
+# print(horizons)
+# print(final)
+
+
+#%%
+
+
 display_date = datetime.datetime.strptime(last_date, "%Y-%m-%d")
 display_date = datetime.datetime.strftime(display_date, "%d/%m/%Y")
 
 # print(combo)
-
+import numpy as np 
 def makeTestingLine(df):
 
     template = [
@@ -328,4 +520,6 @@ def makeTestingLine(df):
     yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"linechart"}],
     options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName=f"oz_vaccine_tracker_goals_trend_three_trend{test}")
 
-makeTestingLine(combo)
+makeTestingLine(final)
+
+# %%
