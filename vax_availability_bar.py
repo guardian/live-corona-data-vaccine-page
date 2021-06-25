@@ -24,8 +24,10 @@ prev['Name'] = "Unknown"
 prev['Available'] = prev['Available'].diff(periods=1)
 
 
+unknowns = {"Date":[datetime.date(2021, 6, 20),datetime.date(2021, 6, 27)], "Available":[0,0]}
+unknowns = pd.DataFrame.from_records(unknowns)
+unknowns['Name'] = "Unknown"
 
-print(prev)
 
 #%%
 
@@ -103,6 +105,9 @@ combo = combo.append(astra)
 
 
 combo = combo.append(prev)
+combo = combo.append(unknowns)
+
+# print(combo.head(500))
 
 combo['Date'] = pd.to_datetime(combo['Date'])
 combo = combo.sort_values(by="Date", ascending=True)
@@ -110,7 +115,8 @@ combo = combo.sort_values(by="Date", ascending=True)
 pivoted = combo.pivot(index="Date", columns="Name")['Available'].reset_index()
 pivoted['Date'] = pivoted['Date'].dt.strftime('%Y-%m-%d')
 
-# print(pivoted)
+# print(pivoted.head(50))
+# print(unknowns)
 # print(combo)
 
 # print(combo)
@@ -123,9 +129,9 @@ def makeTestingLine(df):
     template = [
             {
                 "title": "New vaccine doses available in Australia",
-                "subtitle": f"""Showing previous and planned vaccine availability by week""",
+                "subtitle": f"""Showing new vaccine availability per week. Weeks through July from Department of Health weekly COVID-19 vaccine rollout updates. July through December according to the Department of Health's June 2021 Allocation Horizons. Data unavailable for the weeks ending 20th and 27th June.""",
                 "footnote": "",
-                "source": "| Sources: Department of Health Covid Vaccination Allocation Horizons",
+                "source": "| Sources: Department of Health COVID-19 Vaccine Rollout Updates, Covid Vaccination Allocation Horizons",
                 "dateFormat": "%Y-%m-%d",
                 "minY": "0",
                 "maxY": "",
