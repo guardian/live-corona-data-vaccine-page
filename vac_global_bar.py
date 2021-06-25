@@ -47,7 +47,7 @@ final.columns = ['Country', 'Fully vaccinated']
 
 final = final.dropna(subset=["Fully vaccinated"])
 
-final = final.sort_values(by="Fully vaccinated", ascending=True)
+final = final.sort_values(by="Fully vaccinated", ascending=False)
 
 final['Color'] = 'rgb(4, 109, 161)'
 final.loc[final['Country'] == "Australia", "Color"] = "rgb(204, 10, 17)"
