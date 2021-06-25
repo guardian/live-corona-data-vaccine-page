@@ -82,6 +82,6 @@ def makebarChart(df):
     labels = []
 
 
-    yachtCharter(template=template, dropdown=[],  labels=labels,options=[{"enableShowMore":"TRUE", "autoSort":"FALSE"}], data=chartData, chartId=[{"type":"horizontalbar"}], chartName="oecd-covid-fully-vaccinated")
+    yachtCharter(template=template, labels=labels,options=[{"enableShowMore":"TRUE", "autoSort":"FALSE"}], data=chartData, chartId=[{"type":"horizontalbar"}], chartName="oecd-covid-fully-vaccinated")
 
 makebarChart(final)
