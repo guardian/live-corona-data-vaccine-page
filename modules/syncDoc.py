@@ -4,7 +4,10 @@ import os
 
 AWS_KEY = os.environ['AWS_ACCESS_KEY_ID']
 AWS_SECRET = os.environ['AWS_SECRET_ACCESS_KEY']
-AWS_SESSION = os.environ['AWS_SESSION_TOKEN']
+
+if 'AWS_SESSION_TOKEN' in os.environ:
+	AWS_SESSION = os.environ['AWS_SESSION_TOKEN']
+
 
 def syncData(jsonObject,id):
 
@@ -13,11 +16,19 @@ def syncData(jsonObject,id):
 	print("Connecting to S3")
 	bucket = 'gdn-cdn'
 
-	session = boto3.Session(
-	aws_access_key_id=AWS_KEY,
-	aws_secret_access_key=AWS_SECRET,
-	aws_session_token = AWS_SESSION
-	)
+	if 'AWS_SESSION_TOKEN' in os.environ:
+		session = boto3.Session(
+		aws_access_key_id=AWS_KEY,
+		aws_secret_access_key=AWS_SECRET,
+		aws_session_token = AWS_SESSION
+		)
+	else:
+		session = boto3.Session(
+		aws_access_key_id=AWS_KEY,
+		aws_secret_access_key=AWS_SECRET,
+		)
+
+
 	s3 = session.resource('s3')
 
 	key = "docsdata/{id}.json".format(id=id)
