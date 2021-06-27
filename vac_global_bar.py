@@ -59,7 +59,7 @@ def makebarChart(df):
     template = [
             {
                 "title": "Percentage of the population fully vaccinated by country",
-                "subtitle": f"""Showing percentage of the population in OECD countries that have received two doses of a Covid-19 vaccine. Data unavaiablle for some countries. Last updated {latest_date}""",
+                "subtitle": f"""Showing percentage of the population in OECD countries that have received two doses of a Covid-19 vaccine. Data unavailable for some countries. Last updated {latest_date}""",
                 "footnote": "",
                 "source": "Our World in Data",
                 # "dateFormat": "%Y-%m-%d",
