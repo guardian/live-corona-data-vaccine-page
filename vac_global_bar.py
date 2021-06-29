@@ -18,11 +18,11 @@ row_csv = 'https://raw.githubusercontent.com/owid/covid-19-data/master/public/da
 df = pd.read_csv(row_csv)
 
 oecd = [
-"Austria", "Australia", "Belgium", "Canada", "Chile", "Colombia", 
-"Czech Republic", "Denmark", "Estonia", "Finland", "France", "Germany", 
-"Greece", "Hungary", "Iceland", "Ireland", "Israel", "Italy", "Japan", "Korea", 
+"Austria", "Australia", "Belgium", "Canada", "Chile", "Colombia", "Costa Rica",
+"Czechia", "Denmark", "Estonia", "Finland", "France", "Germany", 
+"Greece", "Hungary", "Iceland", "Ireland", "Israel", "Italy", "Japan", "South Korea", 
 "Latvia", "Lithuania", "Luxembourg", "Mexico", "Netherlands", 
-"New Zealand", "Norway", "Poland", "Portugal", "Slovak Republic", 
+"New Zealand", "Norway", "Poland", "Portugal", "Slovakia", 
 "Slovenia", "Spain", "Sweden", "Switzerland", "Turkey", "United Kingdom", "United States"
 
 ]
@@ -41,6 +41,8 @@ final = pd.concat(listo)
 latest_date = final['date'].max()
 latest_date = datetime.datetime.strptime(latest_date, '%Y-%m-%d')
 latest_date = datetime.datetime.strftime(latest_date, '%d/%m/%Y')
+
+final = final.drop_duplicates(subset='location')
 
 final = final[['location', 'people_fully_vaccinated_per_hundred']]
 final.columns = ['Country', 'Fully vaccinated']
@@ -85,3 +87,4 @@ def makebarChart(df):
     yachtCharter(template=template, dropdown=[],labels=labels,options=[{"enableShowMore":"TRUE", "autoSort":"FALSE"}], data=chartData, chartId=[{"type":"horizontalbar"}], chartName="oecd-covid-fully-vaccinated")
 
 makebarChart(final)
+# %%

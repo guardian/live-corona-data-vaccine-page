@@ -75,5 +75,6 @@ import vaccinesReindex
 import daily_covid_cases
 import vac_global_per_hund
 import vac_global_bar
+import thrasher_endpoint
 
 #%%
