@@ -1,0 +1,93 @@
+,,,,,,,,,,,,,,,,,
+,BREACHES,,,,,,12,7,8,6,2,0,,35,,,
+,Quarantine Leaks,,,,,,NSW,VIC,QLD,WA,SA,NT,,AUS,,,
+,,,,,,,,,,,,,,,,,
+,NO,,STATE,DATE,FACILITY,CASE NAME,VARIANT,ONWARD,VAX,LINK,,,,,,,
+,1,,WA,14 Apr 20,Duxton,Security Guard,-,-,,https://ww2.health.wa.gov.au/Media-releases/2020/COVID19-update-15-April-2020,,,,,,,"INSERT INTO covid_breaches VALUES (0,'WA','2020-04-14','Duxton','Security Guard','-','-','','https://ww2.health.wa.gov.au/Media-releases/2020/COVID19-update-15-April-2020');"
+,2,,WA,12 May 20,Pan Pacific Perth,Contractor,-,-,,https://ww2.health.wa.gov.au/Media-releases/2020/COVID19-update-12-May-2020,,,,,,,"INSERT INTO covid_breaches VALUES (0,'WA','2020-05-12','Pan Pacific Perth','Contractor','-','-','','https://ww2.health.wa.gov.au/Media-releases/2020/COVID19-update-12-May-2020');"
+,3,,VIC,25 May 20,Rydges Hotel,Staff and Security Guards,-,Y,,https://www.parliament.vic.gov.au/file_uploads/0387_RC_Covid-19_Final_Report_Volume_2_v21_Digital_h1LPjbnZ.pdf,,,,,,,"INSERT INTO covid_breaches VALUES (0,'VIC','2020-05-25','Rydges Hotel','Staff and Security Guards','-','Y','','https://www.parliament.vic.gov.au/file_uploads/0387_RC_Covid-19_Final_Report_Volume_2_v21_Digital_h1LPjbnZ.pdf');"
+,4,,VIC,14 Jun 20,Stamford Hotel,Security Guard,-,Y,,https://www.parliament.vic.gov.au/file_uploads/0387_RC_Covid-19_Final_Report_Volume_2_v21_Digital_h1LPjbnZ.pdf,,,,,,,"INSERT INTO covid_breaches VALUES (0,'VIC','2020-06-14','Stamford Hotel','Security Guard','-','Y','','https://www.parliament.vic.gov.au/file_uploads/0387_RC_Covid-19_Final_Report_Volume_2_v21_Digital_h1LPjbnZ.pdf');"
+,4,,VIC,15 Jun 20,Stamford Hotel,Couple,-,Y,,https://www.parliament.vic.gov.au/file_uploads/0387_RC_Covid-19_Final_Report_Volume_2_v21_Digital_h1LPjbnZ.pdf,,,,,,,"INSERT INTO covid_breaches VALUES (0,'VIC','2020-06-15','Stamford Hotel','Couple','-','Y','','https://www.parliament.vic.gov.au/file_uploads/0387_RC_Covid-19_Final_Report_Volume_2_v21_Digital_h1LPjbnZ.pdf');"
+,5,,NSW,17 Aug 20,Marriot Hotel,Security Guard,-,-,,https://www.health.nsw.gov.au/news/Pages/20200818_01.aspx,,,,,,,"INSERT INTO covid_breaches VALUES (0,'NSW','2020-08-17','Marriot Hotel','Security Guard','-','-','','https://www.health.nsw.gov.au/news/Pages/20200818_01.aspx');"
+,6,,NSW,20 Aug 20,Marriot Hotel,Security Guard,-,-,,https://www.health.nsw.gov.au/news/Pages/20200823_00.aspx,,,,,,,"INSERT INTO covid_breaches VALUES (0,'NSW','2020-08-20','Marriot Hotel','Security Guard','-','-','','https://www.health.nsw.gov.au/news/Pages/20200823_00.aspx');"
+,,,,,,,,,,,,,,,,,
+,,,STATE,DATE,FACILITY,CASE NAME,VARIANT,ONWARD,VAX,LINK,,,,,,,
+,7,,SA,14 Nov 20,Peppers,Parafield,-,Y,,https://www.abc.net.au/news/2020-11-25/explainer-what-we-know-about-south-australia-coronavirus-cluster/12918444,,,,,,,"INSERT INTO covid_breaches VALUES (0,'SA','2020-11-14','Peppers','Parafield','-','Y','','https://www.abc.net.au/news/2020-11-25/explainer-what-we-know-about-south-australia-coronavirus-cluster/12918444');"
+,8,,NSW,4 Dec 20,Novotel,HQ Cleaner,USA,-,,https://www.health.nsw.gov.au/news/Pages/20201204_00.aspx,,,,,,,"INSERT INTO covid_breaches VALUES (0,'NSW','2020-12-04','Novotel','HQ Cleaner','USA','-','','https://www.health.nsw.gov.au/news/Pages/20201204_00.aspx');"
+,-,,NSW,17 Dec 20,N/A,Bus Driver,USA,-,,https://www.health.nsw.gov.au/news/Pages/20201217_00.aspx,,,,,,,"INSERT INTO covid_breaches VALUES (0,'NSW','2020-12-17','N/A','Bus Driver','USA','-','','https://www.health.nsw.gov.au/news/Pages/20201217_00.aspx');"
+,-,,NSW,17 Dec 20,N/A,Avalon,USA,Y,,https://www.health.nsw.gov.au/news/Pages/20201217_00.aspx,,,,,,,"INSERT INTO covid_breaches VALUES (0,'NSW','2020-12-17','N/A','Avalon','USA','Y','','https://www.health.nsw.gov.au/news/Pages/20201217_00.aspx');"
+,-,,NSW,3 Jan 21,N/A,Patient Transport,USA,Y,,https://www.health.nsw.gov.au/news/Pages/20210103_00.aspx,,,,,,,"INSERT INTO covid_breaches VALUES (0,'NSW','2021-01-03','N/A','Patient Transport','USA','Y','','https://www.health.nsw.gov.au/news/Pages/20210103_00.aspx');"
+,9,,QLD,7 Jan 21,Grand Chancellor,Cleaner,Alpha,Y,,https://www.facebook.com/QLDHealth/posts/3660028480771874,,,,,,,"INSERT INTO covid_breaches VALUES (0,'QLD','2021-01-07','Grand Chancellor','Cleaner','Alpha','Y','','https://www.facebook.com/QLDHealth/posts/3660028480771874');"
+,12,,WA,31 Jan 21,Four Points Sheraton,Case 903,Alpha,-,,https://ww2.health.wa.gov.au/Media-releases/2021/COVID-19-update-31-January-2021,,,,,,,"INSERT INTO covid_breaches VALUES (0,'WA','2021-01-31','Four Points Sheraton','Case 903','Alpha','-','','https://ww2.health.wa.gov.au/Media-releases/2021/COVID-19-update-31-January-2021');"
+,10,,VIC,3 Feb 21,Park Royal Hotel,Family,Alpha,-,,https://www.dhhs.vic.gov.au/coronavirus-update-Victoria-3-February-2021,,,,,,,"INSERT INTO covid_breaches VALUES (0,'VIC','2021-02-03','Park Royal Hotel','Family','Alpha','-','','https://www.dhhs.vic.gov.au/coronavirus-update-Victoria-3-February-2021');"
+,11,,VIC,5 Feb 21,Grand Hyatt,Resident Support Officer,Alpha,-,,https://www.dhhs.vic.gov.au/coronavirus-update-victoria-4-february-2021,,,,,,,"INSERT INTO covid_breaches VALUES (0,'VIC','2021-02-05','Grand Hyatt','Resident Support Officer','Alpha','-','','https://www.dhhs.vic.gov.au/coronavirus-update-victoria-4-february-2021');"
+,13,,VIC,8 Feb 21,Holiday Inn Hotel,Nebuliser,Alpha,Y,,https://www.dhhs.vic.gov.au/coronavirus-update-victoria-8-february-2021,,,,,,,"INSERT INTO covid_breaches VALUES (0,'VIC','2021-02-08','Holiday Inn Hotel','Nebuliser','Alpha','Y','','https://www.dhhs.vic.gov.au/coronavirus-update-victoria-8-february-2021');"
+,14,,QLD,12 Mar 21,Princess Alexandria,Doctor,Alpha,Y,-,https://www.health.qld.gov.au/news-events/doh-media-releases/releases/covid-19-case-identified-at-pa-hospital2,,,,,,,"INSERT INTO covid_breaches VALUES (0,'QLD','2021-03-12','Princess Alexandria','Doctor','Alpha','Y','-','https://www.health.qld.gov.au/news-events/doh-media-releases/releases/covid-19-case-identified-at-pa-hospital2');"
+,15,,NSW,14 Mar 21,Sofitel Wentworth ,HQ Worker,Alpha,-,2,https://www.health.nsw.gov.au/news/Pages/20210314_00.aspx,,,,,,,"INSERT INTO covid_breaches VALUES (0,'NSW','2021-03-14','Sofitel Wentworth ','HQ Worker','Alpha','-','2','https://www.health.nsw.gov.au/news/Pages/20210314_00.aspx');"
+,14,,QLD,26 Mar 21,Princess Alexandria Hospital,Nurse,Alpha,Y,-,https://www.health.qld.gov.au/news-events/doh-media-releases/releases/210326-covid-19-update,,,,,,,"INSERT INTO covid_breaches VALUES (0,'QLD','2021-03-26','Princess Alexandria Hospital','Nurse','Alpha','Y','-','https://www.health.qld.gov.au/news-events/doh-media-releases/releases/210326-covid-19-update');"
+,17,,NSW,17 Apr 21,Adina Apartments,Families,Beta,-,-,https://www.health.nsw.gov.au/news/Pages/20210417_00.aspx,,,,,,,"INSERT INTO covid_breaches VALUES (0,'NSW','2021-04-17','Adina Apartments','Families','Beta','-','-','https://www.health.nsw.gov.au/news/Pages/20210417_00.aspx');"
+,16,,WA,21 Apr 21,Mercure Hotel,Guests,Alpha,Y,-,https://ww2.health.wa.gov.au/Media-releases/2021/COVID-19-update-21-April-2021-Hotel-quarantine-acquired-cases-confirmed,,,,,,,"INSERT INTO covid_breaches VALUES (0,'WA','2021-04-21','Mercure Hotel','Guests','Alpha','Y','-','https://ww2.health.wa.gov.au/Media-releases/2021/COVID-19-update-21-April-2021-Hotel-quarantine-acquired-cases-confirmed');"
+,18,,NSW,21 Apr 21,Mercure Hotel,Adjacent Room,Beta,-,-,https://www.health.nsw.gov.au/news/Pages/20210422_00.aspx,,,,,,,"INSERT INTO covid_breaches VALUES (0,'NSW','2021-04-21','Mercure Hotel','Adjacent Room','Beta','-','-','https://www.health.nsw.gov.au/news/Pages/20210422_00.aspx');"
+,19,,WA,1 May 21,Pan Pacific Hotel,Case 1001,USA,Y,1,https://www.facebook.com/abcperth/videos/1659525380911538,,,,,,,"INSERT INTO covid_breaches VALUES (0,'WA','2021-05-01','Pan Pacific Hotel','Case 1001','USA','Y','1','https://www.facebook.com/abcperth/videos/1659525380911538');"
+,-,,NSW,5 May 21,Park Royal / SHA,BBQ,Delta,Y,-,https://www.health.nsw.gov.au/news/Pages/20210506_00.aspx,,,,,,,"INSERT INTO covid_breaches VALUES (0,'NSW','2021-05-05','Park Royal / SHA','BBQ','Delta','Y','-','https://www.health.nsw.gov.au/news/Pages/20210506_00.aspx');"
+,20,,SA,11 May 21,Playford Hotel,Wollert Man,Kappa,Y,-,https://twitter.com/SAHealth/status/1391981778357817346,,,,,,,"INSERT INTO covid_breaches VALUES (0,'SA','2021-05-11','Playford Hotel','Wollert Man','Kappa','Y','-','https://twitter.com/SAHealth/status/1391981778357817346');"
+,21,,WA,31 May 21,Pan Pacific Hotel,Adjoining Room,B.1.1381,-,-,https://www.facebook.com/abcperth/videos/389264902398378,,,,,,,"INSERT INTO covid_breaches VALUES (0,'WA','2021-05-31','Pan Pacific Hotel','Adjoining Room','B.1.1381','-','-','https://www.facebook.com/abcperth/videos/389264902398378');"
+,-,,VIC,2 Jun 21,Novotel,Jervis Bay Family,Delta,Y,?,https://www.dhhs.vic.gov.au/coronavirus-update-victoria-2-june-2021,,,,,,,"INSERT INTO covid_breaches VALUES (0,'VIC','2021-06-02','Novotel','Jervis Bay Family','Delta','Y','?','https://www.dhhs.vic.gov.au/coronavirus-update-victoria-2-june-2021');"
+,-,,NSW,15 Jun 21,Radisson Blu,Adjacent Room,Alpha,-,-,https://twitter.com/NSWHealth/status/1404762991896141828,,,,,,,"INSERT INTO covid_breaches VALUES (0,'NSW','2021-06-15','Radisson Blu','Adjacent Room','Alpha','-','-','https://twitter.com/NSWHealth/status/1404762991896141828');"
+,-,,NSW,16 Jun 21,N/A,Limo Driver,Delta,Y,-,https://twitter.com/NSWHealth/status/1405038475246596099,,,,,,,"INSERT INTO covid_breaches VALUES (0,'NSW','2021-06-16','N/A','Limo Driver','Delta','Y','-','https://twitter.com/NSWHealth/status/1405038475246596099');"
+,-,,QLD,20 Jun 21,Four Points,Flight Attendant,Alpha,Y,-,https://www.health.qld.gov.au/news-events/doh-media-releases/releases/brisbanes-covid-19-community-case-update-variant-confirmed,,,,,,,"INSERT INTO covid_breaches VALUES (0,'QLD','2021-06-20','Four Points','Flight Attendant','Alpha','Y','-','https://www.health.qld.gov.au/news-events/doh-media-releases/releases/brisbanes-covid-19-community-case-update-variant-confirmed');"
+,-,,QLD,23 Jun 21,Novotel,Adjacent Room,Delta,-,-,https://twitter.com/AnnastaciaMP/status/1407476171088875522,,,,,,,"INSERT INTO covid_breaches VALUES (0,'QLD','2021-06-23','Novotel','Adjacent Room','Delta','-','-','https://twitter.com/AnnastaciaMP/status/1407476171088875522');"
+,-,,QLD,26 Jun 21,Novotel,NT Granite Mine,Delta,Y,-,https://coronavirus.nt.gov.au/updates/items/2021-06-26-positive-covid-19-case-update,,,,,,,"INSERT INTO covid_breaches VALUES (0,'QLD','2021-06-26','Novotel','NT Granite Mine','Delta','Y','-','https://coronavirus.nt.gov.au/updates/items/2021-06-26-positive-covid-19-case-update');"
+,-,,QLD,29 Jun 21,Prince Charles Hospital,Receptionist,Delta,Y,,https://twitter.com/AnnastaciaMP/status/1409685159620714496,,,,,,,"INSERT INTO covid_breaches VALUES (0,'QLD','2021-06-29','Prince Charles Hospital','Receptionist','Delta','Y','','https://twitter.com/AnnastaciaMP/status/1409685159620714496');"
+,-,,QLD,1 Jul 21,Brisbane Airport,Qatar Check-In,Delta,Y,-,https://www.abc.net.au/news/2021-07-01/covid-qld-coronavirus-update-latest-cases-delta/100252538,,,,,,,"INSERT INTO covid_breaches VALUES (0,'QLD','2021-07-01','Brisbane Airport','Qatar Check-In','Delta','Y','-','https://www.abc.net.au/news/2021-07-01/covid-qld-coronavirus-update-latest-cases-delta/100252538');"
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,*,,COVID Live count genomic links and multiple seeding events.,,,,,,,,,,,,,,
+,,,Commonwealth official stats only includes epidemiological links to quarantine.,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,COVID transmission linked to hotel quarantine ,,,,,,,,,,,,,,,,
+,https://twitter.com/TomMcIlroy/status/1399994669195403264,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,Hotel quarantine statistics.,,,,,,,,,,,,,,,,
+,https://twitter.com/JonathanLea10/status/1399921070207950850,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,NSW coronavirus outbreaks take three weeks to end,,,,,,,,,,,,,,,,
+,https://www.abc.net.au/news/2021-01-19/nsw-coronavirus-clusters-three-weeks-to-end-analysis-shows/13066306,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,Anatomy of our battle against COVID-19,,,,,,,,,,,,,,,,
+,https://www.abc.net.au/news/2021-01-25/covid-19-spread-through-australia-over-year/13078574,,,,,,,,,,,,,,,,
