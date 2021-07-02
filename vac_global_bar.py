@@ -1,7 +1,7 @@
 #%%
 from modules.yachtCharter import yachtCharter
-import pandas as pd 
-import os 
+import pandas as pd
+import os
 import datetime
 
 here = os.path.dirname(__file__)
@@ -19,10 +19,10 @@ df = pd.read_csv(row_csv)
 
 oecd = [
 "Austria", "Australia", "Belgium", "Canada", "Chile", "Colombia", "Costa Rica",
-"Czechia", "Denmark", "Estonia", "Finland", "France", "Germany", 
-"Greece", "Hungary", "Iceland", "Ireland", "Israel", "Italy", "Japan", "South Korea", 
-"Latvia", "Lithuania", "Luxembourg", "Mexico", "Netherlands", 
-"New Zealand", "Norway", "Poland", "Portugal", "Slovakia", 
+"Czechia", "Denmark", "Estonia", "Finland", "France", "Germany",
+"Greece", "Hungary", "Iceland", "Ireland", "Israel", "Italy", "Japan", "South Korea",
+"Latvia", "Lithuania", "Luxembourg", "Mexico", "Netherlands",
+"New Zealand", "Norway", "Poland", "Portugal", "Slovakia",
 "Slovenia", "Spain", "Sweden", "Switzerland", "Turkey", "United Kingdom", "United States"
 
 ]
@@ -57,7 +57,7 @@ final.loc[final['Country'] == "Australia", "Color"] = "rgb(204, 10, 17)"
 
 
 def makebarChart(df):
-	
+
     template = [
             {
                 "title": "Percentage of the population fully vaccinated by country",

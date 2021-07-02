@@ -5,7 +5,6 @@ import pandas as pd
 import os 
 import pytz
 import datetime
-import numpy
 
 today = datetime.datetime.now(pytz.timezone("Australia/Sydney"))
 today = datetime.datetime.strftime(today, '%Y-%m-%d')
@@ -21,14 +20,24 @@ here = os.path.dirname(__file__)
 data_path = os.path.dirname(__file__) + "/data/"
 output_path = os.path.dirname(__file__) + "/output/"
 
-fillo = f"experiments/breaches.csv"
+# fillo = f"experiments/breaches.csv"
+
+sheet_id = "15kdyqFGfJdFi0KaTbZp-UDw8WwoKu6OPRs5V5ZzO1c0"
+sheet_name = "breaches"
+fillo = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
 
 #%%
 
-df = pd.read_csv(fillo, skiprows=4)
-df = df.dropna(subset=['LINK'])
-df = df[['NO', 'STATE', 'DATE', 'FACILITY',
-       'CASE NAME', 'VARIANT', 'ONWARD', 'VAX', 'LINK']]
+sheet_id = "15kdyqFGfJdFi0KaTbZp-UDw8WwoKu6OPRs5V5ZzO1c0"
+sheet_name = "breaches"
+sheet = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
+
+df = pd.read_csv(sheet)
+df = df.loc[~df['Unnamed: 4'].isna()]
+df = df.dropna(axis='columns')
+df.columns = ['NO', 'STATE', 'DATE', 'NAME','VARIANT', 'ONWARD', 'LINK1', 'LINK2']
+df = df[['STATE', 'DATE', 'NAME','VARIANT']]
+
 df = df.loc[df['STATE'] != "STATE"]
 
 df['DATE'] = pd.to_datetime(df['DATE'])
@@ -64,42 +73,23 @@ final = pd.concat(listo)
 final = final[["STATE", "Days since"]]
 final.columns = ['State', "Days since last quarantine breach"]
 
-
-
-
 #%%
 
 ## WORK OUT TOTAL NUMBER OF BREACHES BY STATE
 
-
 grouped = df.groupby(by="STATE").count().reset_index()
-grouped = grouped[['STATE', 'NO']]
+grouped = grouped[['STATE', "NAME"]]
 grouped.columns = ["State", "Number of breaches"]
 
 ### Combine
 
 combo = pd.merge(grouped, final, on="State")
 
-
-
-
 ### WORK OUT TOTAL 
 
-
-
 #%%
-import datetime
-import pandas as pd 
-import os
-
-here = os.path.dirname(__file__)
-data_path = os.path.dirname(__file__) + "/data/"
-output_path = os.path.dirname(__file__) + "/output/"
 
 sheet = 'experiments/data/3401055004_OTSP_State_May21.xlsx'
-
-
-#%%
 
 ## WORK OUT VISITOR REASONS
 
@@ -143,25 +133,33 @@ combo = pd.merge(df2, combo, on="State")
 combo['Breaches per arrival'] = round(combo['Total arrivals'] / combo['Number of breaches'])
 combo['Avg days between breach'] = round(days_since_cap / combo['Number of breaches'])
 
-combo.columns = ['State','Arrivals', 'Breaches', 'Days since breach', 'Breaches per arrival', 'Avg days between breach']
+combo.columns = ['State','Arrivals', 'Breaches', 'Days since breach', 'Arrivals per breach', 'Avg days between breach']
 combo = combo[['State', 'Arrivals', 'Breaches',
-       'Breaches per arrival', 'Avg days between breach', 'Days since breach']]
+       'Arrivals per breach', 'Avg days between breach', 'Days since breach']]
 
 nice_today = datetime.datetime.strftime(today, "%d/%m/%Y")
+
+
+combo['Arrivals'] = combo['Arrivals'].astype(int)
+combo['Arrivals per breach'] = combo['Arrivals per breach'].astype(int)
+combo['Avg days between breach'] = combo['Avg days between breach'].astype(int)
+
+combo['Arrivals'] = combo['Arrivals'].apply(lambda x : "{:,}".format(x))
+combo['Arrivals per breach'] = combo['Arrivals per breach'].apply(lambda x : "{:,}".format(x))
+
+print(combo)
 
 def makeTable(df):
 
     template = [
             {
                 "title": "Quarantine breaches by state",
-                "subtitle": f"""Showing international arrivals and quarantine breaches per state. Last updated {nice_today}.""",
-                "footnote": "",
+                "subtitle": f"""Showing international arrivals through May 2021 and quarantine breaches by state. Last updated {nice_today}.""",
+                "footnote": "Average days between breach calculated using the introduction of arrivals caps in July 2020",
                 "source": "Australian Bureau of Statistics, CovidLive.com.au",
                 "yScaleType":"",
-                "minY": "0",
-                "maxY": "",
                 "margin-left": "50",
-                "margin-top": "30",
+                "margin-top": "0",
                 "margin-bottom": "0",
                 "margin-right": "10"
             }
@@ -187,7 +185,7 @@ def makeTable(df):
 
 
     yachtCharter(template=template, data=chartData, chartId=[{"type":"table"}],
-    options=[{"format": "scrolling","enableSearch": "FALSE","enableSort": "FALSE"}], key=key, chartName=f"oz-covid-outbreaks-table")
+    options=[{"format": "vanilla","enableSearch": "FALSE","enableShowMore":"TRUE","enableSort": "FALSE"}], key=key, chartName=f"oz-covid-outbreaks-table")
 
 
 makeTable(combo)

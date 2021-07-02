@@ -1,9 +1,12 @@
 #%%
 from modules.yachtCharter import yachtCharter
 import pandas as pd 
-import os
-import requests
-import json 
+
+import datetime
+import pytz
+
+today = datetime.datetime.now(pytz.timezone("Australia/Sydney"))
+today = datetime.datetime.strftime(today, '%d/%m/%Y')
 
 nsw = 'https://raw.githubusercontent.com/joshnicholas/exposure_site_scrapers/main/data/nsw_exposure_sites.csv'
 vic = 'https://raw.githubusercontent.com/joshnicholas/exposure_site_scrapers/main/data/vic_exposure_sites.csv'
@@ -32,8 +35,14 @@ wa = wa[['Date', 'Location']]
 vic.columns = ['Date', 'Suburb']
 
 vic['Date'] = pd.to_datetime(vic['Date'], format="%d/%m/%Y")
+qld['Date'] = pd.to_datetime(qld['Date'], format="%A %d %B %Y")
+wa['Date'] = pd.to_datetime(wa['Date'], format="%d/%m/%Y")
 
-print(vic['Date'])
+nsw.loc[nsw['Date'] == 'Friday 25 June 2021 to Saturday 26 June 2021', 'Date'] = "Friday 25 June 2021"
+nsw.loc[nsw['Date'] == 'Tuesday 22 June 2021 - Wednesday 23 June 2021', 'Date'] = "Tuesday 22 June 2021"
+
+nsw['Date'] = nsw['Date'].apply(lambda x: x + " 2021" if "2021" not in x else x)
+nsw['Date'] = pd.to_datetime(nsw['Date'], format="%A %d %B %Y")
 
 wa.columns = ['Date', 'Suburb']
 
@@ -49,8 +58,7 @@ combo = pd.concat([nsw, vic, qld, wa])
 
 # combo['Date'] = combo['Date'].str.split(" to ")[0]
 
-combo.loc[combo['Date'] == 'Friday 25 June 2021 to Saturday 26 June 2021', 'Date'] = "Friday 25 June 2021"
-combo.loc[combo['Date'] == 'Tuesday 22 June 2021 - Wednesday 23 June 2021', 'Date'] = "Tuesday 22 June 2021"
+
 combo['Date'] = pd.to_datetime(combo['Date'])
 combo['Count'] = 1
 
@@ -79,9 +87,9 @@ def makestackedbar(df):
     template = [
             {
                 "title": "Exposure sites by state",
-                "subtitle": f"""Showing current exposure sites by day of exposure""",
+                "subtitle": f"""Showing the number of exposure sites by day of exposure. Last updated {today}""",
                 "footnote": "",
-                "source": "| Sources: Government websites",
+                "source": "| Sources: State government websites",
                 "dateFormat": "%Y-%m-%d",
                 "minY": "0",
                 "maxY": "",
