@@ -11,20 +11,23 @@ import os, ssl
 
 ## Work out previous vaccine doses available
 
+# test = '-test'
+test = ''
 
 previous_vaccines = {"Date":[datetime.date(2021, 4, 4),datetime.date(2021, 4, 11),
 datetime.date(2021, 4, 18),datetime.date(2021, 4, 25),datetime.date(2021, 5, 2),
 datetime.date(2021, 5, 9),datetime.date(2021, 5, 16),datetime.date(2021, 5, 23),
-datetime.date(2021, 5, 30),datetime.date(2021, 6, 6),datetime.date(2021, 6, 13)], "Available":[
+datetime.date(2021, 5, 30),datetime.date(2021, 6, 6),datetime.date(2021, 6, 13),
+datetime.date(2021, 6, 20)], "Available":[
     1905294, 2447865, 3025852, 3601029, 4086946, 4622610, 
-    5540846, 6416656, 7168372, 8097906, 9148616]}
+    5540846, 6416656, 7168372, 8097906, 9148616, 10330250]}
 prev = pd.DataFrame.from_records(previous_vaccines)
 prev['Name'] = "Unknown"
 
 prev['Available'] = prev['Available'].diff(periods=1)
 
 
-unknowns = {"Date":[datetime.date(2021, 6, 20),datetime.date(2021, 6, 27)], "Available":[0,0]}
+unknowns = {"Date":[datetime.date(2021, 6, 27)], "Available":[0]}
 unknowns = pd.DataFrame.from_records(unknowns)
 unknowns['Name'] = "Unknown"
 
@@ -129,7 +132,7 @@ def makeTestingLine(df):
     template = [
             {
                 "title": "New vaccine doses available in Australia",
-                "subtitle": f"""Showing new vaccine availability per week. Weeks through July from Department of Health weekly COVID-19 vaccine rollout updates. July through December according to the Department of Health's June 2021 Allocation Horizons. Data unavailable for the weeks ending 20th and 27th June.""",
+                "subtitle": f"""Showing new vaccine availability per week. Weeks through July from Department of Health weekly COVID-19 vaccine rollout updates. July through December according to the Department of Health's June 2021 Allocation Horizons. Data unavailable for week ending 27th June.""",
                 "footnote": "",
                 "source": "| Sources: Department of Health COVID-19 Vaccine Rollout Updates, Covid Vaccination Allocation Horizons",
                 "dateFormat": "%Y-%m-%d",
@@ -151,6 +154,6 @@ def makeTestingLine(df):
     labels = []
 
 
-    yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"stackedbar"}], chartName="oz-vaccine-availability")
+    yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"stackedbar"}], chartName=f"oz-vaccine-availability{test}")
 
 makeTestingLine(pivoted)
