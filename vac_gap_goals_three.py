@@ -42,7 +42,8 @@ rollout_begin = datetime.date(2021, 2, 22)
 rollout_end = datetime.date(2021, 10, 31)
 
 # chart_truncate =  datetime.date(2021, 5, 31)
-chart_truncate =  datetime.date(2021, 7, 31)
+# chart_truncate =  datetime.date(2021, 7, 31)
+chart_truncate =  datetime.date(2021, 8, 31)
 
 ### ORIGINAL GOAL
 
