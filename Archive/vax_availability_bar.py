@@ -18,18 +18,20 @@ previous_vaccines = {"Date":[datetime.date(2021, 4, 4),datetime.date(2021, 4, 11
 datetime.date(2021, 4, 18),datetime.date(2021, 4, 25),datetime.date(2021, 5, 2),
 datetime.date(2021, 5, 9),datetime.date(2021, 5, 16),datetime.date(2021, 5, 23),
 datetime.date(2021, 5, 30),datetime.date(2021, 6, 6),datetime.date(2021, 6, 13),
-datetime.date(2021, 6, 20)], "Available":[
-    1905294, 2447865, 3025852, 3601029, 4086946, 4622610, 
-    5540846, 6416656, 7168372, 8097906, 9148616, 10330250]}
+datetime.date(2021, 6, 20), datetime.date(2021, 6, 27), datetime.date(2021, 7, 4),
+datetime.date(2021, 7, 11), datetime.date(2021, 7, 18), datetime.date(2021, 7, 25)], 
+"Available (Unknown vaccine type)":[1905294, 2447865, 3025852, 3601029, 4086946, 4622610, 
+    5540846, 6416656, 7168372, 8097906, 9148616, 10330250, 11331840,
+     12323794, 13083574, 14282878, 15396668]}
 prev = pd.DataFrame.from_records(previous_vaccines)
-prev['Name'] = "Unknown"
+prev['Name'] = "Available (Unknown vaccine type)"
 
-prev['Available'] = prev['Available'].diff(periods=1)
+prev['Available (Unknown vaccine type)'] = prev['Available (Unknown vaccine type)'].diff(periods=1)
 
 
-unknowns = {"Date":[datetime.date(2021, 6, 27)], "Available":[0]}
-unknowns = pd.DataFrame.from_records(unknowns)
-unknowns['Name'] = "Unknown"
+# unknowns = {"Date":[datetime.date(2021, 6, 27)], "Available":[0]}
+# unknowns = pd.DataFrame.from_records(unknowns)
+# unknowns['Name'] = "Unknown"
 
 
 #%%
@@ -39,7 +41,7 @@ unknowns['Name'] = "Unknown"
 # Source: https://www.health.gov.au/sites/default/files/documents/2021/06/covid-19-vaccination-covid-vaccination-allocations-horizons.pdf
 
 ## Horizon 1
-horizon_one_begin = datetime.date(2021, 7, 1)
+horizon_one_begin = datetime.date(2021, 8, 1)
 horizon_one_end = datetime.date(2021, 8, 31)
 horizon_one_delta = horizon_one_end - horizon_one_begin
 horizon_one_weeks = round(horizon_one_delta.days/7)
@@ -81,16 +83,16 @@ horizon_three_vaccines_per_day = horizon_three_vaccines / horizon_three_delta.da
 # (astra_two, horizon_two_delta.days + 1, "Astra"), (pfizer_two, horizon_two_delta.days + 1, "Pfizer"), (pfizer_three, horizon_two_delta.days + 1, "Moderna"), 
 # (pfizer_three, horizon_three_delta.days + 1, "Pfizer"), (moderna_three, horizon_three_delta.days + 1, "Moderna")]
 
-astra = [(horizon_one_begin, horizon_one_end, astra_one, "Astrazeneca"), (horizon_two_begin, horizon_two_end, astra_two,  "Astrazeneca")]
-pfizer = [(horizon_one_begin, horizon_one_end , pfizer_one,  "Pfizer"),(horizon_two_begin, horizon_two_end, pfizer_two,  "Pfizer"),
-(horizon_three_begin, horizon_three_end, pfizer_three, "Pfizer")]
-moderna = [(horizon_two_begin, horizon_two_end, moderna_two,  "Moderna"), (horizon_three_begin, horizon_three_end, moderna_three, "Moderna")]
+astra = [(horizon_one_begin, horizon_one_end, astra_one, "Astrazeneca (Projection)"), (horizon_two_begin, horizon_two_end, astra_two,  "Astrazeneca (Projection)")]
+pfizer = [(horizon_one_begin, horizon_one_end , pfizer_one,  "Pfizer (Projection)"),(horizon_two_begin, horizon_two_end, pfizer_two,  "Pfizer (Projection)"),
+(horizon_three_begin, horizon_three_end, pfizer_three, "Pfizer (Projection)")]
+moderna = [(horizon_two_begin, horizon_two_end, moderna_two,  "Moderna (Projection)"), (horizon_three_begin, horizon_three_end, moderna_three, "Moderna (Projection)")]
 
 def fourth_builder(start, end, num_vax, name):
 
     inter = pd.date_range(start=start, end=end, freq="W")
     inter = inter.to_frame(name="Date", index=False)
-    inter['Available'] = num_vax
+    inter['Available (Unknown vaccine type)'] = num_vax
     inter['Name'] = name
 
     return inter
@@ -108,14 +110,19 @@ combo = combo.append(astra)
 
 
 combo = combo.append(prev)
-combo = combo.append(unknowns)
+# combo = combo.append(unknowns)
 
 # print(combo.head(500))
 
 combo['Date'] = pd.to_datetime(combo['Date'])
 combo = combo.sort_values(by="Date", ascending=True)
 
-pivoted = combo.pivot(index="Date", columns="Name")['Available'].reset_index()
+
+
+pivoted = combo.pivot(index="Date", columns="Name")["Available (Unknown vaccine type)"].reset_index()
+
+pivoted = pivoted[['Date', 'Astrazeneca (Projection)','Moderna (Projection)', 'Pfizer (Projection)', 'Available (Unknown vaccine type)']]
+print(pivoted.columns)
 pivoted['Date'] = pivoted['Date'].dt.strftime('%Y-%m-%d')
 
 # print(pivoted.head(50))
@@ -132,7 +139,7 @@ def makeTestingLine(df):
     template = [
             {
                 "title": "New vaccine doses available in Australia",
-                "subtitle": f"""Showing new vaccine availability per week. Weeks through July from Department of Health weekly COVID-19 vaccine rollout updates. July through December according to the Department of Health's June 2021 Allocation Horizons. Data unavailable for week ending 27th June.""",
+                "subtitle": f"""Showing new vaccine availability per week. Weeks through July from Department of Health weekly COVID-19 vaccine rollout updates. July through December according to the Department of Health's June 2021 Allocation Horizons. Last updated 6/08/2021.""",
                 "footnote": "",
                 "source": "| Sources: Department of Health COVID-19 Vaccine Rollout Updates, Covid Vaccination Allocation Horizons",
                 "dateFormat": "%Y-%m-%d",
