@@ -182,7 +182,7 @@ seventy_end_date_label = datetime.datetime.strftime(seventy_end_date, "%Y-%m-%d"
 ### WORK OUT 80% AND 70% BY EOY
 
 eighty_goal = goal
-eighty_goal_text = f"80% by <br>{end_date_formated}"
+eighty_goal_text = f"80% by <br>{datetime.datetime.strftime(end_date, '%-d %B')}"
 
 eighty_doses_so_far = combo.loc[combo["Date"] == "2021-07-28"][f"Fully vaccinated: {numberFormat(latest_count)}"].values[0]
 
@@ -203,7 +203,7 @@ combo['80% by EOY'] = combo['80% by EOY'].cumsum()
 combo.loc[combo['Date'] < "2021-07-28", '80% by EOY'] = np.nan
 
 seventy_goal = (over_16)*0.7
-seventy_goal_text = f"70% by <br>{seventy_end_date_formated}"
+seventy_goal_text = f"70% by <br>{datetime.datetime.strftime(seventy_end_date, '%-d %B')}"
 
 
 seventy_doses_so_far = combo.loc[combo["Date"] == "2021-07-28"][f"Fully vaccinated: {numberFormat(latest_count)}"].values[0]
@@ -229,7 +229,7 @@ combo.columns = ['Date', 'Original goal', 'Trend', '80% by EOY', '70% by EOY', f
 # print(combo)
 
 display_date = datetime.datetime.strptime(last_date, "%Y-%m-%d")
-display_date = datetime.datetime.strftime(display_date, "%d/%m/%Y")
+display_date = datetime.datetime.strftime(display_date, "%-d %B, %Y")
 
 # print(combo)
 # print(combo)
@@ -252,8 +252,7 @@ def makeTestingLine(df):
     template = [
             {
                 "title": "Tracking the Covid-19 vaccine rollout in Australia",
-                "subtitle": f"""Showing the number of Australians that are fully vaccinated, the federal government's <a href='https://www.theguardian.com/news/datablog/2021/feb/28/is-australias-goal-of-vaccinating-the-entire-adult-population-by-october-achievable' target='_blank'>original rollout goal</a> and the 70% and 80% vaccination thresholds set by the government. At the 7 day rolling average of {numberFormat(latest_average)} second doses per day, Australia will vaccinate 80% of the 16+ population <b style="color:rgb(245, 189, 44)">around {end_date_formated}</b>. The government's Operation Covid Shield document suggests the vaccinating 80% of the population aged 16 and over is achieveable by December 2021.<br>
-                <small>Last updated {display_date}.</small>""",
+                "subtitle": f"""Showing the number of Australians that are fully vaccinated, the federal government's <a href='https://www.theguardian.com/news/datablog/2021/feb/28/is-australias-goal-of-vaccinating-the-entire-adult-population-by-october-achievable' target='_blank'>original rollout goal</a> and the 70% and 80% vaccination thresholds set by the government. If the current average rate of {numberFormat(latest_average)} second doses per day continues, Australia will vaccinate 80% of the 16+ population <b style="color:rgb(245, 189, 44)">around {end_date_formated}</b>. The government's Operation Covid Shield document suggests the vaccinating 80% of the population aged 16 and over is achieveable by December 2021. Last updated {display_date}<br>""",
                 "footnote": "",
                 "source": "| Sources: Covidlive.com.au, Department of Health 14 March 2021 COVID-19 vaccine rollout update",
                 "dateFormat": "%Y-%m-%d",

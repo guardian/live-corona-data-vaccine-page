@@ -44,6 +44,7 @@ clive = clive[['REPORT_DATE', 'CODE', 'NAME', 'PREV_VACC_DOSE_CNT', 'PREV_VACC_P
 
 # Population counts:
 oz_pop = 25693.1 * 1000
+oz_16_pop = 20619959
 nsw_pop = 8166.4* 1000
 vic_pop = 6680.6* 1000
 qld_pop = 5184.8* 1000
@@ -63,6 +64,8 @@ for area in areas:
     inter['Vax_per_hundred'] = round((inter['PREV_VACC_DOSE_CNT']/area[1])*100, 2)
     inter['Fully_vaxxed_per_hundred'] = round((inter['PREV_VACC_PEOPLE_CNT']/area[1])*100, 2)
     inter = inter.loc[inter['REPORT_DATE'] == inter['REPORT_DATE'].max()]
+    if area[0] == "AUS":
+        inter['Fully_vaxxed_per_16_plus'] = round((inter['PREV_VACC_PEOPLE_CNT']/oz_16_pop)*100, 2)
 
     first_listo.append(inter)
 
@@ -122,8 +125,6 @@ clive['REPORT_DATE'] = clive['REPORT_DATE'].dt.strftime('%Y-%m-%d')
 cliveJson = clive.to_json(orient='records')
 
 
-
-
-syncData(cliveJson, "2021/06/coronavirus-thrasher-data", "covid-vaccines-cases.json")
+syncData(cliveJson, "2021/06/coronavirus-thrasher-data", "covid-vaccines-cases2.json")
 
 # %%
