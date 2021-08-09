@@ -68,12 +68,17 @@ syncData(aus_vacc_finalJson, "2021/02/coronavirus-widget-data", "aus-vaccines.js
 syncData(states_vacc_finalJson, "2021/02/coronavirus-widget-data", "state-vaccine-rollout.json")
 syncData(aus_cases_finalJson, "2021/02/coronavirus-widget-data", "oz-covid-cases.json")
 
+import thrasher_endpoint
+import vac_gap_goals_five
+import vaccine_availability.weekly_state_utilisation
+
 import vac_gap_goals_three
 import vac_state_charter
 import vaccinesReindex
 import daily_covid_cases
 import vac_global_per_hund
 import vac_global_bar
-import thrasher_endpoint
+
+
 
 #%%
