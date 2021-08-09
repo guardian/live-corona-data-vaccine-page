@@ -160,7 +160,7 @@ today = datetime.datetime.today().date()
 days_running = today - rollout_begin
 days_running = days_running.days
 
-# Work out number of days to finish given latest average
+# Work out number of days to get to 80% given latest average
 num_days = round((goal-latest_count)/latest_average)
 
 end_date = today + datetime.timedelta(days=num_days)
@@ -168,6 +168,15 @@ end_date = today + datetime.timedelta(days=num_days)
 months_to_go = (end_date.year - today.year) * 12 + end_date.month - today.month
 
 end_date_formated = datetime.datetime.strftime(end_date, "%d/%m/%Y")
+
+
+# Work out number of days to get to 80% given latest average
+
+seventy_num = round(((over_16*0.7)-latest_count)/latest_average)
+
+seventy_end_date = today + datetime.timedelta(days=seventy_num)
+
+seventy_end_date_formated = datetime.datetime.strftime(seventy_end_date, "%d/%m/%Y")
 
 
 ### WORK OUT 80% AND 70% BY EOY
@@ -234,6 +243,9 @@ combo = combo.loc[combo['Date'] <= np.datetime64(chart_truncate)]
 
 combo['Date'] = combo['Date'].dt.strftime('%Y-%m-%d')
 
+
+# hit_80 = ['70% by EOY']
+
 def makeTestingLine(df):
 
     template = [
@@ -263,9 +275,12 @@ def makeTestingLine(df):
     labels = []
     df.fillna("", inplace=True)
     chartData = df.to_dict('records')
-    # labels = [{"x":f"{last_date}", "y":f"{middle_gap}", "offset":50,
-    # "text":f"Current gap is {numberFormat(latest_gap)}",
-    #  "align":"right", "direction":"right"}]
+    labels = [{"x":f"{end_date_formated}", "y":f"{eighty_goal}", "offset":50,
+    "text":f"80%",
+     "align":"right", "direction":"right"},
+     {"x":f"{seventy_end_date_formated}", "y":f"{seventy_goal}", "offset":50,
+     "text":f"70%",
+      "align":"right", "direction":"right"}]
 
     yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"linechart"}],
     options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName=f"oz_vaccine_tracker_goals_trend_five_trend{test}")
