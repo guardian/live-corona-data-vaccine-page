@@ -123,8 +123,8 @@ for state in df['CODE'].unique().tolist():
     final = pd.DataFrame.from_dict({"State": state, 
                                     "Percent of 16+ population fully vaccinated": latest_count_hundred,
                                     "Seven day average of second doses": latest_rolling,
-                                    "To fully vaccinate 70% of 16+": f"{days_to_go_70} days",
-                                    "To fully vaccinate 80% of 16+": f"{days_to_go_80} days"}, orient="index")
+                                    "To fully vaccinate 70% of 16+": f"{days_to_go_70} days ({seventy_finish})",
+                                    "To fully vaccinate 80% of 16+": f"{days_to_go_80} days ({eighty_finish})"}, orient="index")
                                     # columns=(['Row', "Values"]))
 
     final = final.T
@@ -151,12 +151,16 @@ print(final_final)
 # %%
 
 
+updated_date = datetime.datetime.strftime(today, "%d/%m/%Y")
+
+
+
 def makeTable(df):
 
     template = [
             {
-                "title": "When the states should hit vaccination thresholds",
-                "subtitle": f"""Showing how many of the 16+ population has been fully vaccinated, and when the 70% and 80% thresholds might be hit based on the seven day rolling average""",
+                "title": "When the states might hit vaccination thresholds",
+                "subtitle": f"""Showing how many of the 16+ population has been fully vaccinated, and when the 70% and 80% thresholds will be reached based on a seven day rolling average. Last updated {updated_date}""",
                 "footnote": "",
                 "source": "CovidLive.com.au, Australian Bureau of Statistics, Department of Health",
                 "yScaleType":"",
