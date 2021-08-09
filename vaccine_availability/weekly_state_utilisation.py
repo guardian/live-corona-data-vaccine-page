@@ -62,7 +62,7 @@ listo = []
 
 for region in regions:
 
-    print(region)
+    # print(region)
 
     # include = [x for x in df.columns if region in x or x == 'DATE_AS_AT']
 

@@ -144,7 +144,7 @@ final_final = pd.concat(listo)
 
 final_final = final_final.sort_values(by="State", ascending=True)
 
-print(final_final)
+# print(final_final)
 
 # %%
 
