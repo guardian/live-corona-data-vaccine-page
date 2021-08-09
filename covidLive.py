@@ -18,7 +18,6 @@ r = requests.get('https://covidlive.com.au/covid-live.json', headers=headers)
 ## Grab Covid Live Data
 
 data = r.json()
-
 df = pd.read_json(r.text)
 # print(df.columns)
 
