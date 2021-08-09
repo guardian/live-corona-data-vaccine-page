@@ -168,7 +168,7 @@ end_date = today + datetime.timedelta(days=num_days)
 months_to_go = (end_date.year - today.year) * 12 + end_date.month - today.month
 
 end_date_formated = datetime.datetime.strftime(end_date, "%d/%m/%Y")
-
+end_date_label = datetime.datetime.strftime(end_date, "%Y-%m-%d")
 
 # Work out number of days to get to 80% given latest average
 
@@ -177,11 +177,12 @@ seventy_num = round(((over_16*0.7)-latest_count)/latest_average)
 seventy_end_date = today + datetime.timedelta(days=seventy_num)
 
 seventy_end_date_formated = datetime.datetime.strftime(seventy_end_date, "%d/%m/%Y")
-
+seventy_end_date_label = datetime.datetime.strftime(seventy_end_date, "%Y-%m-%d")
 
 ### WORK OUT 80% AND 70% BY EOY
 
 eighty_goal = goal
+eighty_goal_text = f"80% by <br>{end_date_formated}"
 
 eighty_doses_so_far = combo.loc[combo["Date"] == "2021-07-28"][f"Fully vaccinated: {numberFormat(latest_count)}"].values[0]
 
@@ -201,9 +202,9 @@ combo['80% by EOY'] = combo['80% by EOY'].cumsum()
 
 combo.loc[combo['Date'] < "2021-07-28", '80% by EOY'] = np.nan
 
-
-
 seventy_goal = (over_16)*0.7
+seventy_goal_text = f"70% by <br>{seventy_end_date_formated}"
+
 
 seventy_doses_so_far = combo.loc[combo["Date"] == "2021-07-28"][f"Fully vaccinated: {numberFormat(latest_count)}"].values[0]
 
@@ -251,8 +252,7 @@ def makeTestingLine(df):
     template = [
             {
                 "title": "Tracking the Covid-19 vaccine rollout in Australia",
-                "subtitle": f"""Showing Australians getting second doses, the federal government's <a href='https://www.theguardian.com/news/datablog/2021/feb/28/is-australias-goal-of-vaccinating-the-entire-adult-population-by-october-achievable' target='_blank'>original rollout goal</a> and thresholds for opening up.
-                At the 7 day rolling average of {numberFormat(latest_average)} second doses per day, Australia will vaccinate 80% of the 16+ population <b style="color:rgb(245, 189, 44)">around {end_date_formated}</b>. <br>
+                "subtitle": f"""Showing the number of Australians that are fully vaccinated, the federal government's <a href='https://www.theguardian.com/news/datablog/2021/feb/28/is-australias-goal-of-vaccinating-the-entire-adult-population-by-october-achievable' target='_blank'>original rollout goal</a> and the 70% and 80% vaccination thresholds set by the government. At the 7 day rolling average of {numberFormat(latest_average)} second doses per day, Australia will vaccinate 80% of the 16+ population <b style="color:rgb(245, 189, 44)">around {end_date_formated}</b>. The government's Operation Covid Shield document suggests the vaccinating 80% of the population aged 16 and over is achieveable by December 2021.<br>
                 <small>Last updated {display_date}.</small>""",
                 "footnote": "",
                 "source": "| Sources: Covidlive.com.au, Department of Health 14 March 2021 COVID-19 vaccine rollout update",
@@ -275,12 +275,12 @@ def makeTestingLine(df):
     labels = []
     df.fillna("", inplace=True)
     chartData = df.to_dict('records')
-    labels = [{"x":f"{end_date_formated}", "y":f"{eighty_goal}", "offset":50,
-    "text":f"80%",
-     "align":"right", "direction":"right"},
-     {"x":f"{seventy_end_date_formated}", "y":f"{seventy_goal}", "offset":50,
-     "text":f"70%",
-      "align":"right", "direction":"right"}]
+    labels = [{"x":f"{end_date_label}", "y":f"{eighty_goal}", "offset":70,
+    "text":f"{eighty_goal_text}",
+     "align":"right", "direction":"bottom"},
+     {"x":f"{seventy_end_date_label}", "y":f"{seventy_goal}", "offset":70,
+     "text":f"{seventy_goal_text}",
+      "align":"right", "direction":"bottom"}]
 
     yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"linechart"}],
     options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName=f"oz_vaccine_tracker_goals_trend_five_trend{test}")
