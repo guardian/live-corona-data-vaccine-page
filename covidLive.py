@@ -5,6 +5,7 @@ import os
 import requests
 import pandas as pd
 from modules.syncData import syncData
+import datetime
 
 print("Checking covidlive")
 
@@ -70,7 +71,7 @@ syncData(aus_cases_finalJson, "2021/02/coronavirus-widget-data", "oz-covid-cases
 
 import thrasher_endpoint
 import vac_gap_goals_five
-import vaccine_availability.weekly_state_utilisation
+import state_by_state.vac_state_projection_table
 
 import vac_gap_goals_three
 import vac_state_charter
@@ -79,8 +80,13 @@ import daily_covid_cases
 import vac_global_per_hund
 import vac_global_bar
 
+
+day = datetime.datetime.today().weekday()
+
+if day > 4:
+       import vaccine_availability.weekly_state_utilisation
+       import vaccine_availability.weekly_distribution
+
 import vaccineDosesState
-
-
 
 #%%

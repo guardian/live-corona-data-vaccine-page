@@ -6,6 +6,7 @@ import ssl
 from modules.yachtCharter import yachtCharter
 import numpy as np
 import datetime
+import pytz
 
 today = datetime.datetime.today().date()
 
@@ -23,14 +24,12 @@ print("updating re-indexed state rollout chart")
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None)):
     ssl._create_default_https_context = ssl._create_unverified_context
 
-
-pops = {'NT':246.5* 1000, 'NSW':8166.4* 1000, 
-'VIC':6680.6* 1000, 'QLD':5184.8* 1000, 
-'ACT':431.2* 1000, 'SA':1770.6* 1000, 
+pops = {'NT':246.5* 1000, 'NSW':8166.4* 1000,
+'VIC':6680.6* 1000, 'QLD':5184.8* 1000,
+'ACT':431.2* 1000, 'SA':1770.6* 1000,
  'WA':2667.1* 1000, 'TAS':541.1* 1000}
 
 # source: https://www.abs.gov.au/statistics/people/population/national-state-and-territory-population/sep-2020
-
 
 # 16+ population counts:
 
@@ -40,7 +39,6 @@ sixteen_pop = {
     'SA':1440400, 'WA':2114978, 'TAS':440172}
 
 # source: https://www.health.gov.au/sites/default/files/documents/2021/07/covid-19-vaccine-rollout-update-5-july-2021.pdf
-
 
 first = pd.read_json(state_json)
 
@@ -71,6 +69,7 @@ df['REPORT_DATE'] = pd.to_datetime(df['REPORT_DATE'])
 df = df.sort_values(by="REPORT_DATE", ascending=True)
 
 
+
 #%%
 last_date = datetime.datetime.strftime(df['REPORT_DATE'].max(), "%Y-%m-%d")
 
@@ -89,12 +88,15 @@ for state in df['CODE'].unique().tolist():
     inter['Incremental'] = inter['PREV_VACC_PEOPLE_CNT'].diff(1)
     inter['Rolling'] = inter['Incremental'].rolling(window=7).mean()
 
+    print(inter)
+
     latest = inter.loc[inter['REPORT_DATE'] == inter['REPORT_DATE'].max()].copy()
 
     latest_count = latest['PREV_VACC_PEOPLE_CNT'].values[0]
     # latest_counts[state] = latest_count
-    
+
     latest_rolling = latest['Rolling'].values[0]
+
     # rolling_averages[state] = latest_rolling
 
     ### WORK OUT HOW MANY MORE DAYS TO GO
@@ -119,8 +121,8 @@ for state in df['CODE'].unique().tolist():
     latest_count_hundred = round((latest_count/sixteen_pop[state])*100, 2)
 
     latest_rolling = round(latest_rolling,0)
-    
-    final = pd.DataFrame.from_dict({"State": state, 
+
+    final = pd.DataFrame.from_dict({"State": state,
                                     "Percent of 16+ population fully vaccinated": latest_count_hundred,
                                     "Seven day average of second doses": latest_rolling,
                                     "To fully vaccinate 70% of 16+": f"{days_to_go_70} days ({seventy_finish})",
@@ -146,13 +148,13 @@ final_final = pd.concat(listo)
 
 final_final = final_final.sort_values(by="State", ascending=True)
 
-print(final_final)
+# print(final_final)
 
 # %%
 
 
-updated_date = datetime.datetime.strftime(today, "%d/%m/%Y")
-
+updated_date = datetime.datetime.now()
+updated_date = updated_date.astimezone(pytz.timezone("Australia/Sydney")).strftime('%d %B %Y')
 
 
 def makeTable(df):
