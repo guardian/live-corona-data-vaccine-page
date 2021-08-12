@@ -3,7 +3,7 @@ import pandas as pd
 from modules.yachtCharter import yachtCharter
 import datetime
 
-chart_key = "oz-vaccine-weekly-utilisation"
+chart_key = "oz-vaccine-weekly-distribution"
 fillo = 'https://vaccinedata.covid19nearme.com.au/data/distribution.json'
 
 # testo = "_testo"
@@ -77,7 +77,7 @@ for region in regions:
 
     if region == "CWTH_PRIMARY_CARE":
 
-        inter['Init'] = inter['CWTH_PRIMARY_CARE_ESTIMATED_DOSE_UTILISATION']
+        inter['Init'] = inter['CWTH_PRIMARY_CARE_DISTRIBUTED']
 
         # inter['Init'] = inter['CWTH_PRIMARY_CARE_AVAILABLE'] - inter['CWTH_PRIMARY_CARE_ADMINISTERED']
 
@@ -87,7 +87,7 @@ for region in regions:
 
     elif region == "CWTH_AGED_CARE":
 
-        inter['Init'] = inter['CWTH_AGED_CARE_ESTIMATED_DOSE_UTILISATION']
+        inter['Init'] = inter['CWTH_AGED_CARE_DISTRIBUTED']
 
         # inter.rename(columns={f"{region}_AGED_CARE_AVAILABLE_MINUS_ADMINISTERED": "Aged care (Commonwealth)"}, inplace=True)
 
@@ -97,7 +97,7 @@ for region in regions:
     
     else:
 
-        inter['Init'] = inter[f'STATE_CLINICS_{region}_ESTIMATED_DOSE_UTILISATION']
+        inter['Init'] = inter[f'STATE_CLINICS_{region}_DISTRIBUTED']
 
         # inter['Init'] = inter[f'STATE_CLINICS_{region}_AVAILABLE'] - inter[f'STATE_CLINICS_{region}_ADMINISTERED']
 
@@ -146,8 +146,8 @@ def makeChart(df):
 
     template = [
             {
-                "title": "Estimated vaccine utilisation by jurisdiction",
-                "subtitle": f"""Showing the estimated percentage of weekly allocated doses that have been administered by states and in primary care. Calculation includes wasteage. Data as of {updated_date}""",
+                "title": "Vaccine distributions by jurisdictions",
+                "subtitle": f"""Showing the cumulative distribution of vaccines for each state and in primary care. Data as of {updated_date}""",
                 "footnote": "",
                 "source": "| Source: Ken Tsang, Department of Health rollout updates",
                 "dateFormat":"%Y-%m-%d",
@@ -166,7 +166,7 @@ def makeChart(df):
     periods = []
 
     yachtCharter(template=template, data=chartData, chartId=[{"type":"smallmultiples"}],
-    options=[{"scaleBy": "individual","chartType": "line","numCols":4,"height": 100}], periods=periods, key=key, chartName=f"{chart_key}{testo}")
+    options=[{"scaleBy": "individual","chartType": "bar","numCols":4,"height": 100}], periods=periods, key=key, chartName=f"{chart_key}{testo}")
 
 makeChart(final)
 # 
