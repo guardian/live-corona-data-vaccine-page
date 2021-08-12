@@ -5,6 +5,7 @@ import os
 import requests
 import pandas as pd
 from modules.syncData import syncData
+import numpy as np
 
 print("Checking covidlive")
 
@@ -37,10 +38,11 @@ clive = pd.read_json(r.text)
 #        'VACC_GP_CNT', 'PREV_VACC_GP_CNT'
 
 
+print(clive[['REPORT_DATE','CODE','ACTIVE_CNT', 'PREV_ACTIVE_CNT']].head(20))
 
 #%%
 
-clive = clive[['REPORT_DATE', 'CODE', 'NAME', 'PREV_VACC_DOSE_CNT', 'PREV_VACC_PEOPLE_CNT', 'PREV_ACTIVE_CNT']]
+clive = clive[['REPORT_DATE', 'CODE', 'NAME', 'PREV_VACC_DOSE_CNT', 'PREV_VACC_PEOPLE_CNT','ACTIVE_CNT', 'PREV_ACTIVE_CNT']]
 
 # Population counts:
 oz_pop = 25693.1 * 1000
@@ -64,6 +66,13 @@ for area in areas:
     inter['Vax_per_hundred'] = round((inter['PREV_VACC_DOSE_CNT']/area[1])*100, 2)
     inter['Fully_vaxxed_per_hundred'] = round((inter['PREV_VACC_PEOPLE_CNT']/area[1])*100, 2)
     inter = inter.loc[inter['REPORT_DATE'] == inter['REPORT_DATE'].max()]
+
+    # CHECK IF ACTIVE IS NULL, IF SO USE PREVIOUS
+    latest = inter.loc[inter['REPORT_DATE'] == inter['REPORT_DATE'].max()].copy()
+    inter['Active'] = inter['ACTIVE_CNT']
+    if np.isnan(latest['ACTIVE_CNT'].values[0]):
+        inter['Active'] = inter['PREV_ACTIVE_CNT']
+
     if area[0] == "AUS":
         inter['Fully_vaxxed_per_16_plus'] = round((inter['PREV_VACC_PEOPLE_CNT']/oz_16_pop)*100, 2)
 
@@ -121,6 +130,9 @@ clive.loc[clive['NAME'] == "Australia", 'OECD_rank'] = aus_rank
 clive['REPORT_DATE'] = pd.to_datetime(clive['REPORT_DATE'])
 
 clive['REPORT_DATE'] = clive['REPORT_DATE'].dt.strftime('%Y-%m-%d')
+
+print(clive)
+print(clive.columns)
 
 cliveJson = clive.to_json(orient='records')
 
