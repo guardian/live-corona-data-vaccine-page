@@ -148,7 +148,7 @@ def makeChart(df):
             {
                 "title": "Estimated vaccine utilisation by jurisdiction",
                 "subtitle": f"""Showing the estimated percentage of weekly allocated doses that have been administered by states and in primary care. Calculation includes wasteage. Data as of {updated_date}""",
-                "footnote": "",
+                "footnote": "Note: Aged care has been excluded as the rollout is the demand-based, with vaccines ordered based on resident numbers.",
                 "source": "| Source: Ken Tsang, Department of Health rollout updates",
                 "dateFormat":"%Y-%m-%d",
                 "margin-left": "50",
@@ -166,7 +166,7 @@ def makeChart(df):
     periods = []
 
     yachtCharter(template=template, data=chartData, chartId=[{"type":"smallmultiples"}],
-    options=[{"scaleBy": "individual","chartType": "line","numCols":4,"height": 100}], periods=periods, key=key, chartName=f"{chart_key}{testo}")
+    options=[{"scaleBy": "individual","chartType": "line","numCols":3,"height": 100}], periods=periods, key=key, chartName=f"{chart_key}{testo}")
 
 makeChart(final)
 # 
