@@ -67,7 +67,7 @@ daily_mean = daily_rate.rolling(7).mean()
 thirty_days = lastUpdated - timedelta(days=30)
 daily_mean = daily_mean[thirty_days:]
 daily_mean = daily_mean.dropna()
-# daily_mean = daily_mean[:-1]
+daily_mean = daily_mean[:-2]
 daily_mean.index = daily_mean.index.strftime('%Y-%m-%d')
 aus_only = daily_mean['AUS']
 
