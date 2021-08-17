@@ -6,6 +6,7 @@ import requests
 import pandas as pd
 from modules.syncData import syncData
 import numpy as np
+import math
 
 print("Checking covidlive")
 
@@ -23,6 +24,15 @@ data = r.json()
 
 clive = pd.read_json(r.text)
 
+
+## Get the latest hostpital count
+hospital = round( clive["MED_HOSP_CNT"][0] )
+
+## Get the vaccine total count
+total = round( clive["VACC_DOSE_CNT"][0] )
+
+updated = clive["LAST_UPDATED_DATE"][0]
+
 # 'REPORT_DATE', 'LAST_UPDATED_DATE', 'CODE', 'NAME', 'CASE_CNT',
 #        'TEST_CNT', 'DEATH_CNT', 'RECOV_CNT', 'MED_ICU_CNT', 'MED_VENT_CNT',
 #        'MED_HOSP_CNT', 'SRC_OVERSEAS_CNT', 'SRC_INTERSTATE_CNT',
@@ -37,8 +47,9 @@ clive = pd.read_json(r.text)
 #        'PREV_VACC_PEOPLE_CNT', 'VACC_AGED_CARE_CNT', 'PREV_VACC_AGED_CARE_CNT',
 #        'VACC_GP_CNT', 'PREV_VACC_GP_CNT'
 
+#print(type(clive))
 
-print(clive[['REPORT_DATE','CODE','ACTIVE_CNT', 'PREV_ACTIVE_CNT']].head(20))
+#print(clive[['REPORT_DATE','CODE','ACTIVE_CNT', 'PREV_ACTIVE_CNT']].head(20))
 
 #%%
 
@@ -131,12 +142,56 @@ clive['REPORT_DATE'] = pd.to_datetime(clive['REPORT_DATE'])
 
 clive['REPORT_DATE'] = clive['REPORT_DATE'].dt.strftime('%Y-%m-%d')
 
-print(clive)
-print(clive.columns)
+#print(clive)
+#print(clive.columns)
 
 cliveJson = clive.to_json(orient='records')
 
 
-syncData(cliveJson, "2021/06/coronavirus-thrasher-data", "covid-vaccines-cases2.json")
+#print(type(clive))
+
+feed = []
+
+for item in first_listo:
+
+    listicle = item.values.tolist()
+
+    value = round( listicle[0][6] ) if math.isnan(listicle[0][5]) else round( listicle[0][5])
+
+    feed.append([ listicle[0][1] , value ])
+
+    if listicle[0][7] < 0:
+        status = 'decrease'
+    elif listicle[0][7] > 0:
+        status = 'increase'
+    else:
+        status = 'none'
+
+    feed.append([ listicle[0][1] + "_status" , status ])
+
+australia = clive.loc[clive['NAME'] == "Australia"].values.tolist()
+
+feed.append(["FULL" , australia[0][9] ])
+
+feed.append(["SIXTEEN" , australia[0][11] ])
+
+feed.append(["OECD" , round( australia[0][12] ) ])
+
+feed.append(["HOSPITAL" , hospital ])
+
+feed.append(["TOTAL" , total ])
+
+feed.append(["UPDATED" , updated ])
+
+consolidated = {}
+for row in feed:
+    consolidated[row[0]] = row[1]
+
+#with open("consolidated.json", "w") as data_file: 
+#   json.dump(consolidated, data_file, indent=2)
+
+boom = json.dumps(consolidated)
+
+syncData(boom, "2021/06/coronavirus-thrasher-data", "covid-vaccines-consolidated.json")
 
 # %%
