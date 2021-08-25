@@ -13,7 +13,17 @@ function init(results) {
 	var seventies = dataKeys[3]
 
 	const container = d3.select("#graphicContainer")
-	const context = d3.select("#graphicContainer")
+	const context = d3.select("#State-lollipops")
+
+	var today = new Date();
+
+	var options = { day: 'numeric', month: 'long', year: 'numeric' };
+
+	var formatted_date = today.toLocaleString('en-AU', options)
+
+	context.select("#chartTitle").html(`How many days until <b style="color:#d61d00">70%</b> and <b style="color:#e6711b">80%</b> of the 16+ population are fully vaccinated`)
+	context.select("#subTitle").html(`Based on the current seven day average of second doses for each state or territory. Last updated ${formatted_date}.`)
+	context.select("#sourceText").html('| Sources: CovidLive.com.au, Guardian analysis')
 
 	var isMobile;
 	var windowWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
@@ -43,7 +53,7 @@ function init(results) {
 
 	var width = document.querySelector("#graphicContainer").getBoundingClientRect().width
 	var height = width*0.6				
-	var margin = {top: 20, right: 50, bottom: 50, left:50}
+	var margin = {top: 0, right: 50, bottom: 20, left: 30}
 
 	width = width - margin.left - margin.right;
 	height = height - margin.top - margin.bottom;
@@ -51,10 +61,10 @@ function init(results) {
 	
     context.select("#graphicContainer svg").remove();
     
-    var chartKey = context.select("#chartKey");
+    var chartKey = context.select("#graphicContainer").select("#chartKey");
 	chartKey.html("");
 
-	var svg = context.append("svg")
+	var svg = context.select("#graphicContainer").append("svg")
 				.attr("width", width + margin.left + margin.right)
 				.attr("height", height + margin.top + margin.bottom)
 				.attr("id", "svg")
@@ -103,9 +113,7 @@ function init(results) {
 	var allDates = data.map((d) => d[xVar])
 
 	var dateMax = d3.max(allDates)
-	var today = new Date();
-	// console.log(today)
-
+	
 
 
 	var x = d3.scaleTime()
