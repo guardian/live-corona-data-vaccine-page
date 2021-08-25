@@ -18,12 +18,27 @@ function init(results) {
 	var isMobile;
 	var windowWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 
+	var line_stroke_width = 10
+	var lolli_r = 10
+	var days_offset = 15	
+	var circle_stroke_width = 3
+	var font_size = 10
+
 	if (windowWidth < 610) {
 			isMobile = true;
 	}	
 
 	if (windowWidth >= 610){
 			isMobile = false;
+	}
+
+
+	if (isMobile == true){
+		line_stroke_width = line_stroke_width/3
+		lolli_r = lolli_r/3
+		days_offset = days_offset/3
+		circle_stroke_width = circle_stroke_width/3
+		font_size = font_size/2
 	}
 
 	var width = document.querySelector("#graphicContainer").getBoundingClientRect().width
@@ -98,14 +113,31 @@ function init(results) {
 	.domain([today, dateMax])
 
 
+	const xTicks = isMobile ? 4 : 6
+
+	var xAxis;
+
+	if (isMobile) {
+		xAxis = d3.axisBottom(x)
+		.ticks(xTicks)
+		.tickFormat(d3.timeFormat('%b'))
+	}
+
+	else {
+		xAxis = d3.axisBottom(x)
+		.ticks(xTicks)
+		.tickFormat(d3.timeFormat('%b'))
+	}
+
+
 
 	features.append("g")
-	.attr("class", "xThingo")
+	.attr("class","x")
 	.attr("transform", "translate(0," + height + ")")
-	.call(d3.axisBottom(x))
+	.call(xAxis)
 	.selectAll("text")
-	.attr("transform", "translate(-10,0)rotate(-45)")
-	.style("text-anchor", "end");
+	// .attr("transform", "translate(-10,0)rotate(-45)")
+	.style("text-anchor", "middle");
 
 	// Y axis
 	var y = d3.scaleBand()
@@ -118,7 +150,9 @@ function init(results) {
 	// console.log(thingo)
 
 	features.append("g")
+	.attr("class","y")
 	.call(d3.axisLeft(y))
+
 
 
 	features.selectAll("myline")
@@ -131,7 +165,7 @@ function init(results) {
 		.attr("y1", function(d) { return y(d[yVar]); })
 		.attr("y2", function(d) { return y(d[yVar]); })
 		.attr("stroke", "#94b1ca")
-		.attr("stroke-width",10)
+		.attr("stroke-width",line_stroke_width)
 
 
 	features.selectAll("mycircle")
@@ -140,45 +174,42 @@ function init(results) {
 		.append("circle")
 		.attr("cx", function(d) { return x(d[xVar]); })
 		.attr("cy", function(d) { return y(d[yVar]); })
-		.attr("r", "10")
+		.attr("r", lolli_r.toString())
 		.style("fill", "#e6711b")
 		.attr("stroke", "#94b1ca")
-		.attr("stroke-width",2)
+		.attr("stroke-width",circle_stroke_width)
 
 
-
-
-features.selectAll("mycircle")
-.data(data)
-.enter()
-.append("circle")
-.attr("cx", function(d) { return x(d[seventies]); })
-.attr("cy", function(d) { return y(d[yVar]); })
-.attr("r", "10")
-.style("fill", "#d61d00")
-.attr("stroke", "#94b1ca")
-.attr("stroke-width",2)
+	features.selectAll("mycircle")
+		.data(data)
+		.enter()
+		.append("circle")
+		.attr("cx", function(d) { return x(d[seventies]); })
+		.attr("cy", function(d) { return y(d[yVar]); })
+		.attr("r", lolli_r.toString())
+		.style("fill", "#d61d00")
+		.attr("stroke", "#94b1ca")
+		.attr("stroke-width",circle_stroke_width)
 
 
 data.forEach(function (d) {
 	features.append("text")
 	.attr("x", x(d[seventies]))
 	.attr("text-anchor", "middle")
-	.attr("y", y(d[yVar]) - 15)
+	.attr("y", y(d[yVar]) - days_offset)
 	// .attr("class", "keyLabel").text(Math.round(min))
-	.attr("class", "keyLabel").text(d["70days"]);
+	.attr("class", "keyLabel").text(d["70days"])
+	.attr("font-size", font_size);
 
 	features.append("text")
 	.attr("x", x(d[xVar]))
 	.attr("text-anchor", "middle")
-	.attr("y", y(d[yVar]) - 15)
+	.attr("y", y(d[yVar]) - days_offset)
 	// .attr("class", "keyLabel").text(Math.round(min))
-	.attr("class", "keyLabel").text(d["80days"]);
+	.attr("class", "keyLabel").text(d["80days"])
+	.attr("font-size", font_size);
+
   })
-
-
-
-
 
 
 }
