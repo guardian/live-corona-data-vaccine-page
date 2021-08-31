@@ -73,7 +73,7 @@ import thrasher_endpoint
 import vac_gap_goals_five
 import state_by_state.vac_state_projection_table
 
-import vac_gap_goals_three
+# import vac_gap_goals_three
 import vac_state_charter
 import vaccinesReindex
 import daily_covid_cases

@@ -45,10 +45,18 @@ oz_new_cases = oz_new_cases.sort_values(by='Date', ascending=True)
 
 oz_new_cases.set_index('Date', inplace=True)
 
+oz_trend_cases = oz_new_cases.copy()
+
+oz_trend_cases = oz_trend_cases.rolling(7).mean()
+
+oz_trend_cases = oz_trend_cases.round(1)
+
+# oz_new_cases['2021-08-21':'2021-08-21']['Total'] = oz_new_cases['2021-08-21':'2021-08-21']['Total'] + 832
+
 lastUpdated = datetime.datetime.strftime(lastUpdated, "%d/%m/%Y")
 
-
 oz_new_cases.index.name = None
+
 #%%
 
 def makeNationalBars(df):
@@ -85,6 +93,45 @@ def makeNationalBars(df):
 
 makeNationalBars(oz_new_cases)
 
+#%%
+
+def makeNationalLine(df):
+
+	df.rename(columns={"Total": "Trend in cases"}, inplace=True)
+
+	template = [
+			{
+				"title": "Trend in daily new coronavirus cases in Australia",
+				"subtitle": "Showing the seven-day rolling average of new cases as reported by states and territories. Most recent day may show incomplete data. Last updated {date}".format(date=lastUpdated),
+				"footnote": "",
+				"source": " | Source: Covidlive.com.au",
+				"dateFormat": "%Y-%m-%d",
+				"xAxisLabel": "Date",
+				"yAxisLabel": "",
+				"margin-left": "50",
+				"margin-top": "20",
+				"margin-bottom": "20",
+				"margin-right": "20",
+				"xAxisDateFormat": "%b %d",
+				"tooltip":"<strong>{{#formatDate}}{{Date}}{{/formatDate}}</strong><br><strong>Trend in cases</strong>: {{Trend in cases}}"
+				
+			}
+		]
+
+	periods = []
+	key = []
+	chartId = [{"type":"linechart"}]
+	options = [{"colorScheme":"guardian", "lineLabelling":"TRUE", "aria":"TRUE"}] 
+	df.fillna('', inplace=True)
+	df = df.reset_index()
+	chartData = df.to_dict('records')
+
+	yachtCharter(template=template, options=options, data=chartData, chartId=chartId, chartName="aus-national-trend-new-cases", key=key)
+
+makeNationalLine(oz_trend_cases)
+
+
+#%%
 
 deaths = cl.loc[cl['CODE'] == "AUS"].copy()
 deaths['DEATH_CNT'] = pd.to_numeric(deaths['DEATH_CNT'])
