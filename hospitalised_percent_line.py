@@ -56,7 +56,7 @@ df = df_med[['Date', 'Percentage hospitalised']]
 
 df = df.loc[df['Date'] > "2020-04-01"]
 
-print(df)
+# print(df)
 
 #%%
 
