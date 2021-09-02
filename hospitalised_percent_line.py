@@ -4,6 +4,7 @@ import os
 import requests
 import pandas as pd
 from modules.yachtCharter import yachtCharter
+import datetime
 
 here = os.path.dirname(__file__)
 data_path = os.path.dirname(__file__) + "/data/"
@@ -58,8 +59,12 @@ df = df.loc[df['Date'] > "2020-04-01"]
 
 df['Date'] = pd.to_datetime(df['Date'])
 df = df.sort_values(by='Date', ascending=True)
+
+updated_date = df['Date'].max()
 df['Date'] = df['Date'].dt.strftime("%Y-%m-%d")
 # print(df)
+updated_date = datetime.datetime.strftime(updated_date, "%d %B %Y")
+
 
 #%%
 
@@ -69,7 +74,7 @@ def makeLineChart(df):
     template = [
             {
                 "title": "The percentage of active cases in hospital throughout the pandemic",
-                "subtitle": f"Showing the number of hospitalised cases divided by active cases, including overseas acquired cases",
+                "subtitle": f"Showing the number of hospitalised cases divided by active cases, including overseas acquired cases. Last updated {updated_date}.",
                 "footnote": "",
                 "source": "CovidLive.com.au, Guardian analysis | Based on a chart by Covid19data.com.au",
                 "dateFormat": "%Y-%m-%d",
