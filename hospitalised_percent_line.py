@@ -56,6 +56,9 @@ df = df_med[['Date', 'Percentage hospitalised']]
 
 df = df.loc[df['Date'] > "2020-04-01"]
 
+df['Date'] = pd.to_datetime(df['Date'])
+df = df.sort_values(by='Date', ascending=True)
+df['Date'] = df['Date'].dt.strftime("%Y-%m-%d")
 # print(df)
 
 #%%
@@ -72,7 +75,7 @@ def makeLineChart(df):
                 "dateFormat": "%Y-%m-%d",
                 "yScaleType":"",
                 "xAxisLabel": "Date",
-                "yAxisLabel": "Percentage",
+                "yAxisLabel": "",
                 "minY": "",
                 "maxY": "",
                 # "periodDateFormat":"",
