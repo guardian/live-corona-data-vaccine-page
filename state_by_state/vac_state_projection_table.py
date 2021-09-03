@@ -206,7 +206,7 @@ for state in second['STATE'].unique().tolist():
     
     latest = to_use[['STATE', 'AIR_RESIDENCE_FIRST_DOSE_PCT', 'AIR_RESIDENCE_SECOND_DOSE_PCT']]
     
-    latest.columns = ['State', 'First dose', 'Second dose']
+    latest.columns = ['State', 'First dose %', 'Second dose %']
 
     listo.append(latest)
 
@@ -217,7 +217,7 @@ def makeTable(df):
     template = [
             {
                 "title": "Current vaccination levels by jurisdiction",
-                "subtitle": f"""Showing percentage of the 16+ population vaccinated by dose and state of residence. Last updated {updated_date}""",
+                "subtitle": f"""Showing the percentage of the 16+ population vaccinated by dose and state of residence. Last updated {updated_date}""",
                 "footnote": "",
                 "source": "Department of Health, Ken Tsang",
                 "yScaleType":"",
