@@ -36,7 +36,7 @@ pops = {'NT':246.5* 1000, 'NSW':8166.4* 1000,
 sixteen_pop = {
     'NT':190571, 'NSW':6565651, 'VIC':5407574,
     'QLD':4112707, 'ACT':344037,
-    'SA':1440400, 'WA':2114978, 'TAS':440172}
+    'SA':1440400, 'WA':2114978, 'TAS':440172, "AUS":20619959}
 
 # source: https://www.health.gov.au/sites/default/files/documents/2021/07/covid-19-vaccine-rollout-update-5-july-2021.pdf
 
@@ -88,7 +88,7 @@ for state in df['CODE'].unique().tolist():
     inter['Incremental'] = inter['PREV_VACC_PEOPLE_CNT'].diff(1)
     inter['Rolling'] = inter['Incremental'].rolling(window=7).mean()
 
-    print(inter)
+    # print(inter)
 
     latest = inter.loc[inter['REPORT_DATE'] == inter['REPORT_DATE'].max()].copy()
 
@@ -148,8 +148,6 @@ final_final = pd.concat(listo)
 
 final_final = final_final.sort_values(by="State", ascending=True)
 
-# print(final_final)
-
 # %%
 
 
@@ -187,3 +185,62 @@ def makeTable(df):
     options=[{"colorScheme":"guardian","format": "vanilla","enableSearch": "FALSE","enableSort": "FALSE"}], chartName=f"{chart_key}{testo}")
 
 makeTable(final_final)
+
+# print(final_final)
+# print(final_final.columns)
+
+second = pd.read_json('https://vaccinedata.covid19nearme.com.au/data/air_residence.json')
+
+# 'AIR_RESIDENCE_FIRST_DOSE_APPROX_COUNT',
+#        'AIR_RESIDENCE_SECOND_DOSE_APPROX_COUNT', 'ABS_ERP_JUN_2020_POP',
+#        'VALIDATED', 'URL', 'AIR_RESIDENCE_FIRST_DOSE_COUNT',
+#        'AIR_RESIDENCE_SECOND_DOSE_COUNT'
+
+# %%
+
+listo = []
+
+for state in second['STATE'].unique().tolist():
+    inter = second.loc[(second['STATE'] == state) & (second['DATE_AS_AT'] == second['DATE_AS_AT'].max())].copy()
+    to_use = inter.loc[(inter["AGE_LOWER"] == 16) & (inter['AGE_UPPER'] == 999)]
+    
+    latest = to_use[['STATE', 'AIR_RESIDENCE_FIRST_DOSE_PCT', 'AIR_RESIDENCE_SECOND_DOSE_PCT']]
+    
+    latest.columns = ['State', 'First dose', 'Second dose']
+
+    listo.append(latest)
+
+small = pd.concat(listo)
+
+def makeTable(df):
+
+    template = [
+            {
+                "title": "Current vaccination levels by jurisdiction",
+                "subtitle": f"""Showing percentage of the 16+ population vaccinated by dose and state of residence. Last updated {updated_date}""",
+                "footnote": "",
+                "source": "Department of Health, Ken Tsang",
+                "yScaleType":"",
+                "minY": "0",
+                "maxY": "",
+                "x_axis_cross_y":"",
+                "periodDateFormat":"",
+                "margin-left": "50",
+                "margin-top": "30",
+                "margin-bottom": "20",
+                "margin-right": "10"
+            }
+        ]
+    key = []
+    # labels = []
+    df.fillna("", inplace=True)
+    chartData = df.to_dict('records')
+    labels = []
+
+
+    yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"table"}],
+    options=[{"colorScheme":"guardian","format": "vanilla","enableSearch": "FALSE","enableSort": "FALSE"}], chartName=f"oz-vax-percent-table-states{testo}")
+
+makeTable(small)
+
+# %%

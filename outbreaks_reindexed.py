@@ -1,6 +1,6 @@
 #%%
 
-import pandas as pd 
+import pandas as pd
 from modules.yachtCharter import yachtCharter
 import datetime
 
@@ -20,14 +20,14 @@ print("updating re-indexed state rollout chart")
 df = pd.read_json(fillo)
 
 # 'REPORT_DATE', 'LAST_UPDATED_DATE',
-# 'CODE', 'NAME', 'CASE_CNT', 'TEST_CNT', 
+# 'CODE', 'NAME', 'CASE_CNT', 'TEST_CNT',
 # 'DEATH_CNT', 'RECOV_CNT', 'MED_ICU_CNT',
-# 'MED_VENT_CNT', 'MED_HOSP_CNT', 'SRC_OVERSEAS_CNT', 
+# 'MED_VENT_CNT', 'MED_HOSP_CNT', 'SRC_OVERSEAS_CNT',
 # 'SRC_INTERSTATE_CNT', 'SRC_CONTACT_CNT', 'SRC_UNKNOWN_CNT',
-# 'SRC_INVES_CNT', 'PREV_CASE_CNT', 'PREV_TEST_CNT', 
+# 'SRC_INVES_CNT', 'PREV_CASE_CNT', 'PREV_TEST_CNT',
 # 'PREV_DEATH_CNT', 'PREV_RECOV_CNT', 'PREV_MED_ICU_CNT',
 # 'PREV_MED_VENT_CNT', 'PREV_MED_HOSP_CNT', 'PREV_SRC_OVERSEAS_CNT',
-# 'PREV_SRC_INTERSTATE_CNT', 'PREV_SRC_CONTACT_CNT', 
+# 'PREV_SRC_INTERSTATE_CNT', 'PREV_SRC_CONTACT_CNT',
 # 'PREV_SRC_UNKNOWN_CNT', 'PREV_SRC_INVES_CNT', 'PROB_CASE_CNT',
 # 'PREV_PROB_CASE_CNT', 'ACTIVE_CNT', 'PREV_ACTIVE_CNT',
 # 'NEW_CASE_CNT', 'PREV_NEW_CASE_CNT', 'VACC_DIST_CNT',
@@ -53,7 +53,7 @@ def work_since_begin(code, frame, start, line_name, end_date=today):
     inter = frame.loc[df['CODE'] == code].copy()
 
     inter['New_local_cnt'] = inter['Local_cnt'].diff(1)
-    
+
 
 
 
@@ -97,7 +97,7 @@ def makeLineChart(df):
 
     template = [
             {
-                "title": "Comparing 2021 Delta outbreaks in New South Wales Wales, Victoria and the ACT",
+                "title": "Comparing 2021 Delta outbreaks in New South Wales, Victoria and the ACT",
                 "subtitle": f"Showing cumulative local cases since the first day of each outbreak. Victoria shown as two different waves - the first from 12 July 2021 to 4th August when there were no cases, and the second since 4 August. Last updated {updated_date}",
                 "footnote": "",
                 "source": "Guardian analysis of CovidLive.com.au data | Based on a chart by Covid19data.com.au",
