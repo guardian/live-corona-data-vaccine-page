@@ -79,7 +79,7 @@ pivoted.to_csv('state-comparison.csv', index=False)
 
 colours = ['#e5005a', "#f9b000", "#ffe500", "#bbce00", "#00a194", "#61c3d9", "#ea5a0b", "#4f524a", "#af1674"]
 display_date = datetime.datetime.strptime(last_date, "%Y-%m-%d")
-display_date = datetime.datetime.strftime(display_date, "%d/%m/%Y")
+display_date = datetime.datetime.strftime(display_date, "%d %B %Y")
 
 # print(pivoted)
 # print(pivoted.columns)

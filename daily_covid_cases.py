@@ -53,7 +53,7 @@ oz_trend_cases = oz_trend_cases.round(1)
 
 # oz_new_cases['2021-08-21':'2021-08-21']['Total'] = oz_new_cases['2021-08-21':'2021-08-21']['Total'] + 832
 
-lastUpdated = datetime.datetime.strftime(lastUpdated, "%d/%m/%Y")
+lastUpdated = datetime.datetime.strftime(lastUpdated, '%d %B %Y')
 
 oz_new_cases.index.name = None
 
