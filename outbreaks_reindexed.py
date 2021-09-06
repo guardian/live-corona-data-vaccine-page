@@ -108,7 +108,7 @@ def makeLineChart(df):
                 "minY": "",
                 "maxY": "",
                 # "periodDateFormat":"",
-                "margin-left": "100",
+                "margin-left": "30",
                 "margin-top": "15",
                 "margin-bottom": "20",
                 "margin-right": "20",
