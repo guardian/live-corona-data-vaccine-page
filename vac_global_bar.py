@@ -54,7 +54,7 @@ final = pd.concat(listo)
 
 latest_date = final['date'].max()
 latest_date = datetime.datetime.strptime(latest_date, '%Y-%m-%d')
-latest_date = datetime.datetime.strftime(latest_date, '%d/%m/%Y')
+latest_date = datetime.datetime.strftime(latest_date, '%d %B %Y')
 
 final = final.drop_duplicates(subset='location')
 

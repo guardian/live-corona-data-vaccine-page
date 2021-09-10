@@ -66,7 +66,7 @@ ow['date'] = pd.to_datetime(ow['date'])
 latest_date = ow['date'].max()
 
 # latest_date = datetime.datetime.strptime(latest_date, "%Y-%m-%d")
-latest_date = datetime.datetime.strftime(latest_date, "%d/%m/%Y")
+latest_date = datetime.datetime.strftime(latest_date, "%d %B %Y")
 # print(ow)
 # print(latest_date)
 

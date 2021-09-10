@@ -1,7 +1,13 @@
 #%%
 
-import pandas as pd 
+import pandas as pd
 from modules.yachtCharter import yachtCharter
+import datetime
+
+today = datetime.datetime.today()
+today = datetime.datetime.strftime(today, "%Y-%m-%d")
+
+# print(today)
 
 chart_key = f"oz-outbreaks--cases-reindexed"
 
@@ -14,14 +20,14 @@ print("updating re-indexed state rollout chart")
 df = pd.read_json(fillo)
 
 # 'REPORT_DATE', 'LAST_UPDATED_DATE',
-# 'CODE', 'NAME', 'CASE_CNT', 'TEST_CNT', 
+# 'CODE', 'NAME', 'CASE_CNT', 'TEST_CNT',
 # 'DEATH_CNT', 'RECOV_CNT', 'MED_ICU_CNT',
-# 'MED_VENT_CNT', 'MED_HOSP_CNT', 'SRC_OVERSEAS_CNT', 
+# 'MED_VENT_CNT', 'MED_HOSP_CNT', 'SRC_OVERSEAS_CNT',
 # 'SRC_INTERSTATE_CNT', 'SRC_CONTACT_CNT', 'SRC_UNKNOWN_CNT',
-# 'SRC_INVES_CNT', 'PREV_CASE_CNT', 'PREV_TEST_CNT', 
+# 'SRC_INVES_CNT', 'PREV_CASE_CNT', 'PREV_TEST_CNT',
 # 'PREV_DEATH_CNT', 'PREV_RECOV_CNT', 'PREV_MED_ICU_CNT',
 # 'PREV_MED_VENT_CNT', 'PREV_MED_HOSP_CNT', 'PREV_SRC_OVERSEAS_CNT',
-# 'PREV_SRC_INTERSTATE_CNT', 'PREV_SRC_CONTACT_CNT', 
+# 'PREV_SRC_INTERSTATE_CNT', 'PREV_SRC_CONTACT_CNT',
 # 'PREV_SRC_UNKNOWN_CNT', 'PREV_SRC_INVES_CNT', 'PROB_CASE_CNT',
 # 'PREV_PROB_CASE_CNT', 'ACTIVE_CNT', 'PREV_ACTIVE_CNT',
 # 'NEW_CASE_CNT', 'PREV_NEW_CASE_CNT', 'VACC_DIST_CNT',
@@ -43,11 +49,11 @@ df['REPORT_DATE'] = df['REPORT_DATE'].dt.strftime("%Y-%m-%d")
 
 #%%
 
-def work_since_begin(code, frame, start):
+def work_since_begin(code, frame, start, line_name, end_date=today):
     inter = frame.loc[df['CODE'] == code].copy()
 
     inter['New_local_cnt'] = inter['Local_cnt'].diff(1)
-    
+
 
 
 
@@ -55,7 +61,7 @@ def work_since_begin(code, frame, start):
 
     # inter[code] = inter['New_local_cnt'].rolling(window=7).mean()
 
-    inter = inter.loc[inter['REPORT_DATE'] > start]
+    inter = inter.loc[(inter['REPORT_DATE'] > start) & (inter['REPORT_DATE'] <= end_date)]
     # print(inter['New_local_cnt'])
     inter[code] = inter['New_local_cnt'].cumsum()
 
@@ -63,17 +69,27 @@ def work_since_begin(code, frame, start):
     inter['Days'] = inter['Days'].cumsum()
 
     inter = inter[['Days', code]]
+    inter.columns = ['Days', line_name]
 
     # print(inter)
 
     return (inter)
 
-nsw = work_since_begin("NSW", df, "2021-06-16")
-vic = work_since_begin("VIC", df, "2021-07-12")
+## USE THE DAY BEFORE THE FIRST CASE
+nsw = work_since_begin("NSW", df, "2021-06-16", "NSW")
+vic1 = work_since_begin("VIC", df, "2021-07-12", "VIC Wave 1", "2021-08-03")
+vic2 = work_since_begin("VIC", df, "2021-08-04", "VIC Wave 2")
+act = work_since_begin("ACT", df, "2021-08-11", "ACT")
 
-print(vic)
 
-combo = pd.merge(nsw, vic, on="Days", how="left")
+combo = pd.merge(nsw, vic1, on="Days", how="left")
+combo = pd.merge(combo, vic2, on="Days", how="left")
+combo = pd.merge(combo, act, on="Days", how="left")
+
+
+df['REPORT_DATE'] = pd.to_datetime(df['REPORT_DATE'])
+updated_date = df['REPORT_DATE'].max()
+updated_date = datetime.datetime.strftime(updated_date, "%d %B %Y")
 
 # print(combo)
 
@@ -81,18 +97,18 @@ def makeLineChart(df):
 
     template = [
             {
-                "title": "Comparing 2021 outbreaks in New South Wales Wales and Victoria",
-                "subtitle": f"Showing cumulative local cases since the first day of each outbreak",
+                "title": "Comparing 2021 Delta outbreaks in New South Wales, Victoria and the ACT",
+                "subtitle": f"Showing cumulative local cases since the first day of each outbreak. Victoria shown as two different waves - the first from 12 July 2021 to 4th August when there were no cases, and the second since 4 August. Last updated {updated_date}",
                 "footnote": "",
-                "source": "CovidLive.com.au, Guardian analysis",
+                "source": "Guardian analysis of CovidLive.com.au data | Based on a chart by Covid19data.com.au",
                 # "dateFormat": "%Y-%m-%d",
                 "yScaleType":"",
                 "xAxisLabel": "Days",
-                "yAxisLabel": "Cases",
+                # "yAxisLabel": "Cases",
                 "minY": "",
                 "maxY": "",
                 # "periodDateFormat":"",
-                "margin-left": "100",
+                "margin-left": "30",
                 "margin-top": "15",
                 "margin-bottom": "20",
                 "margin-right": "20",
@@ -107,8 +123,8 @@ def makeLineChart(df):
     # df = df.reset_index()
     chartData = df.to_dict('records')
 
-    yachtCharter(template=template, data=chartData, periods=periods, chartId=[{"type":"linechart"}], options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName=f"{chart_key}")
+    yachtCharter(template=template, data=chartData, periods=periods, chartId=[{"type":"linechart"}], options=[{"colorScheme":"guardian", "lineLabelling":"FALSE"}], chartName=f"{chart_key}")
 
 
-# makeLineChart(combo)
+makeLineChart(combo)
 # %%

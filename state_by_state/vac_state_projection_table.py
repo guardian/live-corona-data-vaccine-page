@@ -36,7 +36,7 @@ pops = {'NT':246.5* 1000, 'NSW':8166.4* 1000,
 sixteen_pop = {
     'NT':190571, 'NSW':6565651, 'VIC':5407574,
     'QLD':4112707, 'ACT':344037,
-    'SA':1440400, 'WA':2114978, 'TAS':440172}
+    'SA':1440400, 'WA':2114978, 'TAS':440172, "AUS":20619959}
 
 # source: https://www.health.gov.au/sites/default/files/documents/2021/07/covid-19-vaccine-rollout-update-5-july-2021.pdf
 
@@ -81,6 +81,9 @@ rolling_averages = {}
 
 days_to_80 = {}
 
+projections_80 = {}
+projections_70 = {}
+
 listo = []
 
 for state in df['CODE'].unique().tolist():
@@ -88,7 +91,7 @@ for state in df['CODE'].unique().tolist():
     inter['Incremental'] = inter['PREV_VACC_PEOPLE_CNT'].diff(1)
     inter['Rolling'] = inter['Incremental'].rolling(window=7).mean()
 
-    print(inter)
+    # print(inter)
 
     latest = inter.loc[inter['REPORT_DATE'] == inter['REPORT_DATE'].max()].copy()
 
@@ -116,6 +119,9 @@ for state in df['CODE'].unique().tolist():
     eighty_finish = datetime.datetime.strftime(eighty_finish, "%d/%m/%Y")
 
     seventy_finish = datetime.datetime.strftime(seventy_finish, "%d/%m/%Y")
+
+    projections_80[state] = eighty_finish
+    projections_70[state] = seventy_finish
 
 
     latest_count_hundred = round((latest_count/sixteen_pop[state])*100, 2)
@@ -147,8 +153,6 @@ for state in df['CODE'].unique().tolist():
 final_final = pd.concat(listo)
 
 final_final = final_final.sort_values(by="State", ascending=True)
-
-# print(final_final)
 
 # %%
 
@@ -187,3 +191,106 @@ def makeTable(df):
     options=[{"colorScheme":"guardian","format": "vanilla","enableSearch": "FALSE","enableSort": "FALSE"}], chartName=f"{chart_key}{testo}")
 
 makeTable(final_final)
+
+# print(final_final)
+# print(final_final.columns)
+
+third = pd.read_json('https://vaccinedata.covid19nearme.com.au/data/air_residence.json')
+
+# 'AIR_RESIDENCE_FIRST_DOSE_APPROX_COUNT',
+#        'AIR_RESIDENCE_SECOND_DOSE_APPROX_COUNT', 'ABS_ERP_JUN_2020_POP',
+#        'VALIDATED', 'URL', 'AIR_RESIDENCE_FIRST_DOSE_COUNT',
+#        'AIR_RESIDENCE_SECOND_DOSE_COUNT'
+
+# %%
+second = third.copy()
+
+second['DATE_AS_AT'] = pd.to_datetime(second['DATE_AS_AT'])
+second = second.sort_values(by='DATE_AS_AT', ascending=True)
+
+listo = []
+
+for state in second['STATE'].unique().tolist():
+    inter = second.loc[second['STATE'] == state].copy()
+    to_use = inter.loc[(inter["AGE_LOWER"] == 16) & (inter['AGE_UPPER'] == 999)].copy()
+
+    to_use['Second_new'] = to_use['AIR_RESIDENCE_SECOND_DOSE_COUNT'].diff(1)
+    to_use['Second_rolling'] = to_use['Second_new'].rolling(window=7).mean()
+
+    latest = to_use.loc[to_use['DATE_AS_AT'] == to_use['DATE_AS_AT'].max()].copy()
+    
+    latest = latest[['STATE', 'AIR_RESIDENCE_FIRST_DOSE_PCT', 'AIR_RESIDENCE_SECOND_DOSE_PCT','AIR_RESIDENCE_SECOND_DOSE_COUNT', 'Second_rolling']]
+
+    # print(latest)
+    # latest_count = latest['AIR_RESIDENCE_SECOND_DOSE_COUNT'].values[0]
+    # latest_rolling = latest['Second_rolling'].values[0]
+
+    ### WORK OUT HOW MANY MORE DAYS TO GO
+
+    
+
+    # eighty_target = sixteen_pop[state] * 0.8
+    # seventy_target = sixteen_pop[state] * 0.7
+
+    # eighty_vax_to_go = eighty_target - latest_count
+    # seventy_vax_to_go = seventy_target - latest_count
+
+
+
+    # days_to_go_80 = int(round(eighty_vax_to_go / latest_rolling,0))
+    # days_to_go_70 = int(round(seventy_vax_to_go / latest_rolling,0))
+
+    # eighty_finish = today + datetime.timedelta(days=days_to_go_80)
+    # seventy_finish = today + datetime.timedelta(days=days_to_go_70)
+
+    eighty_finish = datetime.datetime.strptime(projections_80[state], "%d/%m/%Y")
+    seventy_finish = datetime.datetime.strptime(projections_70[state], "%d/%m/%Y")
+    eighty_finish = datetime.datetime.strftime(eighty_finish, "%d %B")
+    seventy_finish = datetime.datetime.strftime(seventy_finish, "%d %B")
+
+    final = pd.DataFrame.from_dict({"State": state,
+                                    "First dose %": latest['AIR_RESIDENCE_FIRST_DOSE_PCT'].values[0],
+                                    "Second dose %": latest['AIR_RESIDENCE_SECOND_DOSE_PCT'].values[0],
+                                    "Reach 70% on": f"{seventy_finish}",
+                                    "Reach 80% on": f"{eighty_finish}"}, orient="index")
+                                    # columns=(['Row', "Values"]))
+
+    final = final.T
+
+    listo.append(final)
+
+    
+small = pd.concat(listo)
+
+def makeTable(df):
+
+    template = [
+            {
+                "title": "Current vaccination levels by jurisdiction",
+                "subtitle": f"""Showing the percentage of the 16+ population vaccinated by dose and state of residence, and the date we could hit 70% and 80% of the 16+ population fully vaccinated based on the seven day moving average of second doses. Last updated {updated_date}""",
+                "footnote": "",
+                "source": "Department of Health, Ken Tsang",
+                "yScaleType":"",
+                "minY": "0",
+                "maxY": "",
+                "x_axis_cross_y":"",
+                "periodDateFormat":"",
+                "margin-left": "50",
+                "margin-top": "30",
+                "margin-bottom": "20",
+                "margin-right": "10"
+            }
+        ]
+    key = []
+    # labels = []
+    df.fillna("", inplace=True)
+    chartData = df.to_dict('records')
+    labels = []
+
+
+    yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"table"}],
+    options=[{"colorScheme":"guardian","format": "vanilla","enableSearch": "FALSE","enableSort": "FALSE"}], chartName=f"oz-vax-percent-table-states{testo}")
+
+makeTable(small)
+
+# %%

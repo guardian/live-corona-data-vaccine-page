@@ -80,6 +80,8 @@ import daily_covid_cases
 import vac_global_per_hund
 import vac_global_bar
 import vaccineDosesState
+import hospitalised_percent_line
+import outbreaks_reindexed
 
 
 day = datetime.datetime.today().weekday()

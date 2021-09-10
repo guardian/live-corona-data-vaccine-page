@@ -35,7 +35,11 @@ oz['REPORT_DATE'] = pd.to_datetime(oz['REPORT_DATE'])
 oz['total_vaccinations_per_hundred'] = (oz["VACC_DOSE_CNT"] / oz_pop) * 100
 oz['location'] = "Australia"
 oz = oz.sort_values(by="REPORT_DATE", ascending=True)
-last_date = oz.iloc[-1:]["REPORT_DATE"].dt.strftime("%Y-%m-%d").values[0]
+last_date = oz.iloc[-1:]["REPORT_DATE"].dt.strftime("%d %B %Y").values[0]
+
+# last_date = datetime.datetime.strftime(last_date, "%d %B %Y")
+
+
 
 #%%
 # last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d %H:%M:%S")
