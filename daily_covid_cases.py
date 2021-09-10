@@ -26,8 +26,6 @@ old_grouped = old_df.groupby(by=['Date'])['Cumulative case count'].sum()
 cl = 'https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/oz-covid-cases.json'
 cl = pd.read_json(cl)
 
-
-
 oz_new_cases = cl.loc[cl['CODE'] == "AUS"].copy()
 oz_new_cases['CASE_CNT'] = pd.to_numeric(oz_new_cases['CASE_CNT'])
 
@@ -47,7 +45,7 @@ oz_new_cases.set_index('Date', inplace=True)
 
 oz_trend_cases = oz_new_cases.copy()
 
-oz_trend_cases = oz_trend_cases.rolling(7).mean()
+oz_trend_cases = oz_trend_cases[:-1].rolling(7).mean()
 
 oz_trend_cases = oz_trend_cases.round(1)
 
