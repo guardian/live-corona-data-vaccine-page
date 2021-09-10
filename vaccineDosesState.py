@@ -140,7 +140,7 @@ def makeStateVaccinations(df):
 			}
 		]
 	key = []
-	periods = [{"label":"Data change", "start":"2021-08-16","end":"","textAnchor":"end"}]
+	periods = [{"label":"Data change", "start":"2021-08-16","end":"","textAnchor":"start"}]
 	labels = []
 	options = [{"numCols":4, "chartType":"line", "height":150, "scaleBy":"group"}]
 	chartId = [{"type":"smallmultiples"}]
