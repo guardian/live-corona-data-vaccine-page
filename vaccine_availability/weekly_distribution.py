@@ -168,5 +168,5 @@ def makeChart(df):
     yachtCharter(template=template, data=chartData, chartId=[{"type":"smallmultiples"}],
     options=[{"scaleBy": "individual","chartType": "bar","numCols":3,"height": 100}], periods=periods, key=key, chartName=f"{chart_key}{testo}")
 
-# makeChart(final)
+makeChart(final)
 # 
