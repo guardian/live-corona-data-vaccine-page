@@ -277,9 +277,9 @@ def makeTestingLine(df):
     labels = [{"x":f"{end_date_label}", "y":f"{eighty_goal}", "offset":70,
     "text":f"{eighty_goal_text}",
      "align":"right", "direction":"bottom"},
-     {"x":f"{seventy_end_date_label}", "y":f"{seventy_goal}", "offset":70,
+     {"x":f"{seventy_end_date_label}", "y":f"{seventy_goal}", "offset":100,
      "text":f"{seventy_goal_text}",
-      "align":"right", "direction":"bottom"}]
+      "align":"left", "direction":"top"}]
 
     yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"linechart"}],
     options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName=f"oz_vaccine_tracker_goals_trend_five_trend{test}")

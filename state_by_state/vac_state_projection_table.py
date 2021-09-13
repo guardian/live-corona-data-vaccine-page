@@ -68,8 +68,6 @@ df = df[['REPORT_DATE', 'CODE', 'PREV_VACC_PEOPLE_CNT']].copy()
 df['REPORT_DATE'] = pd.to_datetime(df['REPORT_DATE'])
 df = df.sort_values(by="REPORT_DATE", ascending=True)
 
-
-
 #%%
 last_date = datetime.datetime.strftime(df['REPORT_DATE'].max(), "%Y-%m-%d")
 
@@ -197,6 +195,7 @@ makeTable(final_final)
 
 third = pd.read_json('https://vaccinedata.covid19nearme.com.au/data/air_residence.json')
 
+third.to_csv('air-residence.csv')
 # 'AIR_RESIDENCE_FIRST_DOSE_APPROX_COUNT',
 #        'AIR_RESIDENCE_SECOND_DOSE_APPROX_COUNT', 'ABS_ERP_JUN_2020_POP',
 #        'VALIDATED', 'URL', 'AIR_RESIDENCE_FIRST_DOSE_COUNT',
