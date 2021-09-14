@@ -86,9 +86,9 @@ import outbreaks_reindexed
 
 day = datetime.datetime.today().weekday()
 #%%
-if day > 4:
-       import vaccine_availability.weekly_state_utilisation
-       import vaccine_availability.weekly_distribution
+# if day > 4:
+import vaccine_availability.weekly_state_utilisation
+import vaccine_availability.weekly_distribution
 
 # import vaccineDosesState
 
