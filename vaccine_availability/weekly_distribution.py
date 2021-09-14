@@ -137,7 +137,7 @@ updated_date = final['Date'].max()
 updated_date = datetime.datetime.strptime(updated_date, "%Y-%m-%d")
 updated_date = datetime.datetime.strftime(updated_date, "%d %B %Y")
 
-print(final)
+# print(final)
 
 # %%
 
