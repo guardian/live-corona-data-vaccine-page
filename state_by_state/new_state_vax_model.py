@@ -79,6 +79,9 @@ temp_state = newData.loc[newData['STATE'] == state].copy()
 temp_state['daily_first_dose'] = temp_state['FIRST_DOSE_COUNT'].diff(1)
 temp_state['daily_second_dose'] = temp_state['SECOND_DOSE_COUNT'].diff(1)
 temp_state['daily_first_dose_avg'] = temp_state['daily_first_dose'].rolling(window=7).mean()
+
+temp_state.to_csv('temp-state-doses.csv')
+
 last_doses = temp_state['daily_first_dose_avg'].iloc[-1]
 temp_state.index = temp_state['DATE_AS_AT']
 temp_state = temp_state.reindex(date_index)
@@ -114,8 +117,9 @@ for index, row in temp_state["2021-07-02":].iterrows():
 	pf_projection_fwd_date = index + datetime.timedelta(days=int(days))
 # 	print(pf_projection_fwd_date)
 	if pf_projection_fwd_date < end_year:
-		print("pf doses:", doses * assumptions['pfizer_proportion'].iloc[0])
-		temp_projections.at[pf_projection_fwd_date,'second_dose_pfizer_projection'] = doses * assumptions['pfizer_proportion'].iloc[0]
+		print("pf assump", assumptions['pfizer_est_proportion'].iloc[0])
+		temp_projections.at[pf_projection_fwd_date,'second_dose_pfizer_projection'] = doses * 1
+
 
 	# Forward date for az
 	
@@ -124,7 +128,8 @@ for index, row in temp_state["2021-07-02":].iterrows():
 	pf_projection_fwd_date = index + datetime.timedelta(days=int(days))
 # 	print(pf_projection_fwd_date)
 	if pf_projection_fwd_date < end_year:
-		temp_projections.at[pf_projection_fwd_date,'second_dose_az_projection'] = doses * assumptions['az_proportion'].iloc[0]
+		print("az assump", assumptions['az_est_proportion'].iloc[0])
+		temp_projections.at[pf_projection_fwd_date,'second_dose_az_projection'] = doses * 0.001
 
 #%%
 
