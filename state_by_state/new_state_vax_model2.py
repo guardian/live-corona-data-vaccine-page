@@ -25,9 +25,9 @@ pd.options.mode.chained_assignment = None
 # 16+ population counts:
 
 sixteen_pop = {
-    'NT':190571, 'NSW':6565651, 'VIC':5407574,
-    'QLD':4112707, 'ACT':344037,
-    'SA':1440400, 'WA':2114978, 'TAS':440172, "AUS":20619959}
+	'NT':190571, 'NSW':6565651, 'VIC':5407574,
+	'QLD':4112707, 'ACT':344037,
+	'SA':1440400, 'WA':2114978, 'TAS':440172, "AUS":20619959}
 
 # source: https://www.health.gov.au/sites/default/files/documents/2021/07/covid-19-vaccine-rollout-update-5-july-2021.pdf
 
@@ -51,6 +51,8 @@ for state in states:
 	temp['STATE'] = state
 	temp = temp.rename(columns={f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT':'FIRST_DOSE_COUNT',f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT':'SECOND_DOSE_COUNT'}) 
 	newData = newData.append(temp)
+
+newData.to_csv('temp.csv')
 	
 #%%
 
@@ -82,14 +84,19 @@ def makeProjection(state, cutoff_date):
 	last_doses = temp_state['daily_first_dose_avg'].iloc[-1]
 	
 	current_second_doses = temp_state['SECOND_DOSE_COUNT'].iloc[-1]
-# 	print("current second", current_second_doses)
+	print("current second", current_second_doses)
 	current_first_doses = temp_state['FIRST_DOSE_COUNT'].iloc[-1]
 	current_date = temp_state['DATE_AS_AT'].iloc[-1]
 # 	print("currentdate", current_date)
 	current_rolling = int(temp_state['daily_first_dose_avg'].iloc[-1])
 	current_rolling_sec = int(temp_state['daily_second_dose_avg'].iloc[-1])
-	
-	first_dose_eq_second = temp_state[temp_state['FIRST_DOSE_COUNT'] >= current_second_doses]['DATE_AS_AT'].iloc[0]
+	# Handle data change in NT and ACT
+	change_date = "2021-07-28"
+	if state == "ACT" or state == "NT":
+		temp_temp_state = temp_state[temp_state['DATE_AS_AT'] >= change_date]
+		first_dose_eq_second = temp_temp_state[temp_temp_state['FIRST_DOSE_COUNT'] >= current_second_doses]['DATE_AS_AT'].iloc[0]
+	else:	
+		first_dose_eq_second = temp_state[temp_state['FIRST_DOSE_COUNT'] >= current_second_doses]['DATE_AS_AT'].iloc[0]
 	
 	current_lag = (current_date - first_dose_eq_second).days
 	
@@ -115,7 +122,7 @@ def makeProjection(state, cutoff_date):
 	second_doses_rate_needed = int(round(eighty_vax_to_go_second / (days_to_go_80 + current_lag),0))
 # 	print("eighty_finish", eighty_finish_second)
 	results = {"current_lag":current_lag, "eighty_finish_first": eighty_finish_first, "seventy_finish_first":seventy_finish_first, "eighty_finish_second":eighty_finish_second, "seventy_finish_second":seventy_finish_second, "current_rolling":current_rolling, "second_doses_rate_needed":second_doses_rate_needed,"eighty_target":eighty_target}
-	print(results)
+# 	print(results)
 	return results
 
 
@@ -124,9 +131,10 @@ def makeProjection(state, cutoff_date):
 latest_date = newData['DATE_AS_AT'].iloc[-1]
 
 newProjections = []
-test_states = ["NSW"]
+test_states = ["ACT"]
 
 for state in states:
+	print(state)
 	for day in range(0,14):
 		print("day",day)
 		cutoff_date = (latest_date - datetime.timedelta(days=day))
@@ -141,7 +149,7 @@ for state in states:
 newProjectionsDf = pd.DataFrame(newProjections)
 
 fig = px.scatter(newProjectionsDf, x=["eighty_finish_second", "seventy_finish_second"], y="state",
-                 size='recent', color='recent', color_continuous_scale='reds', opacity=0.7)
+				 size='recent', color='recent', color_continuous_scale='reds', opacity=0.7)
 																		
 # fig.add_trace(go.Scatter(x=newProjectionsDf["seventy_finish_second"], y=newProjectionsDf["state"],
 #                   mode='markers',opacity=0.7))
@@ -200,12 +208,12 @@ def makeStateChart(state):
 	
 	other_chart = ['SECOND_DOSE_COUNT','FIRST_DOSE_COUNT','cumulative_first_dose_projection_0', 'cumulative_first_dose_projection_13', 'cumulative_second_dose_projection_0','cumulative_second_dose_projection_13']	
 	fig = px.line(temp_projections,
-	 			  title=f"Second dose projections for {state}", 
-	 			  x=temp_projections.index, y=other_chart)
+				  title=f"Second dose projections for {state}", 
+				  x=temp_projections.index, y=other_chart)
 	# fig.layout.update(showlegend=False)
 	fig.show()
 
-makeStateChart("VIC")
+makeStateChart("ACT")
 
 # #%%
 
