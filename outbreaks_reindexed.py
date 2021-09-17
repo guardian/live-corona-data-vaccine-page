@@ -10,6 +10,7 @@ today = datetime.datetime.strftime(today, "%Y-%m-%d")
 # print(today)
 
 chart_key = f"oz-outbreaks--cases-reindexed"
+# chart_key = f"oz-outbreaks--cases-reindexed-testo"
 
 fillo = "https://covidlive.com.au/covid-live.json"
 
@@ -46,13 +47,21 @@ df['REPORT_DATE'] = pd.to_datetime(df['REPORT_DATE'])
 df = df.sort_values(by=['REPORT_DATE'], ascending=True)
 df['REPORT_DATE'] = df['REPORT_DATE'].dt.strftime("%Y-%m-%d")
 
+pops = {'NT':246.5* 1000, 'NSW':8166.4* 1000,
+'VIC':6680.6* 1000, 'QLD':5184.8* 1000,
+'ACT':431.2* 1000, 'SA':1770.6* 1000,
+ 'WA':2667.1* 1000, 'TAS':541.1* 1000}
+
 
 #%%
 
 def work_since_begin(code, frame, start, line_name, end_date=today):
     inter = frame.loc[df['CODE'] == code].copy()
 
+
     inter['New_local_cnt'] = inter['Local_cnt'].diff(1)
+    # inter['New_local_cnt'] = (inter['New_local_cnt'] / pops[code]) * 1000000
+
 
 
 
