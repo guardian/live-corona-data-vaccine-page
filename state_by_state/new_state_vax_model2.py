@@ -33,7 +33,7 @@ air_data = pd.read_json(url)
 
 cols = list(air_data.columns)
 
-states =['NSW','VIC','QLD','WA','SA','TAS','NT','ACT']
+states =['NSW','VIC','QLD','WA','SA','TAS','NT','ACT','AUS']
 short_cols = ['DATE_AS_AT']
 
 for state in states:
@@ -54,7 +54,7 @@ for state in states:
 #%%
 
 # variables set up for state projections
-state = "NSW"
+state = "WA"
 date_index = pd.date_range(start='2021-07-01', end='2021-12-31')	
 today = datetime.datetime.today().date()
 
@@ -64,6 +64,7 @@ temp_state = newData.loc[newData['STATE'] == state].copy()
 temp_state['daily_first_dose'] = temp_state['FIRST_DOSE_COUNT'].diff(1)
 temp_state['daily_second_dose'] = temp_state['SECOND_DOSE_COUNT'].diff(1)
 temp_state['daily_first_dose_avg'] = temp_state['daily_first_dose'].rolling(window=7).mean()
+temp_state['daily_second_dose_avg'] = temp_state['daily_second_dose'].rolling(window=7).mean()
 
 temp_state.to_csv('temp-state-doses.csv')
 
@@ -73,6 +74,7 @@ current_second_doses = temp_state['SECOND_DOSE_COUNT'].iloc[-1]
 current_first_doses = temp_state['FIRST_DOSE_COUNT'].iloc[-1]
 current_date = temp_state['DATE_AS_AT'].iloc[-1]
 current_rolling = int(temp_state['daily_first_dose_avg'].iloc[-1])
+current_rolling_sec = int(temp_state['daily_second_dose_avg'].iloc[-1])
 
 first_dose_eq_second = temp_state[temp_state['FIRST_DOSE_COUNT'] >= current_second_doses]['DATE_AS_AT'].iloc[0]
 
@@ -93,9 +95,11 @@ eighty_finish_second = eighty_finish + datetime.timedelta(days=current_lag)
 seventy_finish_second = seventy_finish + datetime.timedelta(days=current_lag)
 
 eighty_vax_to_go_second = eighty_target - current_second_doses
-second_doses_rate_needed = int(round(eighty_vax_to_go_second / current_lag,0))
+second_doses_rate_needed = int(round(eighty_vax_to_go_second / (days_to_go_80 + current_lag),0))
 
 #%%
+
+# This is all stuff for de-bugging the projection below here
 
 temp_state.index = temp_state['DATE_AS_AT']
 temp_state = temp_state.reindex(date_index)
@@ -104,10 +108,11 @@ temp_state = temp_state.reindex(date_index)
 temp_projections = temp_state.copy()
 temp_projections['second_dose_projection'] = 0
 temp_projections['first_dose_projection'] = 0
+temp_projections['second_dose_projection_rolling'] = 0
 
 temp_projections[current_date:]['first_dose_projection'] = current_rolling
 temp_projections[current_date:]['second_dose_projection'] = second_doses_rate_needed
-
+temp_projections[current_date:]['second_dose_projection_rolling'] = current_rolling_sec
 
 #%%
 
@@ -117,20 +122,27 @@ temp_projections[current_date:]['second_dose_projection'] = second_doses_rate_ne
 
 # Make total projection col
 
+temp_projections.at[current_date,'second_dose_projection_rolling'] = temp_projections.at[current_date,'SECOND_DOSE_COUNT']
 temp_projections.at[current_date,'second_dose_projection'] = temp_projections.at[current_date,'SECOND_DOSE_COUNT']
 temp_projections.at[current_date,'first_dose_projection'] = temp_projections.at[current_date,'FIRST_DOSE_COUNT']
 
 temp_projections['cumulative_second_dose_projection'] = temp_projections['second_dose_projection'].cumsum()
+temp_projections['cumulative_second_dose_projection_rolling'] = temp_projections['second_dose_projection_rolling'].cumsum()
 temp_projections['cumulative_first_dose_projection'] = temp_projections['first_dose_projection'].cumsum()
 
 temp_projections['pop'] = sixteen_pop[state]
 temp_projections['second_dose_pct_proj'] = temp_projections['cumulative_second_dose_projection'] / temp_projections['pop'] * 100
 temp_projections['first_dose_pct_proj'] = temp_projections['cumulative_first_dose_projection'] / temp_projections['pop'] * 100
 
-to_80 = temp_projections[temp_projections['second_dose_pct_proj'] <= 81]
+# to_80 = temp_projections[temp_projections['second_dose_pct_proj'] <= 81]
+to_80 = temp_projections.copy()
 to_80['cumulative_second_dose_projection']['2021-07-01':current_date] = None
 to_80['cumulative_first_dose_projection']['2021-07-01':current_date] = None
-to_80['cumulative_first_dose_projection'][eighty_finish:] = None
+to_80['cumulative_second_dose_projection_rolling']['2021-07-01':current_date] = None
+
+to_80['cumulative_first_dose_projection'][to_80['cumulative_first_dose_projection'] > eighty_target] = None
+to_80['cumulative_second_dose_projection'][to_80['cumulative_second_dose_projection'] > eighty_target] = None
+to_80['cumulative_second_dose_projection_rolling'][to_80['cumulative_second_dose_projection_rolling'] > eighty_target] = None
 
 # temp_projections = temp_projections[temp_projections['second_dose_pct_proj'] <= 81]
 
@@ -140,15 +152,16 @@ import plotly.express as px
 
 fig = px.line(to_80,
 			  title=f"Second dose projections for {state}", 
-			  x=to_80.index, y=['SECOND_DOSE_COUNT','cumulative_second_dose_projection','FIRST_DOSE_COUNT','cumulative_first_dose_projection']
+			  x=to_80.index, y=['SECOND_DOSE_COUNT','cumulative_second_dose_projection','cumulative_second_dose_projection_rolling','FIRST_DOSE_COUNT','cumulative_first_dose_projection']
 			  )
 fig.data[0].name = "Second dose count"
 fig.data[1].name = "Second dose projected"
-fig.data[2].name = "First dose count"
-fig.data[3].name = "First dose projected"
+fig.data[2].name = "Second dose avg proj"
+fig.data[3].name = "First dose count"
+fig.data[4].name = "First dose projected"
 fig.show()
 
-fig.write_html("second-dose-projections.html")
+# fig.write_html("second-dose-projections.html")
 
 
 		
