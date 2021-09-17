@@ -8,6 +8,7 @@ import numpy as np
 import datetime
 import pytz
 import plotly.express as px
+import plotly.graph_objs as go
 
 
 #%%
@@ -56,12 +57,18 @@ for state in states:
 
 #%%
 
+# state = "NSW"
+# cutoff_date = (latest_date - datetime.timedelta(days=2))
+# latest_date = newData['DATE_AS_AT'].iloc[-1]
+	
 def makeProjection(state, cutoff_date):
 	
 	# variables set up for state projections
+	
+
 	today = datetime.datetime.today().date()
 	
-	assumptions_cutoff = datetime.datetime.strptime("2021-09-01", "%Y-%m-%d")
+	# assumptions_cutoff = datetime.datetime.strptime("2021-09-01", "%Y-%m-%d")
 	end_year = datetime.datetime.strptime("2022-01-01", "%Y-%m-%d")
 	temp_state = newData.loc[newData['STATE'] == state].copy()
 	temp_state = temp_state[temp_state['DATE_AS_AT'] <= cutoff_date]
@@ -75,8 +82,10 @@ def makeProjection(state, cutoff_date):
 	last_doses = temp_state['daily_first_dose_avg'].iloc[-1]
 	
 	current_second_doses = temp_state['SECOND_DOSE_COUNT'].iloc[-1]
+# 	print("current second", current_second_doses)
 	current_first_doses = temp_state['FIRST_DOSE_COUNT'].iloc[-1]
 	current_date = temp_state['DATE_AS_AT'].iloc[-1]
+# 	print("currentdate", current_date)
 	current_rolling = int(temp_state['daily_first_dose_avg'].iloc[-1])
 	current_rolling_sec = int(temp_state['daily_second_dose_avg'].iloc[-1])
 	
@@ -97,11 +106,17 @@ def makeProjection(state, cutoff_date):
 	
 	eighty_finish_second = eighty_finish_first + datetime.timedelta(days=current_lag)
 	seventy_finish_second = seventy_finish_first + datetime.timedelta(days=current_lag)
-	
-	eighty_vax_to_go_second = eighty_target - current_second_doses
+	time_between_70_80_sec = eighty_finish_second - seventy_finish_second
+	time_between_70_80_fir = eighty_finish_first - seventy_finish_first
+# 	print("timediff1", time_between_70_80_fir)
+# 	print("timediff2", time_between_70_80_sec)
+	eighty_vax_to_go_second = int(eighty_target - current_second_doses)
+# 	print(eighty_vax_to_go_second,days_to_go_80,current_lag)
 	second_doses_rate_needed = int(round(eighty_vax_to_go_second / (days_to_go_80 + current_lag),0))
-	print(eighty_finish_second)
-	return {"current_lag":current_lag, "eighty_finish_first": eighty_finish_first, "seventy_finish_first":seventy_finish_first, "eighty_finish_second":eighty_finish_second, "seventy_finish_second":seventy_finish_second}
+# 	print("eighty_finish", eighty_finish_second)
+	results = {"current_lag":current_lag, "eighty_finish_first": eighty_finish_first, "seventy_finish_first":seventy_finish_first, "eighty_finish_second":eighty_finish_second, "seventy_finish_second":seventy_finish_second, "current_rolling":current_rolling, "second_doses_rate_needed":second_doses_rate_needed,"eighty_target":eighty_target}
+	print(results)
+	return results
 
 
 #%%
@@ -109,54 +124,96 @@ def makeProjection(state, cutoff_date):
 latest_date = newData['DATE_AS_AT'].iloc[-1]
 
 newProjections = []
+test_states = ["NSW"]
 
 for state in states:
 	for day in range(0,14):
 		print("day",day)
 		cutoff_date = (latest_date - datetime.timedelta(days=day))
-		print(cutoff_date.strftime("%Y-%m-%d"))
+		print("cutoff", cutoff_date.strftime("%Y-%m-%d"))
 		results = makeProjection(state,cutoff_date)
-		row = {"day":day, "recent":(14 - day), "state":state,"eighty_finish_second":results['eighty_finish_second']}
+		print(results)
+		row = {"day":day, "recent":(14 - day), "state":state, "eighty_finish_second":results['eighty_finish_second'], "seventy_finish_second":results["seventy_finish_second"],"current_rolling":results['current_rolling'], "second_doses_rate_needed":results['second_doses_rate_needed'], "eighty_target":results['eighty_target'], "cutoff":cutoff_date}
 		newProjections.append(row)
 	
 #%%
 
 newProjectionsDf = pd.DataFrame(newProjections)
 
-fig = px.scatter(newProjectionsDf, x="eighty_finish_second", y="state",
+fig = px.scatter(newProjectionsDf, x=["eighty_finish_second", "seventy_finish_second"], y="state",
                  size='recent', color='recent', color_continuous_scale='reds', opacity=0.7)
-fig.show()	
+																		
+# fig.add_trace(go.Scatter(x=newProjectionsDf["seventy_finish_second"], y=newProjectionsDf["state"],
+#                   mode='markers',opacity=0.7))
+
+
+fig.show()
 
 #%%
 
 # This is all stuff for de-bugging the projection below here
 
-# date_index = pd.date_range(start='2021-07-01', end='2021-12-31')	
-# temp_state.index = temp_state['DATE_AS_AT']
-# temp_state = temp_state.reindex(date_index)
-# # temp_state['second_dose_estimate'] = temp_state.apply(makeSecondDoses, axis=1)
+def makeStateChart(state):
 
-# temp_projections = temp_state.copy()
-# temp_projections['second_dose_projection'] = 0
-# temp_projections['first_dose_projection'] = 0
-# temp_projections['second_dose_projection_rolling'] = 0
+# 	state = "WA"
+	date_index = pd.date_range(start='2021-07-01', end='2021-12-31')	
+	temp_state = newData.loc[newData['STATE'] == state].copy()
+	# temp_state = temp_state[temp_state['DATE_AS_AT'] <= cutoff_date]
+	temp_state['daily_first_dose'] = temp_state['FIRST_DOSE_COUNT'].diff(1)
+	temp_state['daily_second_dose'] = temp_state['SECOND_DOSE_COUNT'].diff(1)
+	temp_state['daily_first_dose_avg'] = temp_state['daily_first_dose'].rolling(window=7).mean()
+	temp_state['daily_second_dose_avg'] = temp_state['daily_second_dose'].rolling(window=7).mean()
+	
+	temp_state.index = temp_state['DATE_AS_AT']
+	temp_state = temp_state.reindex(date_index)
+	# temp_state['second_dose_estimate'] = temp_state.apply(makeSecondDoses, axis=1)
+	
+	temp_projections = temp_state.copy()
+	
+	to_chart = ['SECOND_DOSE_COUNT','FIRST_DOSE_COUNT']
+	
+	for day in range(0,14):
+		print(day)
+		temp_projections[f'second_dose_projection_{day}'] = 0
+		temp_projections[f'first_dose_projection_{day}'] = 0
+		current_proj = newProjectionsDf[(newProjectionsDf['day'] == day) & (newProjectionsDf['state'] == state)]
+		print(current_proj)
+		eighty_target = current_proj['eighty_target'].iloc[0]
+		cutoff_date = current_proj['cutoff'].iloc[0]
+		temp_projections[cutoff_date:][f'second_dose_projection_{day}'] = current_proj['second_doses_rate_needed'].iloc[0]
+		temp_projections[cutoff_date:][f'first_dose_projection_{day}'] = current_proj['current_rolling'].iloc[0]
+		
+		temp_projections.at[cutoff_date,f'second_dose_projection_{day}'] = temp_projections.at[cutoff_date,'SECOND_DOSE_COUNT']
+		temp_projections.at[cutoff_date,f'first_dose_projection_{day}'] = temp_projections.at[cutoff_date,'FIRST_DOSE_COUNT']
+	
+		temp_projections[f'cumulative_second_dose_projection_{day}'] = temp_projections[f'second_dose_projection_{day}'].cumsum()
+		temp_projections[f'cumulative_first_dose_projection_{day}'] = temp_projections[f'first_dose_projection_{day}'].cumsum()
+		
+		temp_projections[f'cumulative_second_dose_projection_{day}']['2021-07-01':cutoff_date] = None
+		temp_projections[f'cumulative_first_dose_projection_{day}']['2021-07-01':cutoff_date] = None
+		
+		temp_projections[f'cumulative_second_dose_projection_{day}'][temp_projections[f'cumulative_second_dose_projection_{day}'] > eighty_target] = None
+		temp_projections[f'cumulative_first_dose_projection_{day}'][temp_projections[f'cumulative_first_dose_projection_{day}'] > eighty_target] = None
+		to_chart.append(f'cumulative_first_dose_projection_{day}')
+		to_chart.append(f'cumulative_second_dose_projection_{day}')
+	
+	
+	other_chart = ['SECOND_DOSE_COUNT','FIRST_DOSE_COUNT','cumulative_first_dose_projection_0', 'cumulative_first_dose_projection_13', 'cumulative_second_dose_projection_0','cumulative_second_dose_projection_13']	
+	fig = px.line(temp_projections,
+	 			  title=f"Second dose projections for {state}", 
+	 			  x=temp_projections.index, y=other_chart)
+	# fig.layout.update(showlegend=False)
+	fig.show()
 
-# temp_projections[current_date:]['first_dose_projection'] = current_rolling
-# temp_projections[current_date:]['second_dose_projection'] = second_doses_rate_needed
-# temp_projections[current_date:]['second_dose_projection_rolling'] = current_rolling_sec
-
+makeStateChart("VIC")
 
 # #%%
 
 # # Make total projection col
 
-# temp_projections.at[current_date,'second_dose_projection_rolling'] = temp_projections.at[current_date,'SECOND_DOSE_COUNT']
-# temp_projections.at[current_date,'second_dose_projection'] = temp_projections.at[current_date,'SECOND_DOSE_COUNT']
-# temp_projections.at[current_date,'first_dose_projection'] = temp_projections.at[current_date,'FIRST_DOSE_COUNT']
 
-# temp_projections['cumulative_second_dose_projection'] = temp_projections['second_dose_projection'].cumsum()
-# temp_projections['cumulative_second_dose_projection_rolling'] = temp_projections['second_dose_projection_rolling'].cumsum()
-# temp_projections['cumulative_first_dose_projection'] = temp_projections['first_dose_projection'].cumsum()
+
+
 
 # temp_projections['pop'] = sixteen_pop[state]
 # temp_projections['second_dose_pct_proj'] = temp_projections['cumulative_second_dose_projection'] / temp_projections['pop'] * 100
