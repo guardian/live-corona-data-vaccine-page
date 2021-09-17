@@ -86,13 +86,14 @@ def work_since_begin(code, frame, start, line_name, end_date=today):
 
 ## USE THE DAY BEFORE THE FIRST CASE
 nsw = work_since_begin("NSW", df, "2021-06-16", "NSW")
-vic1 = work_since_begin("VIC", df, "2021-07-12", "VIC Wave 1", "2021-08-03")
-vic2 = work_since_begin("VIC", df, "2021-08-04", "VIC Wave 2")
+vic1 = work_since_begin("VIC", df, "2021-07-12", "VIC")
+# vic1 = work_since_begin("VIC", df, "2021-07-12", "VIC Wave 1", "2021-08-03")
+# vic2 = work_since_begin("VIC", df, "2021-08-04", "VIC Wave 2")
 act = work_since_begin("ACT", df, "2021-08-11", "ACT")
 
 
 combo = pd.merge(nsw, vic1, on="Days", how="left")
-combo = pd.merge(combo, vic2, on="Days", how="left")
+# combo = pd.merge(combo, vic2, on="Days", how="left")
 combo = pd.merge(combo, act, on="Days", how="left")
 
 
@@ -107,7 +108,7 @@ def makeLineChart(df):
     template = [
             {
                 "title": "Comparing 2021 Delta outbreaks in New South Wales, Victoria and the ACT",
-                "subtitle": f"Showing cumulative local cases since the first day of each outbreak. Victoria shown as two different waves - the first from 12 July 2021 to 4th August when there were no cases, and the second since 4 August. Last updated {updated_date}",
+                "subtitle": f"Showing cumulative local cases since the first day of each outbreak. Last updated {updated_date}",
                 "footnote": "",
                 "source": "Guardian analysis of CovidLive.com.au data | Based on a chart by Covid19data.com.au",
                 # "dateFormat": "%Y-%m-%d",

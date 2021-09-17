@@ -90,6 +90,8 @@ day = datetime.datetime.today().weekday()
 import vaccine_availability.weekly_state_utilisation
 import vaccine_availability.weekly_distribution
 
+import state_by_state.new_table_model2
+
 # import vaccineDosesState
 
 #%%

@@ -184,9 +184,9 @@ def makeTable(df):
     template = [
             {
                 "title": "Current vaccination levels by jurisdiction",
-                "subtitle": f"""Showing the percentage of the 16+ population vaccinated by dose and state of residence, and the date we could hit 70% and 80% of the 16+ population fully vaccinated based on the current time lag between first and second doses. Last updated {updated_date}.""",
+                "subtitle": f"""Showing the percentage of the 16+ population vaccinated by dose and state of residence, and the date we could hit 70% and 80% of the 16+ population fully vaccinated based on the current lag between administering first and second doses. Last updated {updated_date}.""",
                 "footnote": "",
-                "source": "Department of Health, Ken Tsang",
+                "source": "Department of Health, Ken Tsang, Guardian Australia analysis",
                 "yScaleType":"",
                 "minY": "0",
                 "maxY": "",
