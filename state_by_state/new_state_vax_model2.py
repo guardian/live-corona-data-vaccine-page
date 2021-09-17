@@ -131,7 +131,7 @@ def makeProjection(state, cutoff_date):
 latest_date = newData['DATE_AS_AT'].iloc[-1]
 
 newProjections = []
-test_states = ["ACT"]
+test_states = ["NT"]
 
 for state in states:
 	print(state)
@@ -206,14 +206,14 @@ def makeStateChart(state):
 		to_chart.append(f'cumulative_second_dose_projection_{day}')
 	
 	
-	other_chart = ['SECOND_DOSE_COUNT','FIRST_DOSE_COUNT','cumulative_first_dose_projection_0', 'cumulative_first_dose_projection_13', 'cumulative_second_dose_projection_0','cumulative_second_dose_projection_13']	
+	other_chart = ['SECOND_DOSE_COUNT','FIRST_DOSE_COUNT','cumulative_first_dose_projection_0', 'cumulative_first_dose_projection_6', 'cumulative_second_dose_projection_0','cumulative_second_dose_projection_6']	
 	fig = px.line(temp_projections,
 				  title=f"Second dose projections for {state}", 
 				  x=temp_projections.index, y=other_chart)
 	# fig.layout.update(showlegend=False)
 	fig.show()
 
-makeStateChart("ACT")
+makeStateChart("NT")
 
 # #%%
 
