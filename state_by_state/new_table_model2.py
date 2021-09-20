@@ -71,7 +71,7 @@ def makeProjection(state, cutoff_date):
 	last_doses = temp_state['daily_first_dose_avg'].iloc[-1]
 	
 	current_second_doses = temp_state['SECOND_DOSE_COUNT'].iloc[-1]
-	# print("current second", current_second_doses)
+	print("current second", current_second_doses)
 	current_first_doses = temp_state['FIRST_DOSE_COUNT'].iloc[-1]
 	current_date = temp_state['DATE_AS_AT'].iloc[-1]
 # 	print("currentdate", current_date)
@@ -108,11 +108,9 @@ def makeProjection(state, cutoff_date):
 # 	print(eighty_vax_to_go_second,days_to_go_80,current_lag)
 	second_doses_rate_needed = int(round(eighty_vax_to_go_second / (days_to_go_80 + current_lag),0))
 # 	print("eighty_finish", eighty_finish_second)
-	# results = {"current_lag":current_lag, "eighty_finish_first": eighty_finish_first, "seventy_finish_first":seventy_finish_first, "eighty_finish_second":eighty_finish_second, "seventy_finish_second":seventy_finish_second, "current_rolling":current_rolling, "second_doses_rate_needed":second_doses_rate_needed,"eighty_target":eighty_target}
+	results = {"current_lag":current_lag, "eighty_finish_first": eighty_finish_first, "seventy_finish_first":seventy_finish_first, "eighty_finish_second":eighty_finish_second, "seventy_finish_second":seventy_finish_second, "current_rolling":current_rolling, "second_doses_rate_needed":second_doses_rate_needed,"eighty_target":eighty_target}
 # 	print(results)
-	# return results
-	return {"current_lag":current_lag, "eighty_finish_first": eighty_finish_first, "seventy_finish_first":seventy_finish_first, "eighty_finish_second":eighty_finish_second, "seventy_finish_second":seventy_finish_second}
-
+	return results
 
 #%%
 

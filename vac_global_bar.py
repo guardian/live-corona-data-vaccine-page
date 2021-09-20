@@ -32,6 +32,15 @@ oecd = [
 
 df = df.loc[df['location'].isin(oecd)]
 
+cut_off = datetime.datetime.today().date()
+cut_off = cut_off - datetime.timedelta(days=30)
+cut_off = datetime.datetime.strftime(cut_off, '%Y-%m-%d')
+
+
+inter = df.loc[df['location'] == 'Luxembourg'].copy()
+
+# print(inter['people_fully_vaccinated_per_hundred'].unique().tolist())
+
 listo = []
 
 for country in df['location'].unique().tolist():
@@ -58,6 +67,10 @@ latest_date = datetime.datetime.strftime(latest_date, '%d %B %Y')
 
 final = final.drop_duplicates(subset='location')
 
+### CUT OFF COUNTRIES OLDER THAN A MONTH
+
+final = final.loc[final['date'] >= cut_off]
+
 final = final[['location', 'people_fully_vaccinated_per_hundred']]
 final.columns = ['Country', 'Fully vaccinated']
 
@@ -67,6 +80,8 @@ final = final.sort_values(by="Fully vaccinated", ascending=False)
 
 final['Color'] = 'rgb(4, 109, 161)'
 final.loc[final['Country'].str.contains("Australia"), "Color"] = "rgb(204, 10, 17)"
+
+
 
 def makebarChart(df):
 
