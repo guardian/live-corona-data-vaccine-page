@@ -4,3 +4,4 @@ __pycache__/
 __pycache__
 scraperwiki.sqlite
 *.csv
+state_by_state/second-dose-projections.html

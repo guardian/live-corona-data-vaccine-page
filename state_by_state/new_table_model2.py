@@ -70,7 +70,7 @@ def makeProjection(state, cutoff_date):
 	last_doses = temp_state['daily_first_dose_avg'].iloc[-1]
 	
 	current_second_doses = temp_state['SECOND_DOSE_COUNT'].iloc[-1]
-	# print("current second", current_second_doses)
+	print("current second", current_second_doses)
 	current_first_doses = temp_state['FIRST_DOSE_COUNT'].iloc[-1]
 	current_date = temp_state['DATE_AS_AT'].iloc[-1]
 # 	print("currentdate", current_date)
@@ -85,43 +85,43 @@ def makeProjection(state, cutoff_date):
 		first_dose_eq_second = temp_state[temp_state['FIRST_DOSE_COUNT'] >= current_second_doses]['DATE_AS_AT'].iloc[0]
 	
 	current_lag = (current_date - first_dose_eq_second).days + 1
-	# print("current_lag", current_lag)
+	print("current_lag", current_lag)
 	eighty_target = sixteen_pop[state] * 0.8
 	seventy_target = sixteen_pop[state] * 0.7
-	# print("eighty_target", eighty_target)
+	print("eighty_target", eighty_target)
 	eighty_vax_to_go = eighty_target - current_first_doses
 	seventy_vax_to_go = seventy_target - current_first_doses
-	# print("eighty_vax_to_go",eighty_vax_to_go)
+	print("eighty_vax_to_go",eighty_vax_to_go)
 	
 	if (eighty_vax_to_go < 0):
-		# print("80 target already reached")
+		print("80 target already reached")
 		days_to_go_80 = 0
 		eighty_finish_first = temp_state[temp_state['FIRST_DOSE_COUNT'] > eighty_target]['DATE_AS_AT'].iloc[0]
-		# print(eighty_finish_first)
+		print(eighty_finish_first)
 	else:
-		# print("80 target not yet reached")
+		print("80 target not yet reached")
 		days_to_go_80 = int(round(eighty_vax_to_go / current_rolling,0)) + 1
-		# print("days to go 80", days_to_go_80)
+		print("days to go 80", days_to_go_80)
 		eighty_finish_first = current_date + datetime.timedelta(days=days_to_go_80) 
-		# print("eighty_finish_first", eighty_finish_first)
+		print("eighty_finish_first", eighty_finish_first)
 	if (seventy_vax_to_go < 0):
-		# print("70 target already reached")
+		print("70 target already reached")
 		days_to_go_70 = 0
 		seventy_finish_first = temp_state[temp_state['FIRST_DOSE_COUNT'] > seventy_target]['DATE_AS_AT'].iloc[0]
 	else:
-		# print("70 target not yet reached")
+		print("70 target not yet reached")
 		days_to_go_70 = int(round(seventy_vax_to_go / current_rolling,0)) + 1
 		seventy_finish_first = current_date + datetime.timedelta(days=days_to_go_70) 
-		# print("days to go 70", days_to_go_70)
+		print("days to go 70", days_to_go_70)
 
 	
-	# print("current rolling", current_rolling)
+	print("current rolling", current_rolling)
 
 	eighty_finish_second = eighty_finish_first + datetime.timedelta(days=current_lag)
 	
 	days_to_second_80 = (eighty_finish_second - current_date).days + 1
-	# print("days_to_second_80", days_to_second_80)
-	# print("eighty_finish_second",eighty_finish_second)
+	print("days_to_second_80", days_to_second_80)
+	print("eighty_finish_second",eighty_finish_second)
 	seventy_finish_second = seventy_finish_first + datetime.timedelta(days=current_lag)
 	
 	eighty_vax_to_go_second = int(eighty_target - current_second_doses)
