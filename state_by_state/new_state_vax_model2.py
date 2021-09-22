@@ -205,7 +205,7 @@ def makeChart(df):
 	yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"table"}],
     options=[{"colorScheme":"guardian","format": "vanilla","enableSearch": "FALSE","enableSort": "FALSE"}], chartName=f"new-model-state-projections")
 
-# makeChart(newProjectionsDf.copy())
+makeChart(newProjectionsDf.copy())
 
 #%%
 
@@ -220,7 +220,7 @@ def makeCircles():
 	
 	fig.show()
 	
-makeCircles()	
+# makeCircles()	
 
 #%%
 
@@ -286,4 +286,4 @@ def makeStateChart(state):
 	fig.show()
 	fig.write_html("second-dose-projections.html")
 
-makeStateChart(test_state)
+# makeStateChart(test_state)
