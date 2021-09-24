@@ -1,7 +1,7 @@
-import pandas as pd 
+import pandas as pd
 from modules.yachtCharter import yachtCharter
-import datetime 
-import numpy as np 
+import datetime
+import numpy as np
 import os, ssl
 import math
 
@@ -53,7 +53,7 @@ oz = oz[['location', 'date', 'total_vaccinations_per_hundred']]
 oz = oz.loc[oz['total_vaccinations_per_hundred'] > 0]
 
 
-## Load Our World 
+## Load Our World
 
 our_world = pd.read_csv(row_csv, parse_dates=['date'])
 our_world = our_world.sort_values(by="date", ascending=True)
@@ -118,15 +118,15 @@ sinceDayZero = pd.DataFrame()
 for col in includes:
 
 	start = pivoted[col].notna().idxmax()
-	
+
 	tempSeries = pivoted[col][start:]
-	
+
 	tempSeries = tempSeries.replace({0:np.nan})
-	
+
 	tempSeries = tempSeries.reset_index()
-	
+
 	tempSeries = tempSeries.drop(['index'], axis=1)
-	
+
 	sinceDayZero = pd.concat([sinceDayZero, tempSeries], axis=1)
 
 
@@ -150,7 +150,7 @@ upto.to_csv('country-comparison.csv')
 #%%
 
 def makeSince100Chart(df):
-   
+
     template = [
             {
                 "title": "Covid-19 vaccine doses per hundred people for selected countries",
@@ -180,6 +180,6 @@ def makeSince100Chart(df):
     chartData = df.to_dict('records')
     # print(since100.head())
 
-    yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName="vaccines_per_hundred_reindexed_to_50")
+    yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":"guardian", "lineLabelling":"FALSE"}], chartName="vaccines_per_hundred_reindexed_to_50")
 
 makeSince100Chart(upto)
