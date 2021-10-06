@@ -135,8 +135,8 @@ averager = combo.loc[~combo[f"Fully vaccinated: {numberFormat(latest_count)}"].i
 # with open("state_by_state/new-projections.json", 'r') as f:
 # 	projections = json.load(f)
 
-# latest_average = averager[-1:][f'{how_many_days} day rolling average'].values[0]
-latest_average = projections[0]['second_doses_rate_needed']
+latest_average = averager[-1:][f'{how_many_days} day rolling average'].values[0]
+# latest_average = projections[0]['second_doses_rate_needed']
 # print(latest_average)
 
 
