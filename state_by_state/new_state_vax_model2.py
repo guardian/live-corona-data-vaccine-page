@@ -49,13 +49,19 @@ for state in states:
 	temp = temp.rename(columns={f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT':'FIRST_DOSE_COUNT',f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT':'SECOND_DOSE_COUNT'}) 
 	newData = newData.append(temp)
 
+# newData = pd.read_csv("dummy.csv")
 newData['DATE_AS_AT'] = pd.to_datetime(newData['DATE_AS_AT'])
 print(newData['DATE_AS_AT'].dtypes)
-newData.to_csv('temp.csv')
+# newData.to_csv('temp.csv')
+
+# newData = pd.read_csv("dummy.csv")
+
+# test = "test"
+test = ""
 	
 #%%
 
-test_state = "ACT"
+test_state = "AUS"
 
 #%%
 
@@ -128,16 +134,35 @@ def makeProjection(state, cutoff_date):
 		print("days to go 70", days_to_go_70)
 
 	
-	print("current rolling", current_rolling)
-
-	eighty_finish_second = eighty_finish_first + datetime.timedelta(days=current_lag)
-	
-	days_to_second_80 = (eighty_finish_second - current_date).days + 1
-	print("days_to_second_80", days_to_second_80)
-	print("eighty_finish_second",eighty_finish_second)
-	seventy_finish_second = seventy_finish_first + datetime.timedelta(days=current_lag)
-	
 	eighty_vax_to_go_second = int(eighty_target - current_second_doses)
+	seventy_vax_to_go_second = int(seventy_target - current_second_doses)
+
+	print("eighty_vax_to_go_second", eighty_vax_to_go_second, "seventy_vax_to_go_second", seventy_vax_to_go_second)
+	
+	# Check if seventy percent second dose target has already been met
+
+	if (seventy_vax_to_go_second < 0):
+		print("70% second dose target already reached")
+		seventy_finish_second = temp_state[temp_state['SECOND_DOSE_COUNT'] > seventy_target]['DATE_AS_AT'].iloc[0]
+	else:	
+		seventy_finish_second = seventy_finish_first + datetime.timedelta(days=current_lag)
+	
+	# Check if eighty percent second dose target has already been met
+	
+	if (eighty_vax_to_go_second < 0):
+		print("80% second dose target already reached")
+		eighty_finish_second = temp_state[temp_state['SECOND_DOSE_COUNT'] > eighty_target]['DATE_AS_AT'].iloc[0]
+		days_to_second_80 = 0
+	else:	
+		eighty_finish_second = eighty_finish_first + datetime.timedelta(days=current_lag)
+		days_to_second_80 = (eighty_finish_second - current_date).days + 1
+	
+	
+# 	print("days_to_second_80", days_to_second_80)
+# 	print("eighty_finish_second",eighty_finish_second)
+
+# 	
+# 	eighty_vax_to_go_second = int(eighty_target - current_second_doses)
 # 	print(eighty_vax_to_go_second,days_to_go_80,current_lag)
 	second_doses_rate_needed = int(round(eighty_vax_to_go_second / days_to_second_80,0))
 # 	print("eighty_finish", eighty_finish_second)
@@ -159,13 +184,14 @@ for state in states:
 	for day in range(0,14):
 		print("day",day)
 		cutoff_date = (latest_date - datetime.timedelta(days=day))
-# 		print("cutoff", cutoff_date.strftime("%Y-%m-%d"))
+		print("cutoff", cutoff_date.strftime("%Y-%m-%d"))
 		results = makeProjection(state,cutoff_date)
 # 		print(results)
 		row = {"day":day, "recent":(14 - day), "state":state, "eighty_finish_second":results['eighty_finish_second'].strftime("%Y-%m-%d"), "seventy_finish_second":results["seventy_finish_second"].strftime("%Y-%m-%d"),"current_rolling":results['current_rolling'], "second_doses_rate_needed":results['second_doses_rate_needed'], "eighty_target":results['eighty_target'], "seventy_target":results['seventy_target'], "cutoff":cutoff_date}
 		newProjections.append(row)
 	
 newProjectionsDf = pd.DataFrame(newProjections)	
+# newProjectionsDf.to_json("new-projections.json", orient="records")
 
 #%%
 
@@ -200,7 +226,7 @@ def makeChart(df):
 
 
 	yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"table"}],
-    options=[{"colorScheme":"guardian","format": "vanilla","enableSearch": "FALSE","enableSort": "FALSE"}], chartName=f"new-model-state-projections")
+    options=[{"colorScheme":"guardian","format": "vanilla","enableSearch": "FALSE","enableSort": "FALSE"}], chartName=f"new-model-state-projections{test}")
 
 makeChart(newProjectionsDf.copy())
 

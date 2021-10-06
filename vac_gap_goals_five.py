@@ -4,6 +4,7 @@ import pandas as pd
 import datetime
 import numpy as np
 import os, ssl
+
 pd.set_option("display.max_rows", None, "display.max_columns", None)
 
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None)):
@@ -11,8 +12,8 @@ if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unveri
 
 oz_json = 'https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/aus-vaccines.json'
 
-# test = "_test"
-test = ""
+test = "_test"
+# test = ""
 
 def second_builder(start, listers, which):
     # To calculate number of days for the date range
@@ -131,7 +132,11 @@ averager = combo.dropna()
 averager = combo.loc[~combo[f"Fully vaccinated: {numberFormat(latest_count)}"].isna()]
 ## THIS IS WHERE I FIXED TO CORRECT THE MOVING AVERAGE
 
-latest_average = averager[-1:][f'{how_many_days} day rolling average'].values[0]
+# with open("state_by_state/new-projections.json", 'r') as f:
+# 	projections = json.load(f)
+
+# latest_average = averager[-1:][f'{how_many_days} day rolling average'].values[0]
+latest_average = projections[0]['second_doses_rate_needed']
 # print(latest_average)
 
 
@@ -151,7 +156,6 @@ eighty = over_16*0.8
 combo['80% vaxxed'] = combo['Trend']
 combo.loc[combo['80% vaxxed'] > eighty, '80% vaxxed'] = np.nan
 
-
 goal = over_16 * 0.8
 
 rollout_begin = datetime.date(2021, 2, 22)
@@ -161,6 +165,7 @@ days_running = today - rollout_begin
 days_running = days_running.days
 
 # Work out number of days to get to 80% given latest average
+
 num_days = round((goal-latest_count)/latest_average)
 
 end_date = today + datetime.timedelta(days=num_days)
