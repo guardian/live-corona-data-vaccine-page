@@ -88,7 +88,7 @@ oz = oz[['REPORT_DATE', 'PREV_VACC_PEOPLE_CNT']]
 #%%
 ### APPEND GOALS TO DUMMY DATASET
 
-dummy_vals = [x for x in range(0, 400)]
+dummy_vals = [x for x in range(0, 500)]
 
 dummy_date = '2021-02-22'
 
@@ -241,7 +241,7 @@ display_date = datetime.datetime.strftime(display_date, "%-d %B, %Y")
 
 
 
-chart_truncate = end_date + datetime.timedelta(days=31)
+chart_truncate = end_date + datetime.timedelta(days=50)
 
 combo['Date'] = pd.to_datetime(combo['Date'])
 
@@ -279,12 +279,12 @@ def makeTestingLine(df):
     labels = []
     df.fillna("", inplace=True)
     chartData = df.to_dict('records')
-    labels = [{"x":f"{end_date_label}", "y":f"{eighty_goal}", "offset":70,
+    labels = [{"x":f"{end_date_label}", "y":f"{eighty_goal}", "offset":30,
     "text":f"{eighty_goal_text}",
-     "align":"right", "direction":"bottom"},
-     {"x":f"{seventy_end_date_label}", "y":f"{seventy_goal}", "offset":100,
+     "align":"right", "direction":"right"},
+     {"x":f"{seventy_end_date_label}", "y":f"{seventy_goal}", "offset":30,
      "text":f"{seventy_goal_text}",
-      "align":"left", "direction":"top"}]
+      "align":"right", "direction":"right"}]
 
     yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"linechart"}],
     options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName=f"oz_vaccine_tracker_goals_trend_five_trend{test}")
