@@ -141,18 +141,22 @@ def makeProjection(state, cutoff_date):
 	
 	# Check if seventy percent second dose target has already been met
 
+	seventy_reached = False
 	if (seventy_vax_to_go_second < 0):
 		print("70% second dose target already reached")
 		seventy_finish_second = temp_state[temp_state['SECOND_DOSE_COUNT'] > seventy_target]['DATE_AS_AT'].iloc[0]
+		seventy_reached = True
 	else:	
 		seventy_finish_second = seventy_finish_first + datetime.timedelta(days=current_lag)
 	
 	# Check if eighty percent second dose target has already been met
 	
+	eighty_reached = False
 	if (eighty_vax_to_go_second < 0):
 		print("80% second dose target already reached")
 		eighty_finish_second = temp_state[temp_state['SECOND_DOSE_COUNT'] > eighty_target]['DATE_AS_AT'].iloc[0]
 		days_to_second_80 = 0
+		eighty_reached = True
 	else:	
 		eighty_finish_second = eighty_finish_first + datetime.timedelta(days=current_lag)
 		days_to_second_80 = (eighty_finish_second - current_date).days + 1
@@ -166,7 +170,7 @@ def makeProjection(state, cutoff_date):
 # 	print(eighty_vax_to_go_second,days_to_go_80,current_lag)
 	second_doses_rate_needed = int(round(eighty_vax_to_go_second / days_to_second_80,0))
 # 	print("eighty_finish", eighty_finish_second)
-	results = {"current_lag":current_lag, "eighty_finish_first": eighty_finish_first, "seventy_finish_first":seventy_finish_first, "eighty_finish_second":eighty_finish_second, "seventy_finish_second":seventy_finish_second, "current_rolling":current_rolling, "second_doses_rate_needed":second_doses_rate_needed,"eighty_target":eighty_target, "seventy_target":seventy_target}
+	results = {"current_lag":current_lag, "eighty_finish_first": eighty_finish_first, "seventy_finish_first":seventy_finish_first, "eighty_finish_second":eighty_finish_second, "seventy_finish_second":seventy_finish_second, "current_rolling":current_rolling, "second_doses_rate_needed":second_doses_rate_needed,"eighty_target":eighty_target, "seventy_target":seventy_target, "seventy_reached":seventy_reached, "eighty_reached":eighty_reached}
 # 	print(results)
 	return results
 
@@ -187,7 +191,7 @@ for state in states:
 		print("cutoff", cutoff_date.strftime("%Y-%m-%d"))
 		results = makeProjection(state,cutoff_date)
 # 		print(results)
-		row = {"day":day, "recent":(14 - day), "state":state, "eighty_finish_second":results['eighty_finish_second'].strftime("%Y-%m-%d"), "seventy_finish_second":results["seventy_finish_second"].strftime("%Y-%m-%d"),"current_rolling":results['current_rolling'], "second_doses_rate_needed":results['second_doses_rate_needed'], "eighty_target":results['eighty_target'], "seventy_target":results['seventy_target'], "cutoff":cutoff_date}
+		row = {"day":day, "recent":(14 - day), "state":state, "eighty_finish_second":results['eighty_finish_second'].strftime("%Y-%m-%d"), "seventy_finish_second":results["seventy_finish_second"].strftime("%Y-%m-%d"),"current_rolling":results['current_rolling'], "second_doses_rate_needed":results['second_doses_rate_needed'], "eighty_target":results['eighty_target'], "seventy_target":results['seventy_target'], "cutoff":cutoff_date, "seventy_reached": results['seventy_reached'], "eighty_reached": results['eighty_reached']}
 		newProjections.append(row)
 	
 newProjectionsDf = pd.DataFrame(newProjections)	
