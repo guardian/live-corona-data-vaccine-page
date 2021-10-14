@@ -12,8 +12,8 @@ if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unveri
 
 oz_json = 'https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/aus-vaccines.json'
 
-test = "_test"
-# test = ""
+# test = "_test"
+test = ""
 
 def second_builder(start, listers, which):
     # To calculate number of days for the date range
@@ -98,8 +98,6 @@ dummy_df = pd.DataFrame({"Units":1,
 
 dummy_df = dummy_df.loc[dummy_df['Date'] >= "2021-02-22"]
 
-
-
 dummy_combo = pd.merge(dummy_df, original_target, left_on="Date", right_on="Date", how="left")
 
 ## Merge current vaccine total with goal dataframes
@@ -108,7 +106,7 @@ combo = pd.merge(dummy_combo, oz, left_on="Date", right_on="REPORT_DATE", how="l
 combo.rename(columns={'PREV_VACC_PEOPLE_CNT': "Fully vaccinated"}, inplace=True)
 
 combo = combo.sort_values(by="Date", ascending=True)
-
+#%%
 # print(combo)
 
 ## Truncate dataset
@@ -279,12 +277,13 @@ def makeTestingLine(df):
     labels = []
     df.fillna("", inplace=True)
     chartData = df.to_dict('records')
-    labels = [{"x":f"{end_date_label}", "y":f"{eighty_goal}", "offset":30,
-    "text":f"{eighty_goal_text}",
-     "align":"right", "direction":"right"},
-     {"x":f"{seventy_end_date_label}", "y":f"{seventy_goal}", "offset":30,
-     "text":f"{seventy_goal_text}",
-      "align":"right", "direction":"right"}]
+    # labels = [{"x":f"{end_date_label}", "y":f"{eighty_goal}", "offset":30,
+    # "text":f"{eighty_goal_text}",
+    #  "align":"right", "direction":"left"},
+    #  {"x":f"{seventy_end_date_label}", "y":f"{seventy_goal}", "offset":30,
+    #  "text":f"{seventy_goal_text}",
+    #   "align":"right", "direction":"left"}]
+	
 
     yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"linechart"}],
     options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName=f"oz_vaccine_tracker_goals_trend_five_trend{test}")
