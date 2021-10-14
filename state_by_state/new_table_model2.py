@@ -206,7 +206,7 @@ for state in second['STATE'].unique().tolist():
 		else: 
 			latest['Hit 70'] = f"{first_finish_70.day} {first_finish_70.strftime('%b')} - {second_finish_70.day} {second_finish_70.strftime('%b')}"
 	else:
-		latest['Hit 70'] = first_finish_70.strftime('%-d %b')
+		latest['Hit 70'] = first_finish_70.strftime('%-d %b') + " ✓"
 
 	if first_projection['eighty_reached'] == False:
 		if first_finish_80.strftime('%b') == second_finish_80.strftime('%b'):
@@ -214,7 +214,7 @@ for state in second['STATE'].unique().tolist():
 		else:
 			latest['Hit 80'] = f"{first_finish_80.day} {first_finish_80.strftime('%b')} - {second_finish_80.day} {second_finish_80.strftime('%b')}"
 	else:
-		latest['Hit 80'] = second_finish_80.strftime('%-d %b')
+		latest['Hit 80'] = second_finish_80.strftime('%-d %b') + " ✓"
 	listo.append(latest)
 
 table_data = pd.concat(listo)
