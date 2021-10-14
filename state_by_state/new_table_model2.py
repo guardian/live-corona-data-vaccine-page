@@ -199,15 +199,22 @@ for state in second['STATE'].unique().tolist():
 	latest = to_use.loc[to_use['DATE_AS_AT'] == to_use['DATE_AS_AT'].max()].copy()
 
 	latest = latest[['STATE', 'AIR_RESIDENCE_FIRST_DOSE_PCT', 'AIR_RESIDENCE_SECOND_DOSE_PCT']]
-	if first_finish_70.strftime('%b') == second_finish_70.strftime('%b'):
-		latest['Hit 70'] = f"{first_finish_70.day} - {second_finish_70.day} {second_finish_70.strftime('%b')}"
-	else: 
-		latest['Hit 70'] = f"{first_finish_70.day} {first_finish_70.strftime('%b')} - {second_finish_70.day} {second_finish_70.strftime('%b')}"
-
-	if first_finish_80.strftime('%b') == second_finish_80.strftime('%b'):
-		latest['Hit 80'] = f"{first_finish_80.day} - {second_finish_80.day} {second_finish_80.strftime('%b')}"
+	
+	if first_projection['seventy_reached'] == False:
+		if first_finish_70.strftime('%b') == second_finish_70.strftime('%b'):
+			latest['Hit 70'] = f"{first_finish_70.day} - {second_finish_70.day} {second_finish_70.strftime('%b')}"
+		else: 
+			latest['Hit 70'] = f"{first_finish_70.day} {first_finish_70.strftime('%b')} - {second_finish_70.day} {second_finish_70.strftime('%b')}"
 	else:
-		latest['Hit 80'] = f"{first_finish_80.day} {first_finish_80.strftime('%b')} - {second_finish_80.day} {second_finish_80.strftime('%b')}"
+		latest['Hit 70'] = first_finish_70.strftime('%-d %b')
+
+	if first_projection['eighty_reached'] == False:
+		if first_finish_80.strftime('%b') == second_finish_80.strftime('%b'):
+			latest['Hit 80'] = f"{first_finish_80.day} - {second_finish_80.day} {second_finish_80.strftime('%b')}"
+		else:
+			latest['Hit 80'] = f"{first_finish_80.day} {first_finish_80.strftime('%b')} - {second_finish_80.day} {second_finish_80.strftime('%b')}"
+	else:
+		latest['Hit 80'] = second_finish_80.strftime('%-d %b')
 	listo.append(latest)
 
 table_data = pd.concat(listo)
@@ -249,4 +256,4 @@ def makeTable(df):
     yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"table"}],
     options=[{"colorScheme":"guardian","format": "vanilla","enableSearch": "FALSE","enableSort": "FALSE"}], chartName=f"{chart_key}")
 
-# makeTable(table_data)
+makeTable(table_data)
