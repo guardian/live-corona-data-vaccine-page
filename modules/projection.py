@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-def makeProjection(df, cutoff_date):
+def makeProjection(df):
 	
 	# variables set up for state projections
-	
-	today = datetime.datetime.today().date()
-	
+		
 	# assumptions_cutoff = datetime.datetime.strptime("2021-09-01", "%Y-%m-%d")
 	end_year = datetime.datetime.strptime("2022-01-01", "%Y-%m-%d")
 	temp_state = df.copy()
-	temp_state = temp_state[temp_state['DATE_AS_AT'] <= cutoff_date]
+
 	temp_state['daily_first_dose'] = temp_state['FIRST_DOSE_COUNT'].diff(1)
 	temp_state['daily_second_dose'] = temp_state['SECOND_DOSE_COUNT'].diff(1)
 	temp_state['daily_first_dose_avg'] = temp_state['daily_first_dose'].rolling(window=7).mean()
@@ -28,12 +26,8 @@ def makeProjection(df, cutoff_date):
 	current_rolling = int(temp_state['daily_first_dose_avg'].iloc[-1])
 	current_rolling_sec = int(temp_state['daily_second_dose_avg'].iloc[-1])
 	# Handle data change in NT and ACT
-	change_date = "2021-07-28"
-	if state == "ACT" or state == "NT":
-		temp_temp_state = temp_state[temp_state['DATE_AS_AT'] >= change_date]
-		first_dose_eq_second = temp_temp_state[temp_temp_state['FIRST_DOSE_COUNT'] >= current_second_doses]['DATE_AS_AT'].iloc[0]
-	else:	
-		first_dose_eq_second = temp_state[temp_state['FIRST_DOSE_COUNT'] >= current_second_doses]['DATE_AS_AT'].iloc[0]
+
+	first_dose_eq_second = temp_state[temp_state['FIRST_DOSE_COUNT'] >= current_second_doses]['DATE_AS_AT'].iloc[0]
 	
 	current_lag = (current_date - first_dose_eq_second).days + 1
 	print("current_lag", current_lag)

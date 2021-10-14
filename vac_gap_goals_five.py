@@ -85,6 +85,12 @@ first_date = datetime.datetime.strftime(oz['REPORT_DATE'].min(), "%Y-%m-%d")
 
 oz = oz[['REPORT_DATE', 'PREV_VACC_PEOPLE_CNT']]
 
+
+#%%
+
+
+
+
 #%%
 ### APPEND GOALS TO DUMMY DATASET
 
@@ -236,7 +242,6 @@ display_date = datetime.datetime.strftime(display_date, "%-d %B, %Y")
 
 # print(combo)
 # print(combo)
-
 
 
 chart_truncate = end_date + datetime.timedelta(days=50)
