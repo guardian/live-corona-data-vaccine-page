@@ -103,6 +103,10 @@ updated_date = datetime.datetime.strftime(updated_date, "%d %B %Y")
 
 # print(combo)
 
+nsw_max = combo['NSW'].max()
+vic_max = combo['VIC'].max()
+act_max = combo['ACT'].max()
+
 def makeLineChart(df):
 
     template = [
@@ -138,3 +142,8 @@ def makeLineChart(df):
 
 makeLineChart(combo)
 # %%
+
+
+print(f"NSW so far: {nsw_max}")
+print(f"VIC so far: {vic_max}")
+print(f"ACT so far: {act_max}")
