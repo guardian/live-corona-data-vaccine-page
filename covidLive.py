@@ -30,7 +30,7 @@ aus_vacc = df[df['NAME'] == "Australia"].copy()
 aus_vacc = aus_vacc[aus_vacc['REPORT_DATE'] >= '2021-02-14']
 
 aus_vacc_final = aus_vacc[['REPORT_DATE', 'LAST_UPDATED_DATE', 'ACTIVE_CNT',
-'PREV_ACTIVE_CNT','CODE', 'NAME', 'RECOV_CNT','VACC_DIST_CNT', 'PREV_VACC_DIST_CNT', 'VACC_DOSE_CNT', 'PREV_VACC_DOSE_CNT', 'VACC_PEOPLE_CNT', 'PREV_VACC_PEOPLE_CNT']]
+'PREV_ACTIVE_CNT','CODE', 'NAME', 'RECOV_CNT','VACC_DIST_CNT', 'PREV_VACC_DIST_CNT', 'VACC_DOSE_CNT', 'PREV_VACC_DOSE_CNT', 'VACC_PEOPLE_CNT', 'PREV_VACC_PEOPLE_CNT', "VACC_FIRST_DOSE_CNT_12_15",  "PREV_VACC_FIRST_DOSE_CNT_12_15", "VACC_PEOPLE_CNT_12_15", "PREV_VACC_PEOPLE_CNT_12_15"]]
 
 aus_vacc_finalJson = aus_vacc_final.to_json(orient='records')
 
@@ -65,7 +65,7 @@ aus_cases_finalJson = aus_cases.to_json(orient='records')
 
 ## Sync
 
-syncData(aus_vacc_finalJson, "2021/02/coronavirus-widget-data", "aus-vaccines.json")
+syncData(aus_vacc_finalJson, "2021/02/coronavirus-widget-data", "aus-vaccines2.json")
 syncData(states_vacc_finalJson, "2021/02/coronavirus-widget-data", "state-vaccine-rollout.json")
 syncData(aus_cases_finalJson, "2021/02/coronavirus-widget-data", "oz-covid-cases.json")
 

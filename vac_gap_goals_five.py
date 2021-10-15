@@ -4,13 +4,14 @@ import pandas as pd
 import datetime
 import numpy as np
 import os, ssl
+import requests
 
 pd.set_option("display.max_rows", None, "display.max_columns", None)
 
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None)):
     ssl._create_default_https_context = ssl._create_unverified_context
 
-oz_json = 'https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/aus-vaccines.json'
+oz_json = 'https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/aus-vaccines2.json'
 
 # test = "_test"
 test = ""
@@ -83,12 +84,20 @@ latest_count = oz['PREV_VACC_PEOPLE_CNT'].max()
 last_date = datetime.datetime.strftime(oz['REPORT_DATE'].max(), "%Y-%m-%d")
 first_date = datetime.datetime.strftime(oz['REPORT_DATE'].min(), "%Y-%m-%d")
 
-oz = oz[['REPORT_DATE', 'PREV_VACC_PEOPLE_CNT']]
+# Remove 12 - 15 yos
 
+oz['PREV_VACC_PEOPLE_CNT'] = oz['PREV_VACC_PEOPLE_CNT'] - oz["PREV_VACC_PEOPLE_CNT_12_15"]
+# oz['PREV_VACC_DOSE_CNT'] = oz['PREV_VACC_DOSE_CNT'] - oz["VACC_FIRST_DOSE_CNT_12_15"]
+
+# oz['first_dose'] = oz['PREV_VACC_DOSE_CNT'] - oz['PREV_VACC_PEOPLE_CNT'] - oz["VACC_FIRST_DOSE_CNT_12_15"]
+
+oz = oz[['REPORT_DATE', 'PREV_VACC_PEOPLE_CNT', 'PREV_VACC_DOSE_CNT']]
 
 #%%
 
+projections = requests.get("https://interactive.guim.co.uk/yacht-charter-data/new-model-state-projections.json").json()['sheets']['data']
 
+projections = [x for x in projections if x['state'] == "AUS"][0]
 
 
 #%%
@@ -146,10 +155,10 @@ latest_average = averager[-1:][f'{how_many_days} day rolling average'].values[0]
 
 combo['Trend'] = combo['Incremental']
 combo.loc[combo['Date'] == first_date, 'Trend'] = 20
-combo.loc[combo['Date'] >= last_date, 'Trend'] = latest_average
+combo.loc[combo['Date'] > last_date, 'Trend'] = projections['second_doses_rate_needed']
 combo['Trend'] = round(combo['Trend'].cumsum())
-combo.loc[combo['Date'] < last_date, 'Trend'] = np.nan
-
+combo.loc[combo['Date'] <= last_date, 'Trend'] = np.nan
+#%%
 
 ### WORK OUT TIME TO 80% OF 16+
 
