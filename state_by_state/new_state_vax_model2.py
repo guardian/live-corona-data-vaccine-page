@@ -168,7 +168,16 @@ def makeProjection(state, cutoff_date):
 # 	
 # 	eighty_vax_to_go_second = int(eighty_target - current_second_doses)
 # 	print(eighty_vax_to_go_second,days_to_go_80,current_lag)
-	second_doses_rate_needed = int(round(eighty_vax_to_go_second / days_to_second_80,0))
+	# if 
+
+
+	## 21/10 New conditional to stop the divsion error:
+
+	if days_to_second_80 == 0:
+		second_doses_rate_needed = 0
+	else:
+		second_doses_rate_needed = int(round(eighty_vax_to_go_second / days_to_second_80,0))
+
 # 	print("eighty_finish", eighty_finish_second)
 	results = {"current_lag":current_lag, "eighty_finish_first": eighty_finish_first, "seventy_finish_first":seventy_finish_first, "eighty_finish_second":eighty_finish_second, "seventy_finish_second":seventy_finish_second, "current_rolling":current_rolling, "second_doses_rate_needed":second_doses_rate_needed,"eighty_target":eighty_target, "seventy_target":seventy_target, "seventy_reached":seventy_reached, "eighty_reached":eighty_reached}
 # 	print(results)
