@@ -90,6 +90,8 @@ def together(state, new_data, past, start):
 
 old = together(statto, new, fillo, init)  
 
+old = old.dropna()
+
 # print(old.tail())
 
 #%%

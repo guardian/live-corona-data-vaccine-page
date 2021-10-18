@@ -4,7 +4,8 @@ import pandas as pd
 import datetime
 chart_key = f"oz-covid-act-july2021-outbreak"
 import os 
-# from modules.yachtCharter import yachtCharter
+from modules.yachtCharter import yachtCharter
+import numpy as np
 
 #%%
 
@@ -54,6 +55,8 @@ def together(state, new_data, past, start):
 
     inter.columns = ['Date', 'Locally-acquired cases']
 
+
+
     old_data['Date'] = pd.to_datetime(old_data['Date'], format="%d/%m/%Y")
     old_data['Date'] = old_data['Date'].dt.strftime("%Y-%m-%d")
 
@@ -82,6 +85,8 @@ def together(state, new_data, past, start):
 
 
     old_data = old_data[['Date', 'Locally-acquired cases']]
+    old_data.replace(["NaN", 'NaT'], np.nan, inplace = True)
+
 
     print(old_data.tail())
 
@@ -89,6 +94,8 @@ def together(state, new_data, past, start):
 
 
 old = together(statto, znew, fillo, init)  
+
+old = old.dropna()
 
 print(old.tail())
 
@@ -156,5 +163,5 @@ def makeTestingLine(df):
     yachtCharter(template=template, labels=labels, key=key, trendline=roll, data=chartData, chartId=[{"type":"stackedbar"}],
     options=[{"colorScheme":"guardian"}], chartName=f"{chart_key}")
 
-# makeTestingLine(old)
+makeTestingLine(old)
 
