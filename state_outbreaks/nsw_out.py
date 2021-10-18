@@ -12,6 +12,7 @@ from modules.yachtCharter import yachtCharter
 fillo = 'https://docs.google.com/spreadsheets/d/1t3l50GPkIib2lzPRfXlVW4P4Z-xYak3VwjhZH3T6Rw4/pub?gid=1454102594&single=True&output=csv'
 
 statto = "NSW"
+init = "2021-06-26"
 
 #%%
 
@@ -27,20 +28,23 @@ new = pd.read_json(r.text)
 #%%
 
 
-def together(state, new_data, past):
+def together(state, new_data, past, start):
 
     ### Grab old data 
 
-    old_data = pd.read_csv(past, parse_dates=['Date'])
-    old_data = old_data.loc[old_data['Date'] <= "2021-10-15"]
+    old_data = pd.read_csv(past)
 
     ## Subset data
     inter = new_data.loc[new_data['CODE'] == state].copy()
 
     inter['REPORT_DATE'] = pd.to_datetime(inter['REPORT_DATE'])
     inter = inter.sort_values(by=['REPORT_DATE'], ascending=True)
-    inter['REPORT_DATE'] = inter['REPORT_DATE'].dt.strftime("%Y-%m-%d")
 
+    # Reduce days by one day to get the actual date
+    inter['REPORT_DATE'] = inter['REPORT_DATE'] - datetime.timedelta(days=1)
+
+
+    inter['REPORT_DATE'] = inter['REPORT_DATE'].dt.strftime("%Y-%m-%d")
 
     ## Calculate new local cases
     inter['New_local'] = inter['CASE_CNT'] - inter['SRC_OVERSEAS_CNT']
@@ -50,23 +54,34 @@ def together(state, new_data, past):
 
     inter.columns = ['Date', 'Locally-acquired cases']
 
+    old_data['Date'] = pd.to_datetime(old_data['Date'], format="%d/%m/%Y")
     old_data['Date'] = old_data['Date'].dt.strftime("%Y-%m-%d")
+
     latest_date = old_data['Date'].max()
 
+    new_index = pd.date_range(start, inter['Date'].max())
 
-    ## Cutoff new data for existing values in the dataset
-    inter = inter.loc[inter['Date'] > latest_date]
+    old_data.index = pd.DatetimeIndex(old_data['Date'])
+    old_data = old_data.reindex(new_index, fill_value='NaN').reset_index()
+    old_data = old_data[['index', 'Locally-acquired cases']]
+    old_data.columns = ['Date', 'Locally-acquired cases']
+    old_data['Date'] = old_data['Date'].dt.strftime("%Y-%m-%d")
 
-    ## Combine
+    inter = inter.loc[inter['Date'] >= start]
 
-    combo = pd.concat([old_data, inter])
+    old_data = old_data.reset_index()
+    inter = inter.reset_index()
 
-    # print(combo)
+    ## Combine and update missing values
 
-    return combo
+    old_data['Locally-acquired cases'].update(inter['Locally-acquired cases'])
+
+    old_data = old_data[['Date', 'Locally-acquired cases']]
+
+    return old_data
 
 
-old = together(statto, new, fillo)  
+old = together(statto, new, fillo, init)  
 
 #%%
 
@@ -86,6 +101,7 @@ roll = roll.to_dict(orient='records')
 
 last_updated = old['Date'].max()
 last_updated = datetime.datetime.strptime(last_updated, "%Y-%m-%d")
+last_updated = last_updated + datetime.timedelta(days=1)
 display_date = datetime.datetime.strftime(last_updated, "%-d %B %Y")
 
 
