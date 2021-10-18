@@ -97,8 +97,8 @@ roll = roll[['Date', 'Trend']]
 
 tog = pd.merge(old, roll, on='Date', how='left')
 
-with open(f"state_outbreaks/output/{statto}.csv", "w") as f:
-    tog.to_csv(f, index=False, header=True)
+# with open(f"state_outbreaks/output/{statto}.csv", "w") as f:
+#     tog.to_csv(f, index=False, header=True)
 
 
 roll.fillna('', inplace=True)
