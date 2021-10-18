@@ -71,15 +71,24 @@ def together(state, new_data, past, start):
     inter = inter.reset_index()
 
     ## Combine and update missing values
+    print(statto)
+    print("sheet",old_data.tail())
 
-    old_data['Locally-acquired cases'].update(inter['Locally-acquired cases'])
+    # old_data['Locally-acquired cases'].update(inter['Locally-acquired cases'])
+    old_data.update(inter)
+    
+
 
     old_data = old_data[['Date', 'Locally-acquired cases']]
+
+    print(old_data.tail())
 
     return old_data
 
 
 old = together(statto, new, fillo, init)  
+
+print(old.tail())
 
 #%%
 

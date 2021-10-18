@@ -4,7 +4,7 @@ import pandas as pd
 import datetime
 chart_key = f"oz-covid-act-july2021-outbreak"
 import os 
-from modules.yachtCharter import yachtCharter
+# from modules.yachtCharter import yachtCharter
 
 #%%
 
@@ -73,15 +73,24 @@ def together(state, new_data, past, start):
     inter = inter.reset_index()
 
     ## Combine and update missing values
+    print(statto)
+    print("sheet",old_data.tail())
 
-    old_data['Locally-acquired cases'].update(inter['Locally-acquired cases'])
+    # old_data['Locally-acquired cases'].update(inter['Locally-acquired cases'])
+    old_data.update(inter)
+    
+
 
     old_data = old_data[['Date', 'Locally-acquired cases']]
+
+    print(old_data.tail())
 
     return old_data
 
 
 old = together(statto, znew, fillo, init)  
+
+print(old.tail())
 
 # %%
 
@@ -147,5 +156,5 @@ def makeTestingLine(df):
     yachtCharter(template=template, labels=labels, key=key, trendline=roll, data=chartData, chartId=[{"type":"stackedbar"}],
     options=[{"colorScheme":"guardian"}], chartName=f"{chart_key}")
 
-makeTestingLine(old)
+# makeTestingLine(old)
 
