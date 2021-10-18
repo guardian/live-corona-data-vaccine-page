@@ -13,8 +13,8 @@ if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unveri
 
 oz_json = 'https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/aus-vaccines2.json'
 
-test = "_test"
-# test = ""
+# test = "_test"
+test = ""
 
 def second_builder(start, listers, which):
     # To calculate number of days for the date range
