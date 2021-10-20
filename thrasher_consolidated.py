@@ -24,7 +24,6 @@ data = r.json()
 
 clive = pd.read_json(r.text)
 
-
 ## Get the latest hostpital count
 hospital = round( clive["MED_HOSP_CNT"][0] )
 
@@ -47,14 +46,22 @@ updated = clive["LAST_UPDATED_DATE"][0]
 #        'PREV_VACC_PEOPLE_CNT', 'VACC_AGED_CARE_CNT', 'PREV_VACC_AGED_CARE_CNT',
 #        'VACC_GP_CNT', 'PREV_VACC_GP_CNT'
 
+# clive['PREV_VACC_PEOPLE_CNT'] = clive['PREV_VACC_PEOPLE_CNT'].astype('Int64', errors='raise')
+
+clive = clive[['REPORT_DATE', 'CODE', 'NAME', 'PREV_VACC_DOSE_CNT', 'PREV_VACC_PEOPLE_CNT','ACTIVE_CNT', 'PREV_ACTIVE_CNT', "PREV_VACC_FIRST_DOSE_CNT_12_15", "PREV_VACC_PEOPLE_CNT_12_15"]]
+
+# clive = clive[['REPORT_DATE', 'CODE', 'NAME', 'PREV_VACC_DOSE_CNT', 'PREV_VACC_PEOPLE_CNT','ACTIVE_CNT', 'PREV_ACTIVE_CNT']]
+
 #print(type(clive))
-
+# num = clive.select_dtypes(np.number)
+# clive[num.columns ]= num.astype('Int64', errors='ignore')
 #print(clive[['REPORT_DATE','CODE','ACTIVE_CNT', 'PREV_ACTIVE_CNT']].head(20))
-
 #%%
 
-clive = clive[['REPORT_DATE', 'CODE', 'NAME', 'PREV_VACC_DOSE_CNT', 'PREV_VACC_PEOPLE_CNT','ACTIVE_CNT', 'PREV_ACTIVE_CNT']]
 
+
+
+#%%
 # Population counts:
 oz_pop = 25693.1 * 1000
 oz_16_pop = 20619959
@@ -72,22 +79,23 @@ areas = [('NT', nt_pop), ('NSW', nsw_pop), ('VIC', vic_pop), ('ACT', act_pop), (
 first_listo = []
 
 for area in areas:
-    inter = clive.loc[clive['CODE'] == area[0]].copy()
-    inter['Change_active_last_seven'] = inter['PREV_ACTIVE_CNT'].diff(-7)
-    inter['Vax_per_hundred'] = round((inter['PREV_VACC_DOSE_CNT']/area[1])*100, 2)
-    inter['Fully_vaxxed_per_hundred'] = round((inter['PREV_VACC_PEOPLE_CNT']/area[1])*100, 2)
-    inter = inter.loc[inter['REPORT_DATE'] == inter['REPORT_DATE'].max()]
+	inter = clive.loc[clive['CODE'] == area[0]].copy()
+	inter['Change_active_last_seven'] = inter['PREV_ACTIVE_CNT'].diff(-7)
+	inter['Vax_per_hundred'] = round((inter['PREV_VACC_DOSE_CNT']/area[1])*100, 2)
+	inter['Fully_vaxxed_per_hundred'] = round((inter['PREV_VACC_PEOPLE_CNT']/area[1])*100, 2)
+	inter = inter.loc[inter['REPORT_DATE'] == inter['REPORT_DATE'].max()]
 
-    # CHECK IF ACTIVE IS NULL, IF SO USE PREVIOUS
-    latest = inter.loc[inter['REPORT_DATE'] == inter['REPORT_DATE'].max()].copy()
-    inter['Active'] = inter['ACTIVE_CNT']
-    if np.isnan(latest['ACTIVE_CNT'].values[0]):
-        inter['Active'] = inter['PREV_ACTIVE_CNT']
+	# CHECK IF ACTIVE IS NULL, IF SO USE PREVIOUS
+	latest = inter.loc[inter['REPORT_DATE'] == inter['REPORT_DATE'].max()].copy()
+	inter['Active'] = inter['ACTIVE_CNT']
+	if np.isnan(latest['ACTIVE_CNT'].values[0]):
+		inter['Active'] = inter['PREV_ACTIVE_CNT']
 
-    if area[0] == "AUS":
-        inter['Fully_vaxxed_per_16_plus'] = round((inter['PREV_VACC_PEOPLE_CNT']/oz_16_pop)*100, 2)
+	if area[0] == "AUS":
+		 inter['Fully_vaxxed_per_16_plus'] = round(((inter['PREV_VACC_PEOPLE_CNT'] - inter["PREV_VACC_PEOPLE_CNT_12_15"])/oz_16_pop)*100, 2)
+# 		inter['Fully_vaxxed_per_16_plus'] = round(((inter['PREV_VACC_PEOPLE_CNT'])/oz_16_pop)*100, 2)
 
-    first_listo.append(inter)
+	first_listo.append(inter)
 
 
 clive = pd.concat(first_listo)
@@ -115,9 +123,9 @@ row = row.loc[row['location'].isin(oecd)]
 listo = []
 
 for country in row['location'].unique().tolist():
-    inter = row.loc[row['location'] == country].copy()
-    latest = inter.loc[inter['people_fully_vaccinated_per_hundred'] == inter['people_fully_vaccinated_per_hundred'].max()]
-    listo.append(latest)
+	inter = row.loc[row['location'] == country].copy()
+	latest = inter.loc[inter['people_fully_vaccinated_per_hundred'] == inter['people_fully_vaccinated_per_hundred'].max()]
+	listo.append(latest)
 
 final = pd.concat(listo)
 
@@ -150,32 +158,35 @@ cliveJson = clive.to_json(orient='records')
 
 #print(type(clive))
 
+
 feed = []
 
 for item in first_listo:
 
-    listicle = item.values.tolist()
+# 	listicle = item.values.tolist()
 
-    value = round( listicle[0][6] ) if math.isnan(listicle[0][5]) else round( listicle[0][5])
+	value = round( item['PREV_ACTIVE_CNT'].iloc[0] ) if math.isnan(item['ACTIVE_CNT'].iloc[0]) else round( item['ACTIVE_CNT'].iloc[0])
 
-    feed.append([ listicle[0][1] , value ])
+	feed.append([ item['CODE'].iloc[0] , value ])
 
-    if listicle[0][7] < 0:
-        status = 'decrease'
-    elif listicle[0][7] > 0:
-        status = 'increase'
-    else:
-        status = 'none'
+	if item['Change_active_last_seven'].iloc[0] < 0:
+		status = 'decrease'
+	elif item['Change_active_last_seven'].iloc[0]  > 0:
+		status = 'increase'
+	else:
+		status = 'none'
 
-    feed.append([ listicle[0][1] + "_status" , status ])
+	feed.append([ item['CODE'].iloc[0] + "_status" , status ])
 
-australia = clive.loc[clive['NAME'] == "Australia"].values.tolist()
+australia = clive.loc[clive['NAME'] == "Australia"]
+print(australia['Fully_vaxxed_per_hundred'].iloc[0])
 
-feed.append(["FULL" , australia[0][9] ])
+#%%
+feed.append(["FULL" , australia['Fully_vaxxed_per_hundred'].iloc[0] ])
 
-feed.append(["SIXTEEN" , australia[0][11] ])
+feed.append(["SIXTEEN" , australia['Fully_vaxxed_per_16_plus'].iloc[0]])
 
-feed.append(["OECD" , round( australia[0][12] ) ])
+feed.append(["OECD" , round( australia['OECD_rank'].iloc[0] ) ])
 
 feed.append(["HOSPITAL" , hospital ])
 
@@ -185,7 +196,7 @@ feed.append(["UPDATED" , updated ])
 
 consolidated = {}
 for row in feed:
-    consolidated[row[0]] = row[1]
+	consolidated[row[0]] = row[1]
 
 #with open("consolidated.json", "w") as data_file: 
 #   json.dump(consolidated, data_file, indent=2)
