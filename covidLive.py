@@ -96,3 +96,7 @@ import state_by_state.new_table_model2
 # import vaccineDosesState
 
 #%%
+
+import state_outbreaks.act_out
+import state_outbreaks.vic_out
+import state_outbreaks.nsw_out
