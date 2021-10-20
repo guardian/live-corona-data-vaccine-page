@@ -5,6 +5,7 @@ import datetime
 chart_key = f"oz-covid-vic-july2021-outbreak"
 import os 
 from modules.yachtCharter import yachtCharter
+import numpy as np 
 
 #%%
 
@@ -22,6 +23,8 @@ r = requests.get('https://covidlive.com.au/covid-live.json', headers=headers)
 new = r.json()
 new = pd.read_json(r.text)
 
+# new.loc[new['REPORT_DATE'] == "2021-10-21", 'CASE_CNT'] = np.nan 
+# new.loc[new['REPORT_DATE'] == "2021-10-21", 'SRC_OVERSEAS_CNT'] = np.nan 
 
 #%%
 
@@ -52,6 +55,8 @@ def together(state, new_data, past, start):
 
     inter.columns = ['Date', 'Locally-acquired cases']
 
+
+
     old_data['Date'] = pd.to_datetime(old_data['Date'], format="%d/%m/%Y")
     old_data['Date'] = old_data['Date'].dt.strftime("%Y-%m-%d")
 
@@ -80,6 +85,8 @@ def together(state, new_data, past, start):
 
 
     old_data = old_data[['Date', 'Locally-acquired cases']]
+    old_data.replace(["NaN", 'NaT'], np.nan, inplace = True)
+
 
     print(old_data.tail())
 

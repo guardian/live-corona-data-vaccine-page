@@ -5,6 +5,7 @@ import datetime
 chart_key = f"oz-covid-nsw-june2021-outbreak"
 import os 
 from modules.yachtCharter import yachtCharter
+import numpy as np
 
 #%%
 
@@ -54,6 +55,8 @@ def together(state, new_data, past, start):
 
     inter.columns = ['Date', 'Locally-acquired cases']
 
+
+
     old_data['Date'] = pd.to_datetime(old_data['Date'], format="%d/%m/%Y")
     old_data['Date'] = old_data['Date'].dt.strftime("%Y-%m-%d")
 
@@ -82,6 +85,8 @@ def together(state, new_data, past, start):
 
 
     old_data = old_data[['Date', 'Locally-acquired cases']]
+    old_data.replace(["NaN", 'NaT'], np.nan, inplace = True)
+
 
     print(old_data.tail())
 
