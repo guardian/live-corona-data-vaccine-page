@@ -21,36 +21,36 @@ oz_json = 'https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/aus-va
 row_csv = 'https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv'
 
 #%%
-oz_pop = 25203000
-# https://ourworldindata.org/grapher/population
+# oz_pop = 25203000
+# # https://ourworldindata.org/grapher/population
 
-# Sort out Australia's vaccination per hundred
+# # Sort out Australia's vaccination per hundred
 
-oz = pd.read_json(oz_json)
+# oz = pd.read_json(oz_json)
+
+# #%%
+# oz['REPORT_DATE'] = pd.to_datetime(oz['REPORT_DATE'])
+# # oz = oz.sort_values(by ="REPORT_DATE", ascending=True)
+
+# oz['total_vaccinations_per_hundred'] = (oz["VACC_DOSE_CNT"] / oz_pop) * 100
+# oz['location'] = "Australia"
+# oz = oz.sort_values(by="REPORT_DATE", ascending=True)
+# last_date = oz.iloc[-1:]["REPORT_DATE"].dt.strftime("%d %B %Y").values[0]
+
+# # last_date = datetime.datetime.strftime(last_date, "%d %B %Y")
+
+# print(oz)
 
 #%%
-oz['REPORT_DATE'] = pd.to_datetime(oz['REPORT_DATE'])
-# oz = oz.sort_values(by ="REPORT_DATE", ascending=True)
+# # last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d %H:%M:%S")
+# # last_date = last_date.strftime("%Y-%m-%d")
+# # print(last_date)
 
-oz['total_vaccinations_per_hundred'] = (oz["VACC_DOSE_CNT"] / oz_pop) * 100
-oz['location'] = "Australia"
-oz = oz.sort_values(by="REPORT_DATE", ascending=True)
-last_date = oz.iloc[-1:]["REPORT_DATE"].dt.strftime("%d %B %Y").values[0]
+# oz.rename(columns={"REPORT_DATE":"date"}, inplace=True)
 
-# last_date = datetime.datetime.strftime(last_date, "%d %B %Y")
+# oz = oz[['location', 'date', 'total_vaccinations_per_hundred']]
 
-
-
-#%%
-# last_date = datetime.datetime.strptime(last_date, "%Y-%m-%d %H:%M:%S")
-# last_date = last_date.strftime("%Y-%m-%d")
-# print(last_date)
-
-oz.rename(columns={"REPORT_DATE":"date"}, inplace=True)
-
-oz = oz[['location', 'date', 'total_vaccinations_per_hundred']]
-
-oz = oz.loc[oz['total_vaccinations_per_hundred'] > 0]
+# oz = oz.loc[oz['total_vaccinations_per_hundred'] > 0]
 
 
 ## Load Our World
@@ -84,7 +84,7 @@ uk = uk[['date','total_vaccinations_per_hundred', 'location']]
 # Sort out everyone else from Our World in Data
 
 
-countries = ['United States', "European Union", "South Korea", "Japan"]
+countries = ["Australia", 'United States', "European Union", "South Korea", "Japan"]
 our_world = our_world.loc[our_world["location"].isin(countries)]
 
 our_world = our_world[['date','total_vaccinations_per_hundred', 'location']]
@@ -92,17 +92,19 @@ our_world = our_world[['date','total_vaccinations_per_hundred', 'location']]
 
 our_world = our_world.append(uk)
 
+# print(our_world['location'].unique())
 
-# Append Australia to rest of the world
 
-combined = our_world.append(oz)
-combined = combined.sort_values(by="date", ascending=True)
-combined['date'] = combined['date'].dt.strftime('%Y-%m-%d')
+# # Append Australia to rest of the world
+
+# combined = our_world.append(oz)
+# combined = combined.sort_values(by="date", ascending=True)
+# combined['date'] = combined['date'].dt.strftime('%Y-%m-%d')
 
 #%%
 # Pivot the dataframe
 
-pivoted = combined.pivot(index="date", columns='location')['total_vaccinations_per_hundred'].reset_index()
+pivoted = our_world.pivot(index="date", columns='location')['total_vaccinations_per_hundred'].reset_index()
 pivoted = pivoted.replace({'0':np.nan, 0:np.nan})
 pivoted = pivoted.ffill(axis=0)
 
@@ -146,6 +148,7 @@ upto = sinceDayZero[:cut_off].copy()
 
 upto.to_csv('country-comparison.csv')
 
+last_date = our_world.iloc[-1:]["date"].dt.strftime("%d %B %Y").values[0]
 
 #%%
 

@@ -227,6 +227,18 @@ for state in second['STATE'].unique().tolist():
 table_data = pd.concat(listo)
 table_data.columns = ['State', 'First dose %', 'Second dose %', "Expected to hit 70% second dose", "Expected to hit 80% second dose"]
 
+
+
+## Add greater than signs when they reach 95
+
+table_data.loc[table_data['First dose %'] >= 95, 'First dose %'] = "> " + table_data.loc[table_data['First dose %'] >= 95].astype(str)
+table_data.loc[table_data['Second dose %'] >= 95, 'Second dose %'] = "> " + table_data.loc[table_data['Second dose %'] >= 95].astype(str)
+
+# table_data.loc[table_data['First dose %'] >= 95, 'First dose %'] = table_data.loc[table_data['First dose %'] >= 95].str.strip()
+
+table_data['First dose %'] = table_data['First dose %'].astype(str)
+table_data['First dose %'] = table_data['First dose %'].str.strip()
+# print(table_data['Second dose %'])
 # print(table_data)
 # print(table_data.columns.tolist())
 # %%
