@@ -233,6 +233,7 @@ def makeProjection(state, cutoff_date):
 
 	if state == "QLD":
 		print(state)
+		print("ninety_target",ninety_target)
 		print("current_lag", current_lag)
 		# print("eighty_target", eighty_target)
 		# print("Ninety target", ninety_target)
