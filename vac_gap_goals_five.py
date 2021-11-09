@@ -280,12 +280,14 @@ combo['Date'] = combo['Date'].dt.strftime('%Y-%m-%d')
 
 # hit_80 = ['70% by EOY']
 
+
 def makeTestingLine(df):
 
     template = [
             {
                 "title": "Tracking the Covid-19 vaccine rollout in Australia",
                 "subtitle": f"""Showing the number of Australians that are fully vaccinated, the federal government's <a href='https://www.theguardian.com/news/datablog/2021/feb/28/is-australias-goal-of-vaccinating-the-entire-adult-population-by-october-achievable' target='_blank'>original rollout goal</a>, and theshholds for 70, 80 and 90% of the 16+ population. Based on the current seven-day average of first doses per day and the lag time between first and second dose numbers, Australia may vaccinate 90% of the 16+ population <b style="color:rgb(245, 189, 44)">around {end_date_formated}</b>. Last updated {display_date}<br>""",
+                # "subtitle": f"""Showing the number of Australians that are fully vaccinated, the federal government's <a href='https://www.theguardian.com/news/datablog/2021/feb/28/is-australias-goal-of-vaccinating-the-entire-adult-population-by-october-achievable' target='_blank'>original rollout goal</a>, and theshholds for 70, 80 and 90% of the 16+ population; and a <b style="color:rgb(245, 189, 44)">trend</b> based on the current seven-day average of first doses per day and the lag time between first and second dose numbers. Last updated {display_date}<br>""",
                 "footnote": "",
                 "source": "| Sources: Covidlive.com.au, Department of Health 14 March 2021 COVID-19 vaccine rollout update",
                 "dateFormat": "%Y-%m-%d",
