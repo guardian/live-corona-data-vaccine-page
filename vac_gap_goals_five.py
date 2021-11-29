@@ -97,7 +97,14 @@ oz = oz[['REPORT_DATE', 'PREV_VACC_PEOPLE_CNT', 'PREV_VACC_DOSE_CNT']]
 
 projections = requests.get("https://interactive.guim.co.uk/yacht-charter-data/new-model-state-projections.json").json()['sheets']['data']
 
+# tested = [x for x in projections if x['state'] == "AUS"]
+# print(tested[0])
+# tested = sorted(tested, key=lambda x: x['ninety_finish_second'])
+# print(tested[0])
+
 projections = [x for x in projections if x['state'] == "AUS"][0]
+
+
 
 
 #%%
@@ -150,12 +157,13 @@ averager = combo.loc[~combo[f"Fully vaccinated: {numberFormat(latest_count)}"].i
 
 latest_average = averager[-1:][f'{how_many_days} day rolling average'].values[0]
 # latest_average = projections[0]['second_doses_rate_needed']
-# print(latest_average)
+print("average", latest_average)
 
 
 combo['Trend'] = combo['Incremental']
 combo.loc[combo['Date'] == first_date, 'Trend'] = 20
-combo.loc[combo['Date'] > last_date, 'Trend'] = projections['second_doses_rate_needed']
+combo.loc[combo['Date'] > last_date, 'Trend'] = projections['ninety_second_doses_needed']
+# combo.loc[combo['Date'] > last_date, 'Trend'] = latest_average
 combo['Trend'] = round(combo['Trend'].cumsum())
 combo.loc[combo['Date'] <= last_date, 'Trend'] = np.nan
 
@@ -166,85 +174,88 @@ combo.loc[combo['Date'] <= last_date, 'Trend'] = np.nan
 over_16 = 20619959
 
 eighty = over_16*0.8
+ninety = over_16 * 0.9
 
 combo['80% vaxxed'] = combo['Trend']
-combo.loc[combo['80% vaxxed'] > eighty, '80% vaxxed'] = np.nan
+# combo.loc[combo['80% vaxxed'] > eighty, '80% vaxxed'] = np.nan
+# combo.loc[combo['80% vaxxed'] > over_16, '80% vaxxed'] = np.nan
+combo.loc[combo['80% vaxxed'] > ninety, '80% vaxxed'] = np.nan
 
-goal = over_16 * 0.8
+# goal = over_16 * 0.8
 
-rollout_begin = datetime.date(2021, 2, 22)
-today = datetime.datetime.today().date()
+# rollout_begin = datetime.date(2021, 2, 22)
+# today = datetime.datetime.today().date()
 
-days_running = today - rollout_begin
-days_running = days_running.days
+# days_running = today - rollout_begin
+# days_running = days_running.days
 
-# Work out number of days to get to 80% given latest average
+# # Work out number of days to get to 80% given latest average
 
-num_days = round((goal-latest_count)/latest_average)
+# num_days = round((goal-latest_count)/latest_average)
 
-end_date = today + datetime.timedelta(days=num_days)
+# end_date = today + datetime.timedelta(days=num_days)
 
-months_to_go = (end_date.year - today.year) * 12 + end_date.month - today.month
+# months_to_go = (end_date.year - today.year) * 12 + end_date.month - today.month
 
-projection_end_date = datetime.datetime.strptime(projections['eighty_finish_second'], "%Y-%m-%d")
+projection_end_date = datetime.datetime.strptime(projections['ninety_finish_second'], "%Y-%m-%d")
 end_date_formated = datetime.datetime.strftime(projection_end_date, "%-d %B, %Y")
-end_date_label = datetime.datetime.strftime(end_date, "%Y-%m-%d")
+# end_date_label = datetime.datetime.strftime(end_date, "%Y-%m-%d")
 
-# Work out number of days to get to 80% given latest average
+# # Work out number of days to get to 80% given latest average
 
-seventy_num = round(((over_16*0.7)-latest_count)/latest_average)
+# seventy_num = round(((over_16*0.7)-latest_count)/latest_average)
 
-seventy_end_date = today + datetime.timedelta(days=seventy_num)
+# seventy_end_date = today + datetime.timedelta(days=seventy_num)
 
-seventy_end_date_formated = datetime.datetime.strftime(seventy_end_date, "%d/%m/%Y")
-seventy_end_date_label = datetime.datetime.strftime(seventy_end_date, "%Y-%m-%d")
+# seventy_end_date_formated = datetime.datetime.strftime(seventy_end_date, "%d/%m/%Y")
+# seventy_end_date_label = datetime.datetime.strftime(seventy_end_date, "%Y-%m-%d")
 
-### WORK OUT 80% AND 70% BY EOY
+# ### WORK OUT 80% AND 70% BY EOY
 
-eighty_goal = goal
-eighty_goal_text = f"80% by <br>{datetime.datetime.strftime(end_date, '%-d %B')}"
+# eighty_goal = goal
+# eighty_goal_text = f"80% by <br>{datetime.datetime.strftime(end_date, '%-d %B')}"
 
-eighty_doses_so_far = combo.loc[combo["Date"] == "2021-07-28"][f"Fully vaccinated: {numberFormat(latest_count)}"].values[0]
+# eighty_doses_so_far = combo.loc[combo["Date"] == "2021-07-28"][f"Fully vaccinated: {numberFormat(latest_count)}"].values[0]
 
-eighty_doses_left = eighty_goal - eighty_doses_so_far
+# eighty_doses_left = eighty_goal - eighty_doses_so_far
 
-eighty_days = datetime.date(2021, 12, 31) - datetime.date(2021, 7, 30)
-eighty_days = eighty_days.days
+# eighty_days = datetime.date(2021, 12, 31) - datetime.date(2021, 7, 30)
+# eighty_days = eighty_days.days
 
-eighty_eoy = eighty_doses_left / eighty_days
+# eighty_eoy = eighty_doses_left / eighty_days
 
-# print(eighty_eoy)
+# # print(eighty_eoy)
 
-combo['80% by EOY'] = combo['Incremental']
-combo.loc[combo['Date'] >= "2021-07-28", '80% by EOY'] = eighty_eoy
+# combo['80% by EOY'] = combo['Incremental']
+# combo.loc[combo['Date'] >= "2021-07-28", '80% by EOY'] = eighty_eoy
 
-combo['80% by EOY'] = combo['80% by EOY'].cumsum()
+# combo['80% by EOY'] = combo['80% by EOY'].cumsum()
 
-combo.loc[combo['Date'] < "2021-07-28", '80% by EOY'] = np.nan
+# combo.loc[combo['Date'] < "2021-07-28", '80% by EOY'] = np.nan
 
-seventy_goal = (over_16)*0.7
-seventy_goal_text = f"70% by <br>{datetime.datetime.strftime(seventy_end_date, '%-d %B')}"
-
-
-seventy_doses_so_far = combo.loc[combo["Date"] == "2021-07-28"][f"Fully vaccinated: {numberFormat(latest_count)}"].values[0]
-
-seventy_doses_left = seventy_goal - seventy_doses_so_far
-
-seventy_days = datetime.date(2021, 12, 31) - datetime.date(2021, 7, 30)
-seventy_days = seventy_days.days
-
-seventy_eoy = seventy_doses_left / seventy_days
+# seventy_goal = (over_16)*0.7
+# seventy_goal_text = f"70% by <br>{datetime.datetime.strftime(seventy_end_date, '%-d %B')}"
 
 
-combo['70% by EOY'] = combo['Incremental']
-combo.loc[combo['Date'] >= "2021-07-28", '70% by EOY'] = seventy_eoy
+# seventy_doses_so_far = combo.loc[combo["Date"] == "2021-07-28"][f"Fully vaccinated: {numberFormat(latest_count)}"].values[0]
 
-combo['70% by EOY'] = combo['70% by EOY'].cumsum()
+# seventy_doses_left = seventy_goal - seventy_doses_so_far
 
-combo.loc[combo['Date'] < "2021-07-28", '70% by EOY'] = np.nan
+# seventy_days = datetime.date(2021, 12, 31) - datetime.date(2021, 7, 30)
+# seventy_days = seventy_days.days
 
-combo = combo[['Date', 'Original goal', '80% vaxxed', '80% by EOY', '70% by EOY', f"Fully vaccinated: {numberFormat(latest_count)}"]]
-combo.columns = ['Date', 'Original goal', 'Trend', '80% by EOY', '70% by EOY', f"Fully vaccinated: {numberFormat(latest_count)}"]
+# seventy_eoy = seventy_doses_left / seventy_days
+
+
+# combo['70% by EOY'] = combo['Incremental']
+# combo.loc[combo['Date'] >= "2021-07-28", '70% by EOY'] = seventy_eoy
+
+# combo['70% by EOY'] = combo['70% by EOY'].cumsum()
+
+# combo.loc[combo['Date'] < "2021-07-28", '70% by EOY'] = np.nan
+
+combo = combo[['Date', 'Original goal', '80% vaxxed', f"Fully vaccinated: {numberFormat(latest_count)}"]]
+combo.columns = ['Date', 'Original goal', 'Trend', f"Fully vaccinated: {numberFormat(latest_count)}"]
 
 # print(combo)
 
@@ -255,7 +266,9 @@ display_date = datetime.datetime.strftime(display_date, "%-d %B, %Y")
 # print(combo)
 
 
-chart_truncate = end_date + datetime.timedelta(days=50)
+# chart_truncate = end_date + datetime.timedelta(days=50)
+
+chart_truncate = datetime.date(2022,1,31)
 
 combo['Date'] = pd.to_datetime(combo['Date'])
 
@@ -267,12 +280,14 @@ combo['Date'] = combo['Date'].dt.strftime('%Y-%m-%d')
 
 # hit_80 = ['70% by EOY']
 
+
 def makeTestingLine(df):
 
     template = [
             {
                 "title": "Tracking the Covid-19 vaccine rollout in Australia",
-                "subtitle": f"""Showing the number of Australians that are fully vaccinated, the federal government's <a href='https://www.theguardian.com/news/datablog/2021/feb/28/is-australias-goal-of-vaccinating-the-entire-adult-population-by-october-achievable' target='_blank'>original rollout goal</a> and the 70% and 80% vaccination thresholds set by the government. Based on the current seven-day average of first doses per day and the lag time between first and second dose numbers, Australia may vaccinate 80% of the 16+ population <b style="color:rgb(245, 189, 44)">around {end_date_formated}</b>. The government's Operation Covid Shield document suggests the vaccinating 80% of the population aged 16 and over is achieveable by December 2021. Last updated {display_date}<br>""",
+                "subtitle": f"""Showing the number of Australians that are fully vaccinated, the federal government's <a href='https://www.theguardian.com/news/datablog/2021/feb/28/is-australias-goal-of-vaccinating-the-entire-adult-population-by-october-achievable' target='_blank'>original rollout goal</a>, and theshholds for 70, 80 and 90% of the 16+ population. Based on the current seven-day average of first doses per day and the lag time between first and second dose numbers, Australia may vaccinate 90% of the 16+ population <b style="color:rgb(245, 189, 44)">around {end_date_formated}</b>. Last updated {display_date}<br>""",
+                # "subtitle": f"""Showing the number of Australians that are fully vaccinated, the federal government's <a href='https://www.theguardian.com/news/datablog/2021/feb/28/is-australias-goal-of-vaccinating-the-entire-adult-population-by-october-achievable' target='_blank'>original rollout goal</a>, and theshholds for 70, 80 and 90% of the 16+ population; and a <b style="color:rgb(245, 189, 44)">trend</b> based on the current seven-day average of first doses per day and the lag time between first and second dose numbers. Last updated {display_date}<br>""",
                 "footnote": "",
                 "source": "| Sources: Covidlive.com.au, Department of Health 14 March 2021 COVID-19 vaccine rollout update",
                 "dateFormat": "%Y-%m-%d",
@@ -300,7 +315,7 @@ def makeTestingLine(df):
     #  {"x":f"{seventy_end_date_label}", "y":f"{seventy_goal}", "offset":30,
     #  "text":f"{seventy_goal_text}",
     #   "align":"right", "direction":"left"}]
-	
+
 
     yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"linechart"}],
     options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}], chartName=f"oz_vaccine_tracker_goals_trend_five_trend{test}")

@@ -171,4 +171,3 @@ def makeChart1(df):
 
 makeChart1(final_table)
 
-

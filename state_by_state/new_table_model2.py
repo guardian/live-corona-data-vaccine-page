@@ -7,6 +7,8 @@ import pytz
 
 
 chart_key = "oz-live-corona-state-vax-table-updated-trend"
+test = ''
+# test = '_testo'
 #%%
 
 pops = {'NT':246.5* 1000, 'NSW':8166.4* 1000,
@@ -86,12 +88,14 @@ def makeProjection(state, cutoff_date):
 	
 	current_lag = (current_date - first_dose_eq_second).days + 1
 	print("current_lag", current_lag)
+	ninety_target = sixteen_pop[state] * 0.9
 	eighty_target = sixteen_pop[state] * 0.8
 	seventy_target = sixteen_pop[state] * 0.7
-	print("eighty_target", eighty_target)
+	# print("eighty_target", eighty_target)
+	ninety_vax_to_go = ninety_target - current_first_doses
 	eighty_vax_to_go = eighty_target - current_first_doses
 	seventy_vax_to_go = seventy_target - current_first_doses
-	print("eighty_vax_to_go",eighty_vax_to_go)
+	# print("eighty_vax_to_go",eighty_vax_to_go)
 	
 	if (eighty_vax_to_go < 0):
 		print("80 target already reached")
@@ -99,26 +103,40 @@ def makeProjection(state, cutoff_date):
 		eighty_finish_first = temp_state[temp_state['FIRST_DOSE_COUNT'] > eighty_target]['DATE_AS_AT'].iloc[0]
 		print(eighty_finish_first)
 	else:
-		print("80 target not yet reached")
+		# print("80 target not yet reached")
 		days_to_go_80 = int(round(eighty_vax_to_go / current_rolling,0)) + 1
-		print("days to go 80", days_to_go_80)
+		# print("days to go 80", days_to_go_80)
 		eighty_finish_first = current_date + datetime.timedelta(days=days_to_go_80) 
-		print("eighty_finish_first", eighty_finish_first)
+		# print("eighty_finish_first", eighty_finish_first)
+
 	if (seventy_vax_to_go < 0):
 		print("70 target already reached")
 		days_to_go_70 = 0
 		seventy_finish_first = temp_state[temp_state['FIRST_DOSE_COUNT'] > seventy_target]['DATE_AS_AT'].iloc[0]
 	else:
-		print("70 target not yet reached")
+		# print("70 target not yet reached")
 		days_to_go_70 = int(round(seventy_vax_to_go / current_rolling,0)) + 1
 		seventy_finish_first = current_date + datetime.timedelta(days=days_to_go_70) 
-		print("days to go 70", days_to_go_70)
+		# print("days to go 70", days_to_go_70)
 
+### ADD 90 target
+
+	if (ninety_vax_to_go < 0):
+		print("90 target already reached")
+		days_to_go_90 = 0
+		ninety_finish_first = temp_state[temp_state['FIRST_DOSE_COUNT'] > ninety_target]['DATE_AS_AT'].iloc[0]
+	else:
+		# print("90 target not yet reached")
+		days_to_go_90 = int(round(ninety_vax_to_go / current_rolling,0)) + 1
+		ninety_finish_first = current_date + datetime.timedelta(days=days_to_go_90) 
+		# print("days to go 90", days_to_go_90)
+
+	ninety_vax_to_go_second = int(ninety_target - current_second_doses)
 	
 	eighty_vax_to_go_second = int(eighty_target - current_second_doses)
 	seventy_vax_to_go_second = int(seventy_target - current_second_doses)
 
-	print("eighty_vax_to_go_second", eighty_vax_to_go_second, "seventy_vax_to_go_second", seventy_vax_to_go_second)
+	# print("eighty_vax_to_go_second", eighty_vax_to_go_second, "seventy_vax_to_go_second", seventy_vax_to_go_second)
 	
 	# Check if seventy percent second dose target has already been met
 
@@ -142,6 +160,17 @@ def makeProjection(state, cutoff_date):
 		eighty_finish_second = eighty_finish_first + datetime.timedelta(days=current_lag)
 		days_to_second_80 = (eighty_finish_second - current_date).days + 1
 	
+	ninety_reached = False
+	if (ninety_vax_to_go_second < 0):
+		print("90% second dose target already reached")
+		ninety_finish_second = temp_state[temp_state['SECOND_DOSE_COUNT'] > ninety_target]['DATE_AS_AT'].iloc[0]
+		days_to_second_90 = 0
+		ninety_reached = True
+	else:	
+		ninety_finish_second = ninety_finish_first + datetime.timedelta(days=current_lag)
+		days_to_second_90 = (ninety_finish_second - current_date).days + 1
+
+
 	
 # 	print("days_to_second_80", days_to_second_80)
 # 	print("eighty_finish_second",eighty_finish_second)
@@ -158,8 +187,12 @@ def makeProjection(state, cutoff_date):
 	else:
 		second_doses_rate_needed = int(round(eighty_vax_to_go_second / days_to_second_80,0))
 # 	print("eighty_finish", eighty_finish_second)
-	results = {"current_lag":current_lag, "eighty_finish_first": eighty_finish_first, "seventy_finish_first":seventy_finish_first, "eighty_finish_second":eighty_finish_second, "seventy_finish_second":seventy_finish_second, "current_rolling":current_rolling, "second_doses_rate_needed":second_doses_rate_needed,"eighty_target":eighty_target, "seventy_target":seventy_target, "seventy_reached":seventy_reached, "eighty_reached":eighty_reached}
-# 	print(results)
+	results = {"current_lag":current_lag, "current_rolling":current_rolling,  "second_doses_rate_needed":second_doses_rate_needed,
+	"eighty_finish_first": eighty_finish_first, "seventy_finish_first":seventy_finish_first, "ninety_finish_first": ninety_finish_first,
+	"eighty_finish_second":eighty_finish_second, "seventy_finish_second":seventy_finish_second, "ninety_finish_second": ninety_finish_second,
+	"eighty_target":eighty_target, "seventy_target":seventy_target, "ninety_target":ninety_target,
+	"seventy_reached":seventy_reached, "eighty_reached":eighty_reached, "ninety_reached": ninety_reached}
+  # 	print(results)
 	return results
 
 #%%
@@ -188,6 +221,7 @@ for state in second['STATE'].unique().tolist():
 
 	first_finish_70 = first_projection['seventy_finish_second']
 	first_finish_80 = first_projection['eighty_finish_second']
+	first_finish_90 = first_projection['ninety_finish_second']
 
 	cutoff_date = (latest_date - datetime.timedelta(days=6))
 
@@ -196,6 +230,7 @@ for state in second['STATE'].unique().tolist():
 	
 	second_finish_70 = first_finish_70 + datetime.timedelta(days=5)
 	second_finish_80 = first_finish_80 + datetime.timedelta(days=5)
+	second_finish_90 = first_finish_90 + datetime.timedelta(days=5)
 
 	inter = second.loc[second['STATE'] == state].copy()
 	to_use = inter.loc[(inter["AGE_LOWER"] == 16) & (inter['AGE_UPPER'] == 999)].copy()
@@ -222,11 +257,32 @@ for state in second['STATE'].unique().tolist():
 			latest['Hit 80'] = f"{first_finish_80.day} {first_finish_80.strftime('%b')} - {second_finish_80.day} {second_finish_80.strftime('%b')}"
 	else:
 		latest['Hit 80'] = first_finish_80.strftime('%-d %b') + " ✓"
+
+	if first_projection['ninety_reached'] == False:
+		if first_finish_90.strftime('%b') == second_finish_90.strftime('%b'):
+			latest['Hit 90'] = f"{first_finish_90.day} - {second_finish_90.day} {second_finish_90.strftime('%b')}"
+		else:
+			latest['Hit 90'] = f"{first_finish_90.day} {first_finish_90.strftime('%b')} - {second_finish_90.day} {second_finish_90.strftime('%b')}"
+	else:
+		latest['Hit 90'] = first_finish_90.strftime('%-d %b') + " ✓"
+
 	listo.append(latest)
 
 table_data = pd.concat(listo)
-table_data.columns = ['State', 'First dose %', 'Second dose %', "Expected to hit 70% second dose", "Expected to hit 80% second dose"]
+table_data.columns = ['State', 'First dose %', 'Second dose %', "Expected to hit 70% second dose", "Expected to hit 80% second dose", "Expected to hit 90% second dose"]
 
+
+
+## Add greater than signs when they reach 95
+
+table_data.loc[table_data['First dose %'] >= 95, 'First dose %'] = "> " + table_data.loc[table_data['First dose %'] >= 95].astype(str)
+table_data.loc[table_data['Second dose %'] >= 95, 'Second dose %'] = "> " + table_data.loc[table_data['Second dose %'] >= 95].astype(str)
+
+# table_data.loc[table_data['First dose %'] >= 95, 'First dose %'] = table_data.loc[table_data['First dose %'] >= 95].str.strip()
+
+table_data['First dose %'] = table_data['First dose %'].astype(str)
+table_data['First dose %'] = table_data['First dose %'].str.strip()
+# print(table_data['Second dose %'])
 # print(table_data)
 # print(table_data.columns.tolist())
 # %%
@@ -261,6 +317,6 @@ def makeTable(df):
 
 
     yachtCharter(template=template, labels=labels, data=chartData, chartId=[{"type":"table"}],
-    options=[{"colorScheme":"guardian","format": "vanilla","enableSearch": "FALSE","enableSort": "FALSE"}], chartName=f"{chart_key}")
+    options=[{"colorScheme":"guardian","format": "vanilla","enableSearch": "FALSE","enableSort": "FALSE"}], chartName=f"{chart_key}{test}")
 
 makeTable(table_data)
