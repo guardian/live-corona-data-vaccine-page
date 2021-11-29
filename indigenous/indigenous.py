@@ -3,7 +3,7 @@
 
 import pandas as pd
 import requests
-from modules.yachtCharter import yachtCharter
+from yachtcharter import yachtCharter
 import datetime
 
 states =['AUS','NSW','VIC','QLD','WA','SA','TAS','NT','ACT']
