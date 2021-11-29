@@ -7,6 +7,8 @@ import pandas as pd
 from modules.syncData import syncData
 import datetime
 
+day = datetime.datetime.today().weekday()
+
 print("Checking covidlive")
 
 #%%
@@ -85,7 +87,7 @@ import hospitalised_percent_line
 import outbreaks_reindexed
 
 
-day = datetime.datetime.today().weekday()
+
 #%%
 # if day > 4:
 import vaccine_availability.weekly_state_utilisation
@@ -93,10 +95,10 @@ import vaccine_availability.weekly_distribution
 
 import state_by_state.new_table_model2
 
-# import vaccineDosesState
-
-#%%
-
 import state_outbreaks.act_out
 import state_outbreaks.vic_out
 import state_outbreaks.nsw_out
+
+
+if (day == 2) | (day == 3):
+       import indigenous.indigenous_line

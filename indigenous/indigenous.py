@@ -65,4 +65,4 @@ for state in states:
 
 # newData = pd.read_csv("dummy.csv")
 newData['DATE_AS_AT'] = pd.to_datetime(newData['DATE_AS_AT'])
-print(newData['DATE_AS_AT'].dtypes)	
+print(newData)	
