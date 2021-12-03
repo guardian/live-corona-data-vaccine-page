@@ -14,7 +14,7 @@ output_path = os.path.dirname(__file__) + "/output/"
 print("Checking covidlive")
 
 testo = ''
-testo = "_testo"
+# testo = "_testo"
 
 #%%
 
@@ -95,7 +95,7 @@ def makeLineChart(df):
     template = [
             {
                 "title": "Covid hospitalisation rate in Australia",
-                "subtitle": f"Showing the number of number of hospitalised Covid cases divided by the number of cases over the previous two weeks, including overseas acquired cases. Last updated {updated_date}.",
+                "subtitle": f"Showing the number of number of hospitalised Covid cases divided by the number of new cases over the previous two weeks, including overseas acquired cases. Last updated {updated_date}.",
                 "footnote": "",
                 "source": "CovidLive.com.au, Guardian analysis | Based on a chart by Covid19data.com.au",
                 "dateFormat": "%Y-%m-%d",
