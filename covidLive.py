@@ -102,3 +102,4 @@ import state_outbreaks.nsw_out
 
 if (day == 2) | (day == 3):
        import indigenous.indigenous_line
+       import indigenous.indigenous
