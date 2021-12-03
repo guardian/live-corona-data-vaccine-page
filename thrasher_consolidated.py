@@ -30,25 +30,30 @@ hospital = round( clive["MED_HOSP_CNT"][0] )
 ## Get the vaccine total count
 total = round( clive["VACC_DOSE_CNT"][0] )
 
-updated = clive["LAST_UPDATED_DATE"][0]
+### Get boosters
+if np.isnan(clive['VACC_BOOSTER_CNT'][0]):
+	boost = round( clive['PREV_VACC_BOOSTER_CNT'][0])
+else:
+	boost = round( clive['VACC_BOOSTER_CNT'][0])
 
-# 'REPORT_DATE', 'LAST_UPDATED_DATE', 'CODE', 'NAME', 'CASE_CNT',
-#        'TEST_CNT', 'DEATH_CNT', 'RECOV_CNT', 'MED_ICU_CNT', 'MED_VENT_CNT',
-#        'MED_HOSP_CNT', 'SRC_OVERSEAS_CNT', 'SRC_INTERSTATE_CNT',
-#        'SRC_CONTACT_CNT', 'SRC_UNKNOWN_CNT', 'SRC_INVES_CNT', 'PREV_CASE_CNT',
-#        'PREV_TEST_CNT', 'PREV_DEATH_CNT', 'PREV_RECOV_CNT', 'PREV_MED_ICU_CNT',
-#        'PREV_MED_VENT_CNT', 'PREV_MED_HOSP_CNT', 'PREV_SRC_OVERSEAS_CNT',
-#        'PREV_SRC_INTERSTATE_CNT', 'PREV_SRC_CONTACT_CNT',
-#        'PREV_SRC_UNKNOWN_CNT', 'PREV_SRC_INVES_CNT', 'PROB_CASE_CNT',
-#        'PREV_PROB_CASE_CNT', 'ACTIVE_CNT', 'PREV_ACTIVE_CNT', 'NEW_CASE_CNT',
-#        'PREV_NEW_CASE_CNT', 'VACC_DIST_CNT', 'PREV_VACC_DIST_CNT',
-#        'VACC_DOSE_CNT', 'PREV_VACC_DOSE_CNT', 'VACC_PEOPLE_CNT',
-#        'PREV_VACC_PEOPLE_CNT', 'VACC_AGED_CARE_CNT', 'PREV_VACC_AGED_CARE_CNT',
-#        'VACC_GP_CNT', 'PREV_VACC_GP_CNT'
+updated = clive["LAST_UPDATED_DATE"][0]
+# 'REPORT_DATE', 'LAST_UPDATED_DATE', 'CODE', 'NAME', 'CASE_CNT', 
+# 'TEST_CNT', 'DEATH_CNT', 'RECOV_CNT', 'MED_ICU_CNT', 'MED_VENT_CNT',
+# 'MED_HOSP_CNT', 'SRC_OVERSEAS_CNT', 'SRC_INTERSTATE_CNT', 'SRC_CONTACT_CNT',
+# 'SRC_UNKNOWN_CNT', 'SRC_INVES_CNT', 'PREV_CASE_CNT', 'PREV_TEST_CNT',
+# 'PREV_DEATH_CNT', 'PREV_RECOV_CNT', 'PREV_MED_ICU_CNT', 'PREV_MED_VENT_CNT',
+# 'PREV_MED_HOSP_CNT', 'PREV_SRC_OVERSEAS_CNT', 'PREV_SRC_INTERSTATE_CNT', 
+# 'PREV_SRC_CONTACT_CNT', 'PREV_SRC_UNKNOWN_CNT', 'PREV_SRC_INVES_CNT', 
+# 'PROB_CASE_CNT', 'PREV_PROB_CASE_CNT', 'ACTIVE_CNT', 'PREV_ACTIVE_CNT', 
+# 'NEW_CASE_CNT', 'PREV_NEW_CASE_CNT', 'VACC_DIST_CNT', 'PREV_VACC_DIST_CNT',
+# 'VACC_DOSE_CNT', 'PREV_VACC_DOSE_CNT', 'VACC_PEOPLE_CNT', 'PREV_VACC_PEOPLE_CNT',
+# 'VACC_AGED_CARE_CNT', 'PREV_VACC_AGED_CARE_CNT', 'VACC_GP_CNT', 'PREV_VACC_GP_CNT', 
+# 'VACC_FIRST_DOSE_CNT', 'PREV_VACC_FIRST_DOSE_CNT', 'VACC_FIRST_DOSE_CNT_12_15', 'PREV_VACC_FIRST_DOSE_CNT_12_15', 
+# 'VACC_PEOPLE_CNT_12_15', 'PREV_VACC_PEOPLE_CNT_12_15', 'VACC_BOOSTER_CNT', 'PREV_VACC_BOOSTER_CNT'
 
 # clive['PREV_VACC_PEOPLE_CNT'] = clive['PREV_VACC_PEOPLE_CNT'].astype('Int64', errors='raise')
 
-clive = clive[['REPORT_DATE', 'CODE', 'NAME', 'PREV_VACC_DOSE_CNT', 'PREV_VACC_PEOPLE_CNT','ACTIVE_CNT', 'PREV_ACTIVE_CNT', "PREV_VACC_FIRST_DOSE_CNT_12_15", "PREV_VACC_PEOPLE_CNT_12_15"]]
+clive = clive[['REPORT_DATE', 'CODE', 'NAME', 'PREV_VACC_DOSE_CNT', 'PREV_VACC_PEOPLE_CNT','ACTIVE_CNT', 'PREV_ACTIVE_CNT', "PREV_VACC_FIRST_DOSE_CNT_12_15", "PREV_VACC_PEOPLE_CNT_12_15", 'PREV_VACC_BOOSTER_CNT']]
 
 # clive = clive[['REPORT_DATE', 'CODE', 'NAME', 'PREV_VACC_DOSE_CNT', 'PREV_VACC_PEOPLE_CNT','ACTIVE_CNT', 'PREV_ACTIVE_CNT']]
 
@@ -57,9 +62,6 @@ clive = clive[['REPORT_DATE', 'CODE', 'NAME', 'PREV_VACC_DOSE_CNT', 'PREV_VACC_P
 # clive[num.columns ]= num.astype('Int64', errors='ignore')
 #print(clive[['REPORT_DATE','CODE','ACTIVE_CNT', 'PREV_ACTIVE_CNT']].head(20))
 #%%
-
-
-
 
 #%%
 # Population counts:
@@ -84,6 +86,7 @@ for area in areas:
 	inter['Vax_per_hundred'] = round((inter['PREV_VACC_DOSE_CNT']/area[1])*100, 2)
 	inter['Fully_vaxxed_per_hundred'] = round((inter['PREV_VACC_PEOPLE_CNT']/area[1])*100, 2)
 	inter = inter.loc[inter['REPORT_DATE'] == inter['REPORT_DATE'].max()]
+
 
 	# CHECK IF ACTIVE IS NULL, IF SO USE PREVIOUS
 	latest = inter.loc[inter['REPORT_DATE'] == inter['REPORT_DATE'].max()].copy()
@@ -191,6 +194,8 @@ feed.append(["OECD" , round( australia['OECD_rank'].iloc[0] ) ])
 feed.append(["HOSPITAL" , hospital ])
 
 feed.append(["TOTAL" , total ])
+
+feed.append(['BOOSTERS', boost])
 
 feed.append(["UPDATED" , updated ])
 
