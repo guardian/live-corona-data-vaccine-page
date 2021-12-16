@@ -12,6 +12,11 @@ yesterday = yesterday.astimezone(pytz.timezone("Australia/Brisbane")).strftime('
 
 #%%
 
+sixteen_pop = {
+    'NT':190571, 'NSW':6565651, 'VIC':5407574,
+    'QLD':4112707, 'ACT':344037,
+    'SA':1440400, 'WA':2114978, 'TAS':440172, "AUS":20619959}
+
 twelve_pop = {
     'NT':190571 + 13060, 'NSW':6565651 + 390330, 
     'VIC':5407574 + 308611,
@@ -100,7 +105,7 @@ for state in states:
         short_cols.append(f"Two_doses_12+")
 
         # air.rename(columns={f"AIR_AUS_16_PLUS_THIRD_DOSE_COUNT":'AUS_third_16+'}, inplace=True)
-        air['Boosters_16+'] = round((((air[f"AIR_AUS_16_PLUS_THIRD_DOSE_COUNT"])/twelve_pop[state]) * 100), 2)
+        air['Boosters_16+'] = round((((air[f"AIR_AUS_16_PLUS_THIRD_DOSE_COUNT"])/sixteen_pop[state]) * 100), 2)
         short_cols.append('Boosters_16+')
         # short_cols.append("AIR_AUS_16_PLUS_THIRD_DOSE_COUNT")
 
