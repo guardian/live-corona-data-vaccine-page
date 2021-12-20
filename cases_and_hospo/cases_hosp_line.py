@@ -84,7 +84,8 @@ def charter(frame, chart_base, state):
         "margin-left": "35",
         "margin-top": "30",
         "margin-bottom": "20",
-        "margin-right": "10"
+        "margin-right": "10",
+        "tooltip":"<strong>{{#formatDate}}{{Date}}{{/formatDate}}</strong><br/> New cases: {{New cases, 7 day avg}}<br/>In hospital: {{In hospital}}<br/>"
         }
     ]
 
