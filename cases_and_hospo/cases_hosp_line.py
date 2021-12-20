@@ -75,9 +75,14 @@ def charter(frame, chart_base, state):
 
     # print("Six months", six_months)
 
+    if state == "VIC":
+        state_name = "Victorian"
+    else:
+        state_name = state
+
     template = [
         {
-        "title": f"{state} daily new Covid-19 cases and hospitalisations",
+        "title": f"{state_name} daily new Covid-19 cases and hospitalisations",
         "subtitle": f"Showing the rolling seven-day average of daily new cases, and the total count of Covid-19 patients in hospital on each day. Last updated {format_date}",
         "footnote": "",
         "source": "CovidLive.com.au",
