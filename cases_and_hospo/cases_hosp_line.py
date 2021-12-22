@@ -78,11 +78,11 @@ def charter(frame, chart_base, state):
     if state == "VIC":
         state_name = "Victorian"
     elif state == "AUS":
-        state_name = "Australia"
+        state_name = "National"
     elif state == "QLD":
         state_name = "Queensland"
     elif state == "SA":
-        state_name = "South Australia"  
+        state_name = "South Australian"  
     # elif state == "ACT":
     #     state_name = "Australian Capital Territory"      
     else:
