@@ -51,6 +51,14 @@ def charter(frame, chart_base, state):
 
     inter = frame.loc[frame['CODE'] == state].copy()
 
+    if state == "AUS":
+        latest = inter.iloc[-1]['CASE_CNT']
+        second_latest = inter.iloc[-2]['CASE_CNT']
+        if latest == second_latest:
+            inter = inter.iloc[:-1]
+
+    # print(inter)
+
     inter['CASE_CNT'] = inter['CASE_CNT'].diff(1)
     inter['Cases_rolling'] = round(inter['CASE_CNT'].rolling(window=7).mean(),2)
 
@@ -115,6 +123,7 @@ def charter(frame, chart_base, state):
     # print(p.columns.tolist())
 
 for state in ['AUS', 'NSW', 'VIC', 'ACT', 'QLD', 'SA']:
+# for state in ['AUS']:
 
     charter(zdf, chart_key, state)
 
