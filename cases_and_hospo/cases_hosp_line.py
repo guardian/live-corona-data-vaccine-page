@@ -77,6 +77,14 @@ def charter(frame, chart_base, state):
 
     if state == "VIC":
         state_name = "Victorian"
+    elif state == "AUS":
+        state_name = "Australia"
+    elif state == "QLD":
+        state_name = "Queensland"
+    elif state == "SA":
+        state_name = "South Australia"  
+    # elif state == "ACT":
+    #     state_name = "Australian Capital Territory"      
     else:
         state_name = state
 
@@ -106,7 +114,7 @@ def charter(frame, chart_base, state):
     # print(p)
     # print(p.columns.tolist())
 
-for state in ['NSW', 'VIC']:
+for state in ['AUS', 'NSW', 'VIC', 'ACT', 'QLD', 'SA']:
 
     charter(zdf, chart_key, state)
 
