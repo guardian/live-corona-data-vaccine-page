@@ -1,10 +1,12 @@
 #%%
+from pandas.core.indexes import numeric
 import requests
-import pandas as pd 
+import pandas as pd
 import numpy as np
 import datetime
 pd.set_option("display.max_rows", 100)
 from yachtcharter import yachtCharter
+from modules.numberFormat import numberFormat
 chart_key = f"oz-live-corona-page-boosters-second-doses-tracker"
 
 #%%
@@ -28,7 +30,7 @@ ant.columns = ['Date', 'Second doses']
 ant['Boosters'] = 0
 
 # %%
-## Read in Ken's data 
+## Read in Ken's data
 ken = pd.read_csv('https://vaccinedata.covid19nearme.com.au/data/air.csv')
 ken = ken.sort_values(by='DATE_AS_AT', ascending=True)
 ken = ken.loc[ken['DATE_AS_AT'] >= "2021-07-01"]
@@ -84,6 +86,9 @@ print("Lag", current_lag)
 
 # print(vax.loc[vax['Date'] > "2021-06-20"])
 
+max_second = vax['Second doses'].max()
+max_boost = vax['Boosters'].max()
+
 vax['Trend'] = vax['Second doses'].shift(periods=current_lag, axis=0)
 
 max_trend = vax.loc[vax['Trend'] == vax['Trend'].max()]['Date'].values[0]
@@ -101,9 +106,10 @@ vax = vax.loc[vax['Date'] < cut_off]
 # print(cut_off)
 # print(max_trend)
 
-print(vax)
 
-    
+vax.rename(columns={'Second doses': f"{numberFormat(max_second)} Second doses", 
+'Boosters': f"{numberFormat(max_boost)} Boosters"}, inplace=True)
+print(vax)
 
 
 # see = vax.loc[(vax['Date'] > "2021-06-25") & (vax['Date'] < "2021-07-10")]
@@ -120,8 +126,8 @@ final = vax.to_dict(orient='records')
 
 template = [
 	{
-	"title": "Tracking second and booster doses in Australia",
-	"subtitle": f"Showing the cumulative count of second and booster doses. Trend in booster doses based on current gap between doses. Last updated {display_date}.",
+	"title": "Tracking the rollout of second and booster doses in Australia",
+	"subtitle": f"""Showing the cumulative count of second and booster doses. The <b style="color:rgb(245, 189, 44)">trend</b> in booster doses is based on current interval between when the equivalent number of second and booster doses were administered. Last updated {display_date}.""",
 	"footnote": "Footnote",
 	"source": "CovidLive.com.au, Ken Tsang, Guardian Australia analysis",
 	"margin-left": "35",
@@ -131,7 +137,7 @@ template = [
 	}
 ]
 
-yachtCharter(template=template, 
+yachtCharter(template=template,
 			data=final,
 			chartId=[{"type":"linechart"}],
             options=[{"colorScheme":"guardian", "lineLabelling":"TRUE"}],

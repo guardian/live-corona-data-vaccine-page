@@ -101,6 +101,8 @@ import state_outbreaks.nsw_out
 
 import cases_and_hospo.cases_hosp_line
 
+import booster_feed.booster_chart_feed
+
 if (day == 2) | (day == 3):
        import indigenous.indigenous_line
        import indigenous.indigenous
