@@ -104,5 +104,5 @@ import cases_and_hospo.cases_hosp_line
 if (day == 2) | (day == 3):
        import indigenous.indigenous_line
        import indigenous.indigenous
-       
-# import booster_feed.booster_chart_feed
+
+import booster_feed.booster_chart_feed

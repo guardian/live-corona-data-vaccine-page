@@ -107,7 +107,7 @@ vax = vax.loc[vax['Date'] < cut_off]
 # print(max_trend)
 
 
-vax.rename(columns={'Second doses': f"{numberFormat(max_second)} Second doses", 
+vax.rename(columns={'Second doses': f"{numberFormat(max_second)} Second doses",
 'Boosters': f"{numberFormat(max_boost)} Boosters"}, inplace=True)
 print(vax)
 
