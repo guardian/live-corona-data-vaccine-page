@@ -21,7 +21,9 @@ chart_key = f"oz-live-corona-page-boosters-second-doses-tracker"
 # with open("booster_feed/Anthony_feed.csv", "w") as f:
 #     df.to_csv(f, index=False, header=True)
 
-ant = pd.read_csv('booster_feed/Anthony_feed.csv')
+# ant = pd.read_csv('booster_feed/Anthony_feed.csv')
+
+ant = pd.read_csv('https://raw.githubusercontent.com/joshnicholas/oz-covid-data/main/Anthony_feed.csv')
 ant = ant.loc[ant['CODE'] == "AUS"]
 ant = ant[['REPORT_DATE', 'VACC_PEOPLE_CNT']]
 ant = ant.loc[(ant['REPORT_DATE'] < "2021-07-01") & (ant['REPORT_DATE'] > "2021-03-01")]
