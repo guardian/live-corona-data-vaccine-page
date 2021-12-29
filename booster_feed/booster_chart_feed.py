@@ -129,7 +129,7 @@ final = vax.to_dict(orient='records')
 template = [
 	{
 	"title": "Tracking the rollout of second and booster doses in Australia",
-	"subtitle": f"""Showing the cumulative count of second and booster doses. The <b style="color:rgb(245, 189, 44)">trend</b> in booster doses is based on current interval between when the equivalent number of second and booster doses were administered. Last updated {display_date}.""",
+	"subtitle": f"""Showing the cumulative count of second and booster doses. The <b style="color:rgb(245, 189, 44)">trend</b> in booster doses is based on the current interval between when the equivalent number of second and booster doses were administered. Last updated {display_date}.""",
 	"footnote": "Footnote",
 	"source": "CovidLive.com.au, Ken Tsang, Guardian Australia analysis",
 	"margin-left": "35",
