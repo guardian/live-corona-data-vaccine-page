@@ -69,7 +69,7 @@ for col in state_order2:
 	tempSeries.iloc[0] = deaths_df[col].dropna().iloc[0]
 	deaths_df_daily = pd.concat([deaths_df_daily, tempSeries], axis=1)
 
-deaths_df_daily.iloc[0] = states_df.iloc[0]
+# deaths_df_daily.iloc[0] = states_df.iloc[0]
 
 #%%
 
@@ -297,4 +297,4 @@ def makeNationalBars(df):
 	yachtCharter(template=template, data=chartData, chartId=chartId, chartName="aus-national-total-corona-cases{test}".format(test=test), key=key)
 
 
-# makeNationalBars(daily_total)
+makeNationalBars(daily_total)
