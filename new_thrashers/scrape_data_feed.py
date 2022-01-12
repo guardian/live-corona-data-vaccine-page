@@ -133,6 +133,8 @@ for state in states:
         short_cols.append(f"Two_doses")
         air['Boosters'] = round((((air[f"AIR_AUS_16_PLUS_THIRD_DOSE_COUNT"])/five_plus[state]) * 100), 2)
         short_cols.append('Boosters')
+        air[f"Two_doses_total"] = round((((air[f'AIR_12_15_SECOND_DOSE_COUNT'] + air[f'AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'])/25739256) * 100), 2)
+        short_cols.append(f"Two_doses_total")
 
 
 z_air = air[short_cols]
@@ -193,7 +195,8 @@ for juri in prok['CODE'].unique().tolist():
         inter['HOSPITALISATION_SHIFTED'] = inter['MED_HOSP_CNT'].shift(7)
 
         latest = inter.loc[inter['REPORT_DATE'] == inter['REPORT_DATE'].max()]
-
+        
+        two_doses_total = inter['Two_doses_total'].max()
         two_doses = inter['Two_doses'].max()
         boosters = inter['Boosters'].max()
 
@@ -217,6 +220,8 @@ for juri in prok['CODE'].unique().tolist():
         feed.append([juri + '_boosters_eligible_percent', booster_eligible])
         feed.append([juri + '_two_doses_percent', two_doses])
         feed.append([juri + '_deaths_last_thirty', deaths_shifted])
+
+        feed.append([juri + '_two_doses_TOTAL_percent', two_doses_total])
 
 
 
