@@ -179,7 +179,7 @@ ninety = over_16 * 0.9
 combo['80% vaxxed'] = combo['Trend']
 # combo.loc[combo['80% vaxxed'] > eighty, '80% vaxxed'] = np.nan
 # combo.loc[combo['80% vaxxed'] > over_16, '80% vaxxed'] = np.nan
-combo.loc[combo['80% vaxxed'] > ninety, '80% vaxxed'] = np.nan
+# combo.loc[combo['80% vaxxed'] > ninety, '80% vaxxed'] = np.nan
 
 # goal = over_16 * 0.8
 
@@ -268,7 +268,7 @@ display_date = datetime.datetime.strftime(display_date, "%-d %B, %Y")
 
 # chart_truncate = end_date + datetime.timedelta(days=50)
 
-chart_truncate = datetime.date(2022,1,31)
+chart_truncate = datetime.date(2022,2,28)
 
 combo['Date'] = pd.to_datetime(combo['Date'])
 
@@ -286,7 +286,7 @@ def makeTestingLine(df):
     template = [
             {
                 "title": "Tracking the Covid-19 vaccine rollout in Australia",
-                "subtitle": f"""Showing the number of Australians that are fully vaccinated, the federal government's <a href='https://www.theguardian.com/news/datablog/2021/feb/28/is-australias-goal-of-vaccinating-the-entire-adult-population-by-october-achievable' target='_blank'>original rollout goal</a>, and theshholds for 70, 80 and 90% of the 16+ population. Based on the current seven-day average of first doses per day and the lag time between first and second dose numbers, Australia may vaccinate 90% of the 16+ population <b style="color:rgb(245, 189, 44)">around {end_date_formated}</b>. Last updated {display_date}<br>""",
+                "subtitle": f"""Showing the number of Australians that are fully vaccinated, the federal government's <a href='https://www.theguardian.com/news/datablog/2021/feb/28/is-australias-goal-of-vaccinating-the-entire-adult-population-by-october-achievable' target='_blank'>original rollout goal</a>, and theshholds for 70, 80 and 90% of the 16+ population. Last updated {display_date}<br>""",
                 # "subtitle": f"""Showing the number of Australians that are fully vaccinated, the federal government's <a href='https://www.theguardian.com/news/datablog/2021/feb/28/is-australias-goal-of-vaccinating-the-entire-adult-population-by-october-achievable' target='_blank'>original rollout goal</a>, and theshholds for 70, 80 and 90% of the 16+ population; and a <b style="color:rgb(245, 189, 44)">trend</b> based on the current seven-day average of first doses per day and the lag time between first and second dose numbers. Last updated {display_date}<br>""",
                 "footnote": "",
                 "source": "| Sources: Covidlive.com.au, Department of Health 14 March 2021 COVID-19 vaccine rollout update",

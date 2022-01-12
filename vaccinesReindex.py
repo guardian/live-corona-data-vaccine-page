@@ -167,7 +167,7 @@ def makeSince100Chart(df):
                 "minY": "",
                 "maxY": "",
                 "periodDateFormat":"",
-                "margin-left": "25",
+                "margin-left": "50",
                 "margin-top": "15",
                 "margin-bottom": "20",
                 "margin-right": "10",

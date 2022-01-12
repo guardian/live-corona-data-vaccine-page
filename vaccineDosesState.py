@@ -13,7 +13,7 @@ if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unveri
     ssl._create_default_https_context = ssl._create_unverified_context
 
 #%%
-	
+
 df = pd.read_json(state_json)
 
 #%%
@@ -55,7 +55,7 @@ count = len(daily_cum["2021-02-24":"2021-08-15"].index) - 1
 
 daily.to_csv('daily-vax.csv')
 
-# Adjusts for the switchover from 2021-08-16 to the AIR derived data, by taking the new difference and adjusting previous values using an average of the difference 
+# Adjusts for the switchover from 2021-08-16 to the AIR derived data, by taking the new difference and adjusting previous values using an average of the difference
 
 diff_adjustment = {"NSW":119652, "VIC":-30981, "QLD":11598, "SA": -5354, "WA":15146, "TAS": 860, "ACT":47614, "NT":5192,"AUS":163727}
 state_adjustments = {}
@@ -83,7 +83,7 @@ daily_short = daily_adj["2021-04-10":]
 # daily[daily < 0] = 0
 
 #%%
-	
+
 lastUpdated = daily_short.index[-1]
 # newUpdated = lastUpdated + timedelta(days=1)
 updatedText = lastUpdated.strftime('%-d %B, %Y')
@@ -112,15 +112,17 @@ daily_mean = daily_mean.drop(['AUS'], axis=1)
 
 #%%
 daily_stack = daily_mean.stack().reset_index().rename(columns={"level_1":"category", 0:"State or territory"})
-daily_stack = daily_stack.set_index('Date')	
+daily_stack = daily_stack.set_index('Date')
 merge = pd.merge(daily_stack, aus_only, left_index=True, right_index=True)
 merge = merge.rename(columns={"AUS": "National"})
 merge = merge.round(3)
 
+print(merge)
+
 #%%
 
 def makeStateVaccinations(df):
-	
+
 	template = [
 			{
 				"title": "Trend in recent daily vaccinations by state and territory",
@@ -152,4 +154,3 @@ def makeStateVaccinations(df):
 	yachtCharter(template=template,options=options, data=chartData, periods=periods, chartId=chartId, chartName="state-vaccinations-sm-2021")
 
 makeStateVaccinations(merge)
-
