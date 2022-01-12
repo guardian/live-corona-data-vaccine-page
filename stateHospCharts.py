@@ -94,7 +94,7 @@ def makeChart(state):
 		template = [
 				{
 					"title": f"Covid cases hospitalised in {state_text} v hospital capacity impact thresholds",
-					"subtitle": f"Showing the number of people hospitalised with Covid over time, along with the federal government's clinical capacity thresholds that indicate when action is required. The 'amber' or 15% hospitcal capacity threshold indicates 'targeted adjustments' are required or in progress, while the 'red' threshold indicates a 'harder or wider' response is required. Last updated {updated_date}.",
+					"subtitle": f"Showing the number of people hospitalised with Covid over time, along with the federal government's clinical capacity thresholds that indicate when action is required. The 'amber' or 15% hospital capacity threshold indicates 'targeted adjustments' are required or in progress, while the 'red' threshold indicates a 'harder or wider' response is required. Last updated {updated_date}.",
 					"footnote": "",
 					"source": f"CovidLive.com.au, Department of Health, AIHW, <a href='hhttps://www.health.gov.au/sites/default/files/documents/2022/01/coronavirus-covid-19-common-operating-picture-3-january-2022.pdf'>clinical capacity thresholds</a>, Guardian analysis{hosp_text}",
 					"dateFormat": "%Y-%m-%d",

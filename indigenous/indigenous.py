@@ -75,6 +75,7 @@ air_cols = list(air_data.columns)
 newData = pd.DataFrame(columns=['DATE_AS_AT','FIRST_DOSE_COUNT_16', 'SECOND_DOSE_COUNT_16','FIRST_DOSE_COUNT_12', 'SECOND_DOSE_COUNT_12' ])
 
 for state in states:
+	
 	temp = air_data[['DATE_AS_AT',
 				  f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT', 
 				  f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT',
@@ -82,14 +83,19 @@ for state in states:
 				  f'AIR_{state}_12_15_SECOND_DOSE_COUNT',
 				  ]]
 	temp['STATE'] = state
-	temp = temp.rename(columns={f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT':'FIRST_DOSE_COUNT_16',f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT':'SECOND_DOSE_COUNT_16', f'AIR_{state}_12_15_FIRST_DOSE_COUNT':'FIRST_DOSE_COUNT_12', f'AIR_{state}_12_15_SECOND_DOSE_COUNT':'SECOND_DOSE_COUNT_12'}) 
+	temp = temp.T.drop_duplicates().T
+
+	temp = temp.rename(columns={f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT':'FIRST_DOSE_COUNT_16',f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT':'SECOND_DOSE_COUNT_16', f'AIR_{state}_12_15_FIRST_DOSE_COUNT':'FIRST_DOSE_COUNT_12', f'AIR_{state}_12_15_SECOND_DOSE_COUNT':'SECOND_DOSE_COUNT_12'})
 	newData = newData.append(temp)
+
 
 # newData = pd.read_csv("dummy.csv")
 newData['DATE_AS_AT'] = pd.to_datetime(newData['DATE_AS_AT'])
 newData['weekday'] = newData['DATE_AS_AT'].dt.dayofweek
-
-
+newData['FIRST_DOSE_COUNT_16'] = pd.to_numeric(newData['FIRST_DOSE_COUNT_16'])
+newData['FIRST_DOSE_COUNT_12'] = pd.to_numeric(newData['FIRST_DOSE_COUNT_12'])
+newData['SECOND_DOSE_COUNT_16'] = pd.to_numeric(newData['SECOND_DOSE_COUNT_16'])
+newData['SECOND_DOSE_COUNT_12'] = pd.to_numeric(newData['SECOND_DOSE_COUNT_12'])
 # print(newData['DATE_AS_AT'].dtypes)	
 #%%
 newData_sundays = newData[newData['weekday'] == 6]
@@ -112,7 +118,13 @@ merged = merged[merged['STATE'] != 'AUS']
 merged['NI_FIRST_DOSE'] = merged['FIRST_DOSE'] - merged['INDIG_FIRST_DOSE']
 merged['NI_SECOND_DOSE'] = merged['SECOND_DOSE'] - merged['INDIG_SECOND_DOSE']
 
-merged['Indigenous 12+ population (AIR 2021)'] = merged.apply(lambda x: pop_dict[x['STATE']]['Indigenous 12+ population (AIR 2021)'], axis=1)
+
+#%%
+def getPop(row):
+	print(row['STATE'])
+	return pop_dict[row['STATE']]['Indigenous 12+ population (AIR 2021)']
+
+merged['Indigenous 12+ population (AIR 2021)'] = merged.apply(getPop, axis=1)
 
 merged['Indigenous 12+ population (AIR 2021)'] = merged['Indigenous 12+ population (AIR 2021)'].astype('int64')
 
