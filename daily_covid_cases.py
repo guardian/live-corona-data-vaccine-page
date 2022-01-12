@@ -26,6 +26,7 @@ old_grouped = old_df.groupby(by=['Date'])['Cumulative case count'].sum()
 cl = 'https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/oz-covid-cases.json'
 cl = pd.read_json(cl)
 
+#%%
 oz_new_cases = cl.loc[cl['CODE'] == "AUS"].copy()
 oz_new_cases['CASE_CNT'] = pd.to_numeric(oz_new_cases['CASE_CNT'])
 
@@ -139,9 +140,42 @@ deaths['Incremental'] = deaths['DEATH_CNT'].diff(periods=-1)
 deaths = deaths[['REPORT_DATE', 'Incremental']]
 
 deaths.columns = ['Date', "Total"]
-deaths = deaths.sort_values(by='Date', ascending=True)
-deaths.set_index('Date', inplace=True)
-deaths.index.name = None
+
+#%%
+
+useLatest = True
+current = pd.DataFrame([{"Date":"2022-01-12", "Total":42}])
+merged = pd.DataFrame()
+
+if useLatest:
+	print("Using latest values")
+	merged = pd.concat([current, deaths])
+else:
+	print("Not latest")
+	merged = deaths
+
+merged.set_index('Date', inplace=True)
+
+merged = merged[~merged.index.duplicated()]
+
+merged = merged.sort_values(by='Date', ascending=True)
+
+
+#%%
+deaths_avg = merged.copy()
+deaths_avg['Trend'] = deaths_avg['Total'].rolling(window=7).mean()
+
+deaths_avg = deaths_avg[['Trend']]
+
+deaths_avg.fillna('', inplace=True)
+deaths_avg.reset_index(inplace=True)
+deaths_avg = deaths_avg.to_dict(orient='records')
+
+
+#%%
+
+
+# merged.index.name = None
 
 
 def makeTotalDeathBars(df):
@@ -164,21 +198,25 @@ def makeTotalDeathBars(df):
 				"margin-bottom": "20",
 				"margin-right": "20",
 				"xAxisDateFormat": "%b %d",
-				"tooltip":"<strong>{{#formatDate}}{{data.index}}{{/formatDate}}</strong><br><strong>{{group}}</strong>: {{groupValue}}"
+				"tooltip":"<strong>{{#nicerdate}}{{Date}}{{/nicerdate}}</strong><br><strong>{{group}}</strong>: {{groupValue}}"
 				
 			}
 		]
 
 	periods = []
-	key = [{"key":"Deaths","colour":"#000"}]
+	key = [{"key":"Deaths","colour":"#cfa1d4"}]
 	chartId = [{"type":"stackedbar"}]
+	options = [{"trendColors":"#751480"}]
 	df.fillna('', inplace=True)
 	df = df.reset_index()
 	chartData = df.to_dict('records')
 
-	yachtCharter(template=template, data=chartData, chartId=chartId, chartName="aus-total-corona-deaths{test}".format(test=test), key=key)
+	yachtCharter(template=template, data=chartData, options=options, chartId=chartId, trendline=deaths_avg, key=key, chartName="aus-total-corona-deaths-testing".format(test=test))
 
-makeTotalDeathBars(deaths)
+makeTotalDeathBars(merged)
+
+
+#%%
 
 states = cl.loc[cl['CODE'] != "AUS"].copy()
 states['CASE_CNT'] = pd.to_numeric(states['CASE_CNT'])
