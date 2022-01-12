@@ -106,3 +106,5 @@ import indigenous.indigenous_line
 import indigenous.indigenous
 
 import booster_feed.booster_chart_feed
+
+import new_thrashers.scrape_data_feed

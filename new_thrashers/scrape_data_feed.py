@@ -2,6 +2,7 @@
 
 from numpy import short
 import pandas as pd 
+pd.set_option("display.max_columns", 100)
 from modules.syncData import syncData
 import datetime 
 import pytz
@@ -103,10 +104,17 @@ air = pd.read_json(url)
 
 dair = air.copy()
 
+dair['AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'] = dair['AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'].fillna(0)
+dair['AIR_12_15_SECOND_DOSE_COUNT'] = dair['AIR_12_15_SECOND_DOSE_COUNT'].fillna(0)
+dair['AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'] = pd.to_numeric(dair['AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'])
+dair['AIR_12_15_SECOND_DOSE_COUNT'] = pd.to_numeric(dair['AIR_12_15_SECOND_DOSE_COUNT'])
+
 dair['Second_doses'] = dair['AIR_12_15_SECOND_DOSE_COUNT'] + dair['AIR_AUS_16_PLUS_SECOND_DOSE_COUNT']
 
 dair = dair[['DATE_AS_AT','Second_doses']]
-dair['Eligible'] = dair['Second_doses'].shift(90)
+dair['Eligible'] = dair['Second_doses'].shift(120)
+
+print(dair.tail(30))
 
 booster_eligible = round(((dair['Eligible'].max()/five_plus["AUS"]) * 100), 2)
 
@@ -174,6 +182,10 @@ for juri in prok['CODE'].unique().tolist():
         
         inter['DEATH_CNT'] = inter['DEATH_CNT'].ffill()
 
+        inter['MED_HOSP_CNT'] = pd.to_numeric(inter['MED_HOSP_CNT'])
+        inter['MED_HOSP_CNT'] = inter['MED_HOSP_CNT'].ffill()
+
+
         inter['NEW_DEATHS'] = inter['DEATH_CNT'].diff(1)
 
         inter['DEATH_SHIFTED'] = round(inter['NEW_DEATHS'].rolling(window=30).sum(),0)
@@ -192,6 +204,8 @@ for juri in prok['CODE'].unique().tolist():
 
         if hospitalised > hospitalised_week_ago:
             hospitalised_status = "Increasing"
+        elif round(hospitalised,0) == round(hospitalised_week_ago,0):
+            hospitalised_status = "No_change"
         else:
             hospitalised_status = "Decreasing"
 
@@ -202,7 +216,7 @@ for juri in prok['CODE'].unique().tolist():
         feed.append([juri + '_boosters_percent', boosters])
         feed.append([juri + '_boosters_eligible_percent', booster_eligible])
         feed.append([juri + '_two_doses_percent', two_doses])
-        feed.append([juri + '_deaths_last_thirty', two_doses])
+        feed.append([juri + '_deaths_last_thirty', deaths_shifted])
 
 
 
@@ -217,6 +231,8 @@ for juri in prok['CODE'].unique().tolist():
 
         if hospitalised > hospitalised_week_ago:
             hospitalised_status = "Increasing"
+        elif round(hospitalised,0) == round(hospitalised_week_ago,0):
+            hospitalised_status = "No_change"
         else:
             hospitalised_status = "Decreasing"
 
