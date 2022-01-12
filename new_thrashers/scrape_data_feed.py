@@ -22,7 +22,7 @@ twelve_pop = {
     'SA':1440400 + 82747, 'WA':2114978 + 132869,
      'TAS':440172 + 26308 , "AUS":20619959 + 1243990}
 
-five_plus = {"AUS":24218334}
+five_plus = {"AUS":20619959 + 1243990 + 2276638}
 
 #%%
 
@@ -98,6 +98,20 @@ url = 'https://vaccinedata.covid19nearme.com.au/data/air.json'
 air = pd.read_json(url)
 
 #%%
+
+### Work out booster eligibility
+
+dair = air.copy()
+
+dair['Second_doses'] = dair['AIR_12_15_SECOND_DOSE_COUNT'] + dair['AIR_AUS_16_PLUS_SECOND_DOSE_COUNT']
+
+dair = dair[['DATE_AS_AT','Second_doses']]
+dair['Eligible'] = dair['Second_doses'].shift(90)
+
+booster_eligible = round(((dair['Eligible'].max()/five_plus["AUS"]) * 100), 2)
+
+
+## Work out rest of vax
 
 states =['NSW','VIC','QLD','WA','SA','TAS','NT','ACT','AUS']
 short_cols = ['DATE_AS_AT']
@@ -186,8 +200,11 @@ for juri in prok['CODE'].unique().tolist():
         feed.append([ juri + "_status" , hospitalised_status])
 
         feed.append([juri + '_boosters_percent', boosters])
+        feed.append([juri + '_boosters_eligible_percent', booster_eligible])
         feed.append([juri + '_two_doses_percent', two_doses])
         feed.append([juri + '_deaths_last_thirty', two_doses])
+
+
 
     else:
 

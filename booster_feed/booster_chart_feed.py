@@ -38,7 +38,10 @@ ken = ken.sort_values(by='DATE_AS_AT', ascending=True)
 ken = ken.loc[ken['DATE_AS_AT'] >= "2021-07-01"]
 ken.fillna(0, inplace=True)
 
-ken['Second'] = ken['AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'] + ken['AIR_12_15_SECOND_DOSE_COUNT']
+if 'AIR_5_11_SECOND_DOSE_COUNT' in ken.columns.tolist():
+	ken['Second'] = ken['AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'] + ken['AIR_12_15_SECOND_DOSE_COUNT'] + ken['AIR_5_11_SECOND_DOSE_COUNT']
+else:
+	ken['Second'] = ken['AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'] + ken['AIR_12_15_SECOND_DOSE_COUNT']
 
 ken = ken[['DATE_AS_AT','Second', 'AIR_AUS_16_PLUS_THIRD_DOSE_COUNT']]
 ken.columns = ['Date', 'Second doses', 'Boosters']
