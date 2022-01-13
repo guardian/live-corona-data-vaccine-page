@@ -1,3 +1,4 @@
+#%%
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -7,14 +8,17 @@ import ssl
 from datetime import timedelta
 from modules.yachtCharter import yachtCharter
 
-state_json = "https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/state-vaccine-rollout.json"
+testo = ''
+# testo = "-testo"
 
-if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None)):
-    ssl._create_default_https_context = ssl._create_unverified_context
+# state_json = "https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/state-vaccine-rollout.json"
 
-#%%
+# if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None)):
+#     ssl._create_default_https_context = ssl._create_unverified_context
 
-df = pd.read_json(state_json)
+# #%%
+
+# df = pd.read_json(state_json)
 
 #%%
 
@@ -31,111 +35,190 @@ population = {
 	}
 
 
+# %%
+
+# df['REPORT_DATE'] = pd.to_datetime(df['REPORT_DATE'], format="%Y-%m-%d")
+# df = df.rename(columns={"REPORT_DATE": "Date"})
+
+# #%%
+# pivoted = df.pivot(index='Date', columns='CODE')['VACC_DOSE_CNT']
+# states = ["NSW","VIC","QLD","SA","WA","TAS","ACT","NT","AUS"]
+# daily_cum = pivoted[states]
+# daily_cum.to_csv('pivot_cumulative.csv')
+
+# # daily_cum["2021-02-24":"2021-08-16"] = daily_cum["2021-02-24":"2021-08-16"].apply(adjust)
+
+# #%%
+
+# daily = daily_cum.copy()
+
+# for state in states:
+# 	daily[state] = daily[state].sub(daily[state].shift())
+
+# count = len(daily_cum["2021-02-24":"2021-08-15"].index) - 1
+
+# daily.to_csv('daily-vax.csv')
+
+# # Adjusts for the switchover from 2021-08-16 to the AIR derived data, by taking the new difference and adjusting previous values using an average of the difference
+
+# diff_adjustment = {"NSW":119652, "VIC":-30981, "QLD":11598, "SA": -5354, "WA":15146, "TAS": 860, "ACT":47614, "NT":5192,"AUS":163727}
+# state_adjustments = {}
+# daily_adj = daily.copy()
+
+# for state in states:
+# 	gap = diff_adjustment[state]
+# 	avg_7day = daily[state]["2021-08-09":"2021-08-15"].mean()
+# 	adj_gap = gap - avg_7day
+# 	adj_avg = adj_gap / count
+# 	print("gap", gap, "avg_7day", avg_7day, "adj_gap", adj_gap, "adj_avg", adj_avg)
+# 	state_adjustments[state] = {"adj_avg":adj_avg, "avg_7day":avg_7day}
+# 	daily_adj[state]["2021-08-16"] = avg_7day
+
+# #%%
+# def adjust(col):
+# 	return col + state_adjustments[col.name]["adj_avg"]
+
+# daily_adj["2021-02-24":"2021-08-15"] = daily_adj["2021-02-24":"2021-08-15"].apply(adjust)
+
+# #%%
+
+# daily_short = daily_adj["2021-04-10":]
+# # daily_short = daily["2021-04-10":]
+# # daily[daily < 0] = 0
+
+# #%%
+
+# lastUpdated = daily_short.index[-1]
+# # newUpdated = lastUpdated + timedelta(days=1)
+# updatedText = lastUpdated.strftime('%-d %B, %Y')
+
+# #%%
+
+# def getRate(col):
+# 	print(col.name)
+# 	return col / population[col.name] * 100
+
+# daily_short.apply(getRate)
+# daily_rate = daily_short.apply(getRate)
+
+# #%%
+
+# daily_mean = daily_rate.rolling(7).mean()
+# thirty_days = lastUpdated - timedelta(days=30)
+# daily_mean = daily_mean[thirty_days:]
+# daily_mean = daily_mean.dropna()
+# # daily_mean = daily_mean[:-2]
+# daily_mean.index = daily_mean.index.strftime('%Y-%m-%d')
+# aus_only = daily_mean['AUS']
+
+# #%%
+# daily_mean = daily_mean.drop(['AUS'], axis=1)
+
+# #%%
+# daily_stack = daily_mean.stack().reset_index().rename(columns={"level_1":"category", 0:"State or territory"})
+# daily_stack = daily_stack.set_index('Date')
+# merge = pd.merge(daily_stack, aus_only, left_index=True, right_index=True)
+# merge = merge.rename(columns={"AUS": "National"})
+# merge = merge.round(3)
+
+# print("merged", merge)
+
+
 #%%
 
-df['REPORT_DATE'] = pd.to_datetime(df['REPORT_DATE'], format="%Y-%m-%d")
-df = df.rename(columns={"REPORT_DATE": "Date"})
+### Redo with Ken data
 
-#%%
-pivoted = df.pivot(index='Date', columns='CODE')['VACC_DOSE_CNT']
-states = ["NSW","VIC","QLD","SA","WA","TAS","ACT","NT","AUS"]
-daily_cum = pivoted[states]
-daily_cum.to_csv('pivot_cumulative.csv')
+url = 'https://vaccinedata.covid19nearme.com.au/data/air.json'
 
-# daily_cum["2021-02-24":"2021-08-16"] = daily_cum["2021-02-24":"2021-08-16"].apply(adjust)
+air_data = pd.read_json(url)
+
 
 #%%
 
-daily = daily_cum.copy()
+air = air_data.copy()
+
+states =['NSW','VIC','QLD','WA','SA','TAS','NT','ACT','AUS']
+
+short_cols = ['DATE_AS_AT']
+
+air.fillna(0, inplace=True)
 
 for state in states:
-	daily[state] = daily[state].sub(daily[state].shift())
 
-count = len(daily_cum["2021-02-24":"2021-08-15"].index) - 1
+	# air[f'{state}'] = pd.to_numeric(air[f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT']) + pd.to_numeric(air[f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT']) + pd.to_numeric(air[f'AIR_{state}_12_15_FIRST_DOSE_COUNT']) + pd.to_numeric(air[f'AIR_{state}_12_15_SECOND_DOSE_COUNT']) + (air[f'AIR_{state}_5_11_FIRST_DOSE_COUNT']) + pd.to_numeric(air[f'AIR_{state}_5_11_SECOND_DOSE_COUNT']) + pd.to_numeric(air[f'AIR_{state}_18_PLUS_THIRD_DOSE_COUNT'])
+	air[f'{state}'] = pd.to_numeric(air[f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT']) + pd.to_numeric(air[f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT']) + pd.to_numeric(air[f'AIR_{state}_12_15_FIRST_DOSE_COUNT']) + pd.to_numeric(air[f'AIR_{state}_12_15_SECOND_DOSE_COUNT']) + (air[f'AIR_{state}_5_11_FIRST_DOSE_COUNT']) + pd.to_numeric(air[f'AIR_{state}_5_11_SECOND_DOSE_COUNT'])
 
-daily.to_csv('daily-vax.csv')
+	air[f'{state}_daily'] = air[f'{state}'].diff(1)
+	air[f'{state}_7_day_avg'] = air[f'{state}_daily'].rolling(window=7).mean()
+	
+	air[f'{state}_7_day_avg_per_100'] = round((air[f'{state}_7_day_avg']/population[state])*100,2)
 
-# Adjusts for the switchover from 2021-08-16 to the AIR derived data, by taking the new difference and adjusting previous values using an average of the difference
+	short_cols.append(f'{state}_7_day_avg_per_100')
+	
 
-diff_adjustment = {"NSW":119652, "VIC":-30981, "QLD":11598, "SA": -5354, "WA":15146, "TAS": 860, "ACT":47614, "NT":5192,"AUS":163727}
-state_adjustments = {}
-daily_adj = daily.copy()
+rolled = air[short_cols]
 
-for state in states:
-	gap = diff_adjustment[state]
-	avg_7day = daily[state]["2021-08-09":"2021-08-15"].mean()
-	adj_gap = gap - avg_7day
-	adj_avg = adj_gap / count
-	print("gap", gap, "avg_7day", avg_7day, "adj_gap", adj_gap, "adj_avg", adj_avg)
-	state_adjustments[state] = {"adj_avg":adj_avg, "avg_7day":avg_7day}
-	daily_adj[state]["2021-08-16"] = avg_7day
-
-#%%
-def adjust(col):
-	return col + state_adjustments[col.name]["adj_avg"]
-
-daily_adj["2021-02-24":"2021-08-15"] = daily_adj["2021-02-24":"2021-08-15"].apply(adjust)
 
 #%%
 
-daily_short = daily_adj["2021-04-10":]
-# daily_short = daily["2021-04-10":]
-# daily[daily < 0] = 0
+zdf = rolled.copy()
 
-#%%
 
-lastUpdated = daily_short.index[-1]
-# newUpdated = lastUpdated + timedelta(days=1)
+oz = zdf[['DATE_AS_AT', 'AUS_7_day_avg_per_100']]
+oz.columns = ['Date', 'National']
+
+
+zdf = zdf[['DATE_AS_AT', 'NSW_7_day_avg_per_100', 'VIC_7_day_avg_per_100', 'QLD_7_day_avg_per_100', 'WA_7_day_avg_per_100', 'SA_7_day_avg_per_100', 'TAS_7_day_avg_per_100', 'NT_7_day_avg_per_100', 'ACT_7_day_avg_per_100']]
+zdf.columns = ['Date', 'NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'NT', 'ACT']
+
+
+
+melted = pd.melt(zdf, id_vars=['Date'], value_vars=['NSW', 'VIC', 'QLD', 'WA', 'SA', 'TAS', 'NT', 'ACT'])
+
+melted = melted.sort_values(by=['Date'], ascending=True)
+
+tog = pd.merge(melted, oz, on=['Date'], how='left')
+
+tog.columns = ['Date', 'Code', 'State or territory', 'National']
+
+lastUpdated = tog['Date'].max()
+
+
 updatedText = lastUpdated.strftime('%-d %B, %Y')
 
-#%%
-
-def getRate(col):
-	print(col.name)
-	return col / population[col.name] * 100
-
-daily_short.apply(getRate)
-daily_rate = daily_short.apply(getRate)
-
-#%%
-
-daily_mean = daily_rate.rolling(7).mean()
 thirty_days = lastUpdated - timedelta(days=30)
-daily_mean = daily_mean[thirty_days:]
-daily_mean = daily_mean.dropna()
-# daily_mean = daily_mean[:-2]
-daily_mean.index = daily_mean.index.strftime('%Y-%m-%d')
-aus_only = daily_mean['AUS']
 
-#%%
-daily_mean = daily_mean.drop(['AUS'], axis=1)
+tog = tog.loc[tog['Date'] > thirty_days]
 
-#%%
-daily_stack = daily_mean.stack().reset_index().rename(columns={"level_1":"category", 0:"State or territory"})
-daily_stack = daily_stack.set_index('Date')
-merge = pd.merge(daily_stack, aus_only, left_index=True, right_index=True)
-merge = merge.rename(columns={"AUS": "National"})
-merge = merge.round(3)
 
-print(merge)
+tog['Date'] = tog['Date'].dt.strftime("%Y-%m-%d")
 
-#%%
+tog.set_index('Date', inplace=True)
+
+
+
+merge = tog
+
+p = tog
+
+print(p)
+print(p.columns.tolist())
 
 def makeStateVaccinations(df):
 
 	template = [
 			{
 				"title": "Trend in recent daily vaccinations by state and territory",
-				"subtitle": "Showing the seven-day rolling average in Covid vaccination doses administered daily per 100 people in each state and territory, versus the national rate. Showing the last 30 days only. Figures have been adjusted to average out the difference of the data changing sources on 16 August, see notes. Last updated {date}".format(date=updatedText),
+				"subtitle": "Showing the seven-day rolling average in Covid vaccination doses administered daily per 100 people in each state and territory, versus the national rate. Includes first and second shots. Showing the last 30 days only.  Last updated {date}".format(date=updatedText),
 				"footnote": "",
-				"source": " | Source: Guardian Australia analysis of <a href='https://covidlive.com.au/' target='_blank'>covidlive.com.au</a> data | Data shows vaccinations by state of administration, not by state of residence | On 16 August the Department of Health switched to using figures from the Australian Immunisation Register for state and territory vaccination totals. The day-on-day difference between the old and new data has been averaged out on data up to 16 August, and the 16 August total replaced with a 7-day average. After 16 August figures are as normal.",
+				"source": " | Source: Guardian Australia analysis of federal health department data, extracted by Ken Tsang | Data shows vaccinations by state of administration, not by state of residence.",
 				"dateFormat": "%Y-%m-%d",
 				"xAxisLabel": "",
 				"yAxisLabel": "",
 				"timeInterval":"day",
-				"tooltip":"<strong>Date: </strong>{{#nicedate}}Date{{/nicedate}}<br/><strong>Count: </strong>{{State or territory}}",
+				"tooltip":"<strong>Date: </strong>{{#nicedate}}Date{{/nicedate}}<br/><strong>Rolling average per 100: </strong>{{State or territory}}",
 				"periodDateFormat":"",
-				"margin-left": "25",
+				"margin-left": "35",
 				"margin-top": "25",
 				"margin-bottom": "22",
 				"margin-right": "22",
@@ -151,6 +234,8 @@ def makeStateVaccinations(df):
 	df = df.reset_index()
 	chartData = df.to_dict('records')
 
-	yachtCharter(template=template,options=options, data=chartData, periods=periods, chartId=chartId, chartName="state-vaccinations-sm-2021")
+	yachtCharter(template=template,options=options, data=chartData, periods=periods, chartId=chartId, chartName=f"state-vaccinations-sm-2021{testo}")
 
 makeStateVaccinations(merge)
+
+# %%
