@@ -209,7 +209,7 @@ def makeStateVaccinations(df):
 	template = [
 			{
 				"title": "Trend in recent daily vaccinations by state and territory",
-				"subtitle": "Showing the seven-day rolling average in Covid vaccination doses administered daily per 100 people in each state and territory, versus the national rate. Includes first and second shots. Showing the last 30 days only.  Last updated {date}".format(date=updatedText),
+				"subtitle": "Showing the seven-day rolling average in Covid vaccination doses administered daily per 100 people in each state and territory, versus the national rate. Includes first and second doses. Showing the last 30 days only.  Last updated {date}".format(date=updatedText),
 				"footnote": "",
 				"source": " | Source: Guardian Australia analysis of federal health department data, extracted by Ken Tsang | Data shows vaccinations by state of administration, not by state of residence.",
 				"dateFormat": "%Y-%m-%d",
