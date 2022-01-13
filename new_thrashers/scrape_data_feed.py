@@ -25,6 +25,11 @@ twelve_pop = {
 
 five_plus = {"AUS":20619959 + 1243990 + 2276638}
 
+
+eighteen_plus = {"AUS": 20068897, "NSW": 6576596, 
+"VIC": 5366921, "QLD":4131396, "SA":1448431, 'WA':2118269, "TAS":443555,
+"NT":186710, "ACT":342638}
+
 #%%
 
 ## Read in scrape data
@@ -116,7 +121,7 @@ dair['Eligible'] = dair['Second_doses'].shift(120)
 
 print(dair.tail(30))
 
-booster_eligible = round(((dair['Eligible'].max()/five_plus["AUS"]) * 100), 2)
+booster_eligible = round(((dair['Eligible'].max()/eighteen_plus["AUS"]) * 100), 2)
 
 
 ## Work out rest of vax
@@ -131,7 +136,7 @@ for state in states:
         
         air[f"Two_doses"] = round((((air[f'AIR_12_15_SECOND_DOSE_COUNT'] + air[f'AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'])/five_plus[state]) * 100), 2)
         short_cols.append(f"Two_doses")
-        air['Boosters'] = round((((air[f"AIR_AUS_16_PLUS_THIRD_DOSE_COUNT"])/five_plus[state]) * 100), 2)
+        air['Boosters'] = round((((air[f"AIR_AUS_16_PLUS_THIRD_DOSE_COUNT"])/eighteen_plus[state]) * 100), 2)
         short_cols.append('Boosters')
         air[f"Two_doses_total"] = round((((air[f'AIR_12_15_SECOND_DOSE_COUNT'] + air[f'AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'])/25739256) * 100), 2)
         short_cols.append(f"Two_doses_total")

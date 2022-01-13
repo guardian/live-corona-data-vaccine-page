@@ -27,9 +27,24 @@ sixteen_pop = {
     'QLD':4112707, 'ACT':344037,
     'SA':1440400, 'WA':2114978, 'TAS':440172, "AUS":20619959}
 
+twelve_pop = {
+    'NT':190571 + 13060, 'NSW':6565651 + 390330, 
+    'VIC':5407574 + 308611,
+    'QLD':4112707 + 270146 , 'ACT':344037 + 18930 ,
+    'SA':1440400 + 82747, 'WA':2114978 + 132869,
+     'TAS':440172 + 26308 , "AUS":20619959 + 1243990}
+
+five_plus = {'NT':190571 + 13060 + 24750, 'NSW':6565651 + 390330 + 716460, 
+    'VIC':5407574 + 308611 +578499,
+    'QLD':4112707 + 270146 +478731, 'ACT':344037 + 18930 +39789,
+    'SA':1440400 + 82747 + 148816, 'WA':2114978 + 132869 + 244154,
+     'TAS':440172 + 26308 + 45033, "AUS":20619959 + 1243990 + 2276638}
+
 # source: https://www.health.gov.au/sites/default/files/documents/2021/07/covid-19-vaccine-rollout-update-5-july-2021.pdf
 
 url = 'https://vaccinedata.covid19nearme.com.au/data/air.json'
+
+# print(url.columns.tolist())
 
 air_data = pd.read_json(url)
 
@@ -286,6 +301,11 @@ table_data['First dose %'] = table_data['First dose %'].str.strip()
 # print(table_data)
 # print(table_data.columns.tolist())
 # %%
+
+# print(table_data)
+# print(table_data.columns)
+
+# table_data = table_data[['State', 'Second dose %','Expected to hit 90% second dose']]
 
 updated_date = datetime.datetime.now()
 updated_date = updated_date.astimezone(pytz.timezone("Australia/Sydney")).strftime('%d %B %Y')

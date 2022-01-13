@@ -93,7 +93,7 @@ import outbreaks_reindexed
 import vaccine_availability.weekly_state_utilisation
 import vaccine_availability.weekly_distribution
 
-import state_by_state.new_table_model2
+import state_by_state.new_table_model4
 
 import state_outbreaks.act_out
 import state_outbreaks.vic_out
