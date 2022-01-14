@@ -201,6 +201,8 @@ for juri in prok['CODE'].unique().tolist():
         inter['HOSPITALISATION_SHIFTED'] = pd.to_numeric(inter['HOSPITALISATION_SHIFTED'])
 
         latest = inter.loc[inter['REPORT_DATE'] == inter['REPORT_DATE'].max()]
+
+        print(latest)
         
         two_doses_total = inter['Two_doses_total'].max()
         two_doses = inter['Two_doses'].max()
