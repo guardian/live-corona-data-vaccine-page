@@ -67,7 +67,6 @@ states =['NSW','VIC','QLD','WA','SA','TAS','NT','ACT','AUS']
 # 	short_cols.append(f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT')
 
 
-
 # newData = pd.DataFrame(columns=['DATE_AS_AT','FIRST_DOSE_COUNT', 'SECOND_DOSE_COUNT'])
 newData = pd.DataFrame()
 
