@@ -55,8 +55,6 @@ def together(state, new_data, past, start):
 
     inter.columns = ['Date', 'Locally-acquired cases']
 
-
-
     old_data['Date'] = pd.to_datetime(old_data['Date'], format="%d/%m/%Y")
     old_data['Date'] = old_data['Date'].dt.strftime("%Y-%m-%d")
 
@@ -96,6 +94,13 @@ def together(state, new_data, past, start):
 old = together(statto, new, fillo, init)  
 
 old = old.dropna()
+
+#%%
+
+# Add new PCR and RAT data
+
+pcr_data = requests.get("https://interactive.guim.co.uk/docsdata/1AJjoasPHqrErXhsv1sh4m8uux_HIZG5wPT4llSq7kOA.json")
+
 
 # print(old.tail())
 

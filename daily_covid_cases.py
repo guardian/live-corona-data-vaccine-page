@@ -144,7 +144,7 @@ deaths.columns = ['Date', "Total"]
 #%%
 
 useLatest = True
-current = pd.DataFrame([{"Date":"2022-01-12", "Total":42}])
+current = pd.DataFrame([{"Date":"2022-01-14", "Total":47}])
 merged = pd.DataFrame()
 
 if useLatest:
@@ -211,7 +211,7 @@ def makeTotalDeathBars(df):
 	df = df.reset_index()
 	chartData = df.to_dict('records')
 
-	yachtCharter(template=template, data=chartData, options=options, chartId=chartId, trendline=deaths_avg, key=key, chartName="aus-total-corona-deaths-testing".format(test=test))
+	yachtCharter(template=template, data=chartData, options=options, chartId=chartId, trendline=deaths_avg, key=key, chartName="aus-total-corona-deaths".format(test=test))
 
 makeTotalDeathBars(merged)
 

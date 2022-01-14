@@ -6,7 +6,7 @@ import pandas as pd
 from yachtcharter import yachtCharter
 import datetime
 
-og = pd.read_json('https://interactive.guim.co.uk/2022/01/oz-covid-health-data/cases.json')
+og = pd.read_json('https://covidlive.com.au/covid-live.json')
 
 # 'REPORT_DATE', 'LAST_UPDATED_DATE', 'CODE', 'NAME', 'CASE_CNT',
 #        'TEST_CNT', 'DEATH_CNT', 'RECOV_CNT', 'MED_ICU_CNT', 'MED_VENT_CNT',
@@ -35,19 +35,37 @@ beds = {
   "ACT": 1151,
   "NT": 977
 }
+# "2021-08-01"
+start = "2021-08-01"
+# start = "2021-12-01"
+
 #%%
 
-# df = og.loc[og['CODE'] == "NT"]
+# optionally manually add today's hosp numbers
+
+useLatest = True
+merge = og.copy()
+
+if useLatest:
+	new_data = pd.read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSNljV81sJgmhQJnKHT4jvsZbqkdYHxaE0k7g5xaurBn0hHMujHEA47dDqELgwHRd4UGfpmRxV4kBkT/pub?gid=203642518&single=true&output=csv")
+	new_data = new_data.dropna()
+	merge = merge.append(new_data)
+
+
+test = merge.loc[merge['CODE'] == "NSW"]
+
 #%%
+
+
 def makeChart(state):
 	
 	# state = "VIC"
 	print(state)	
 	
-	df = og.copy()	
+	df = merge.copy()	
 	df = df.loc[df['CODE'] == state]
 	#%%
-	df = df.loc[df['REPORT_DATE'] >= "2021-08-01"].copy()
+	df = df.loc[df['REPORT_DATE'] >= start].copy()
 	
 	df = df[['REPORT_DATE','MED_HOSP_CNT']]
 	df['MED_HOSP_CNT'] = pd.to_numeric(df['MED_HOSP_CNT'])
@@ -58,10 +76,10 @@ def makeChart(state):
 	import datetime
 	today = datetime.datetime.today()
 	today = datetime.datetime.strftime(today, "%Y-%m-%d")
-	startDate = '2021-08-01'
+# 	startDate = '2021-08-01'
 	
 	thresholds = [
-		{"y1":beds[state] * 0.15,"y2":beds[state] * 0.15,"x1":startDate, "x2":today, "text":"Amber (> 15% of hospital beds)"},
+		{"y1":beds[state] * 0.15,"y2":beds[state] * 0.15,"x1":start, "x2":today, "text":"Amber (> 15% of hospital beds)"},
 # 		{"y1":beds[state] * 0.30,"y2":beds[state] * 0.30,"x1":startDate, "x2":today, "text":"Red (> 30% of hospital beds) "},
 		]
 	
@@ -94,7 +112,7 @@ def makeChart(state):
 		template = [
 				{
 					"title": f"Covid cases hospitalised in {state_text} v hospital capacity impact thresholds",
-					"subtitle": f"Showing the number of people hospitalised with Covid over time, along with the federal government's clinical capacity thresholds that indicate when action is required. The 'amber' or 15% hospital capacity threshold indicates 'targeted adjustments' are required or in progress, while the 'red' threshold indicates a 'harder or wider' response is required. Last updated {updated_date}.",
+					"subtitle": f"Showing the number of people hospitalised with Covid over time, along with the federal government's clinical capacity thresholds that indicate when action is required. The 'amber' or 15% hospital capacity threshold indicates 'targeted adjustments' are required or in progress, while the 'red' threshold of 30% – currently not shown – indicates a 'harder or wider' response is required. Last updated {updated_date}.",
 					"footnote": "",
 					"source": f"CovidLive.com.au, Department of Health, AIHW, <a href='hhttps://www.health.gov.au/sites/default/files/documents/2022/01/coronavirus-covid-19-common-operating-picture-3-january-2022.pdf'>clinical capacity thresholds</a>, Guardian analysis{hosp_text}",
 					"dateFormat": "%Y-%m-%d",
