@@ -49,7 +49,7 @@ ken.columns = ['Date', 'Second doses', 'Boosters']
 latest_date = ken['Date'].max()
 init_date = datetime.datetime.strptime(latest_date, "%Y-%m-%d")
 display_date = datetime.datetime.strftime(init_date, "%-d %B %Y")
-use_date = datetime.datetime.strftime(init_date, "%Y-%m-%d")
+use_date = datetime.datetime.strftime((init_date + datetime.timedelta(days=2)), "%Y-%m-%d") 
 
 # %%
 ## Append Ken's data to Anthony
@@ -85,7 +85,7 @@ gap = difference['Date'].min()
 gap = datetime.datetime.strptime(gap, "%Y-%m-%d")
 print("Gap", gap)
 
-current_lag = (init_date - gap).days+1
+current_lag = (init_date - gap).days -1
 
 print("Lag", current_lag)
 
@@ -114,14 +114,15 @@ vax = vax.loc[vax['Date'] < cut_off]
 
 vax.rename(columns={'Second doses': f"{numberFormat(max_second)} Second doses",
 'Boosters': f"{numberFormat(max_boost)} Boosters"}, inplace=True)
-print(vax)
+# print(vax)
 
+# test 
 
-# see = vax.loc[(vax['Date'] > "2021-06-25") & (vax['Date'] < "2021-07-10")]
+see = vax.loc[(vax['Date'] > "2022-01-10") & (vax['Date'] < "2022-01-15")]
 
-# p = vax
-# print(p)
-# print(p.columns.tolist())
+p = see
+print(p[['4.4m Boosters', 'Trend', 'Date']])
+print(p.columns.tolist())
 # %%
 
 vax.fillna("", inplace=True)

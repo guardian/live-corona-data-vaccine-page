@@ -2,6 +2,7 @@
 
 from numpy import short
 import pandas as pd 
+pd.set_option("display.max_columns", 100)
 from modules.syncData import syncData
 import datetime 
 import pytz
@@ -23,6 +24,11 @@ twelve_pop = {
      'TAS':440172 + 26308 , "AUS":20619959 + 1243990}
 
 five_plus = {"AUS":20619959 + 1243990 + 2276638}
+
+
+eighteen_plus = {"AUS": 20068897, "NSW": 6576596, 
+"VIC": 5366921, "QLD":4131396, "SA":1448431, 'WA':2118269, "TAS":443555,
+"NT":186710, "ACT":342638}
 
 #%%
 
@@ -103,12 +109,19 @@ air = pd.read_json(url)
 
 dair = air.copy()
 
+dair['AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'] = dair['AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'].fillna(0)
+dair['AIR_12_15_SECOND_DOSE_COUNT'] = dair['AIR_12_15_SECOND_DOSE_COUNT'].fillna(0)
+dair['AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'] = pd.to_numeric(dair['AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'])
+dair['AIR_12_15_SECOND_DOSE_COUNT'] = pd.to_numeric(dair['AIR_12_15_SECOND_DOSE_COUNT'])
+
 dair['Second_doses'] = dair['AIR_12_15_SECOND_DOSE_COUNT'] + dair['AIR_AUS_16_PLUS_SECOND_DOSE_COUNT']
 
 dair = dair[['DATE_AS_AT','Second_doses']]
-dair['Eligible'] = dair['Second_doses'].shift(90)
+dair['Eligible'] = dair['Second_doses'].shift(120)
 
-booster_eligible = round(((dair['Eligible'].max()/five_plus["AUS"]) * 100), 2)
+print(dair.tail(30))
+
+booster_eligible = round(((dair['Eligible'].max()/eighteen_plus["AUS"]) * 100), 2)
 
 
 ## Work out rest of vax
@@ -123,8 +136,10 @@ for state in states:
         
         air[f"Two_doses"] = round((((air[f'AIR_12_15_SECOND_DOSE_COUNT'] + air[f'AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'])/five_plus[state]) * 100), 2)
         short_cols.append(f"Two_doses")
-        air['Boosters'] = round((((air[f"AIR_AUS_16_PLUS_THIRD_DOSE_COUNT"])/five_plus[state]) * 100), 2)
+        air['Boosters'] = round((((air[f"AIR_AUS_16_PLUS_THIRD_DOSE_COUNT"])/eighteen_plus[state]) * 100), 2)
         short_cols.append('Boosters')
+        air[f"Two_doses_total"] = round((((air[f'AIR_12_15_SECOND_DOSE_COUNT'] + air[f'AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'])/25739256) * 100), 2)
+        short_cols.append(f"Two_doses_total")
 
 
 z_air = air[short_cols]
@@ -174,6 +189,10 @@ for juri in prok['CODE'].unique().tolist():
         
         inter['DEATH_CNT'] = inter['DEATH_CNT'].ffill()
 
+        inter['MED_HOSP_CNT'] = pd.to_numeric(inter['MED_HOSP_CNT'])
+        inter['MED_HOSP_CNT'] = inter['MED_HOSP_CNT'].ffill()
+
+
         inter['NEW_DEATHS'] = inter['DEATH_CNT'].diff(1)
 
         inter['DEATH_SHIFTED'] = round(inter['NEW_DEATHS'].rolling(window=30).sum(),0)
@@ -181,7 +200,8 @@ for juri in prok['CODE'].unique().tolist():
         inter['HOSPITALISATION_SHIFTED'] = inter['MED_HOSP_CNT'].shift(7)
 
         latest = inter.loc[inter['REPORT_DATE'] == inter['REPORT_DATE'].max()]
-
+        
+        two_doses_total = inter['Two_doses_total'].max()
         two_doses = inter['Two_doses'].max()
         boosters = inter['Boosters'].max()
 
@@ -192,6 +212,8 @@ for juri in prok['CODE'].unique().tolist():
 
         if hospitalised > hospitalised_week_ago:
             hospitalised_status = "Increasing"
+        elif round(hospitalised,0) == round(hospitalised_week_ago,0):
+            hospitalised_status = "No_change"
         else:
             hospitalised_status = "Decreasing"
 
@@ -202,7 +224,9 @@ for juri in prok['CODE'].unique().tolist():
         feed.append([juri + '_boosters_percent', boosters])
         feed.append([juri + '_boosters_eligible_percent', booster_eligible])
         feed.append([juri + '_two_doses_percent', two_doses])
-        feed.append([juri + '_deaths_last_thirty', two_doses])
+        feed.append([juri + '_deaths_last_thirty', deaths_shifted])
+
+        feed.append([juri + '_two_doses_TOTAL_percent', two_doses_total])
 
 
 
@@ -217,6 +241,8 @@ for juri in prok['CODE'].unique().tolist():
 
         if hospitalised > hospitalised_week_ago:
             hospitalised_status = "Increasing"
+        elif round(hospitalised,0) == round(hospitalised_week_ago,0):
+            hospitalised_status = "No_change"
         else:
             hospitalised_status = "Decreasing"
 
