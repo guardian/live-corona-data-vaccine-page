@@ -43,7 +43,7 @@ start = "2021-08-01"
 
 # optionally manually add today's hosp numbers
 
-useLatest = True
+useLatest = False
 merge = og.copy()
 
 if useLatest:
@@ -55,6 +55,8 @@ if useLatest:
 test = merge.loc[merge['CODE'] == "NSW"]
 
 #%%
+
+
 
 
 def makeChart(state):
@@ -121,8 +123,8 @@ def makeChart(state):
 					"yAxisLabel": "",
 					"minY": "",
 					"maxY": f"{maxY}",
-					# "periodDateFormat":"",
-					"margin-left": "50",
+					"tooltip":"<strong>{{#formatDate}}{{Date}}{{/formatDate}}</strong><br/> Hospitalised: {{Hospitalised cases}}",
+					"margin-left": "20",
 					"margin-top": "15",
 					"margin-bottom": "20",
 					"margin-right": "20",

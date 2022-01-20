@@ -9,16 +9,12 @@ from datetime import timedelta
 from modules.yachtCharter import yachtCharter
 
 testo = ''
-# testo = "-testo"
+#%%
 
-# state_json = "https://interactive.guim.co.uk/2021/02/coronavirus-widget-data/state-vaccine-rollout.json"
+df = pd.read_csv("https://vaccinedata.covid19nearme.com.au/data/all.csv")
 
-# if (not os.environ.get('PYTHONHTTPSVERIFY', '') and getattr(ssl, '_create_unverified_context', None)):
-#     ssl._create_default_https_context = ssl._create_unverified_context
-
-# #%%
-
-# df = pd.read_json(state_json)
+#%%
+cols = list(df.columns)
 
 #%%
 
@@ -34,6 +30,28 @@ population = {
 	"AUS":25693.1 * 1000
 	}
 
+states = ["NSW","VIC","QLD","SA","WA","TAS","ACT","NT"]
+
+# STATE_CLINICS_WA_TOTAL CWTH_AGED_CARE_WA_TOTAL CWTH_PRIMARY_CARE_WA_TOTAL
+
+state_cum = df.copy()
+
+for state in states:
+	state_cum[f'{state}_TOTAL'] = state_cum[f'STATE_CLINICS_{state}_TOTAL'] + state_cum[f'CWTH_AGED_CARE_{state}_TOTAL'] + state_cum[f'CWTH_PRIMARY_CARE_{state}_TOTAL']
+	
+state_cum = state_cum[['DATE_AS_AT', 'TOTALS_NATIONAL_TOTAL', 'NSW_TOTAL', "VIC_TOTAL", "QLD_TOTAL", "SA_TOTAL", "WA_TOTAL", "TAS_TOTAL", "ACT_TOTAL", "NT_TOTAL"]]
+
+states_daily = state_cum.copy()
+
+states_daily = states_daily.set_index('DATE_AS_AT')
+
+states_daily = states_daily[['TOTALS_NATIONAL_TOTAL', 'NSW_TOTAL', "VIC_TOTAL", "QLD_TOTAL", "SA_TOTAL", "WA_TOTAL", "TAS_TOTAL", "ACT_TOTAL", "NT_TOTAL"]].sub(states_daily.shift())
+
+states_daily.reset_index(inplace=True)
+
+states_daily = states_daily.rename(columns = {"TOTALS_NATIONAL_TOTAL": "AUS_TOTAL"})
+
+# short_cols = ['DATE_AS_AT']
 
 # %%
 
@@ -42,7 +60,7 @@ population = {
 
 # #%%
 # pivoted = df.pivot(index='Date', columns='CODE')['VACC_DOSE_CNT']
-# states = ["NSW","VIC","QLD","SA","WA","TAS","ACT","NT","AUS"]
+
 # daily_cum = pivoted[states]
 # daily_cum.to_csv('pivot_cumulative.csv')
 
@@ -128,35 +146,33 @@ population = {
 
 ### Redo with Ken data
 
-url = 'https://vaccinedata.covid19nearme.com.au/data/air.json'
+# url = 'https://vaccinedata.covid19nearme.com.au/data/air.json'
 
-air_data = pd.read_json(url)
+# air_data = pd.read_json(url)
 
 
 #%%
 
-air = air_data.copy()
+# air = air_data.copy()
+
+states_daily['DATE_AS_AT'] = pd.to_datetime(states_daily['DATE_AS_AT'])
 
 states =['NSW','VIC','QLD','WA','SA','TAS','NT','ACT','AUS']
 
 short_cols = ['DATE_AS_AT']
 
-air.fillna(0, inplace=True)
+states_daily.fillna(0, inplace=True)
 
 for state in states:
 
-	# air[f'{state}'] = pd.to_numeric(air[f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT']) + pd.to_numeric(air[f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT']) + pd.to_numeric(air[f'AIR_{state}_12_15_FIRST_DOSE_COUNT']) + pd.to_numeric(air[f'AIR_{state}_12_15_SECOND_DOSE_COUNT']) + (air[f'AIR_{state}_5_11_FIRST_DOSE_COUNT']) + pd.to_numeric(air[f'AIR_{state}_5_11_SECOND_DOSE_COUNT']) + pd.to_numeric(air[f'AIR_{state}_18_PLUS_THIRD_DOSE_COUNT'])
-	air[f'{state}'] = pd.to_numeric(air[f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT']) + pd.to_numeric(air[f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT']) + pd.to_numeric(air[f'AIR_{state}_12_15_FIRST_DOSE_COUNT']) + pd.to_numeric(air[f'AIR_{state}_12_15_SECOND_DOSE_COUNT']) + (air[f'AIR_{state}_5_11_FIRST_DOSE_COUNT']) + pd.to_numeric(air[f'AIR_{state}_5_11_SECOND_DOSE_COUNT'])
-
-	air[f'{state}_daily'] = air[f'{state}'].diff(1)
-	air[f'{state}_7_day_avg'] = air[f'{state}_daily'].rolling(window=7).mean()
+	states_daily[f'{state}_7_day_avg'] = states_daily[f'{state}_TOTAL'].rolling(window=7).mean()
 	
-	air[f'{state}_7_day_avg_per_100'] = round((air[f'{state}_7_day_avg']/population[state])*100,2)
+	states_daily[f'{state}_7_day_avg_per_100'] = round((states_daily[f'{state}_7_day_avg']/population[state])*100,2)
 
 	short_cols.append(f'{state}_7_day_avg_per_100')
 	
 
-rolled = air[short_cols]
+rolled = states_daily[short_cols]
 
 
 #%%
@@ -182,7 +198,6 @@ tog = pd.merge(melted, oz, on=['Date'], how='left')
 tog.columns = ['Date', 'Code', 'State or territory', 'National']
 
 lastUpdated = tog['Date'].max()
-
 
 updatedText = lastUpdated.strftime('%-d %B, %Y')
 

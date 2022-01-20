@@ -62,10 +62,6 @@ today = datetime.datetime.today()
 today = datetime.datetime.strftime(today, "%Y-%m-%d")
 # 	startDate = '2021-08-01'
 
-thresholds = [
-	{"y1":beds[state] * 0.15,"y2":beds[state] * 0.15,"x1":start, "x2":today, "text":"Amber (> 15% of hospital beds)"},
-# 		{"y1":beds[state] * 0.30,"y2":beds[state] * 0.30,"x1":startDate, "x2":today, "text":"Red (> 30% of hospital beds) "},
-	]
 
 # %%
 

@@ -144,7 +144,7 @@ deaths.columns = ['Date', "Total"]
 #%%
 
 useLatest = True
-current = pd.DataFrame([{"Date":"2022-01-14", "Total":47}])
+current = pd.DataFrame([{"Date":"2022-01-18", "Total":74}])
 merged = pd.DataFrame()
 
 if useLatest:
@@ -197,7 +197,7 @@ def makeTotalDeathBars(df):
 				"margin-top": "20",
 				"margin-bottom": "20",
 				"margin-right": "20",
-				"xAxisDateFormat": "%b %d",
+				"xAxisDateFormat": "%d %b, '%y",
 				"tooltip":"<strong>{{#nicerdate}}{{Date}}{{/nicerdate}}</strong><br><strong>{{group}}</strong>: {{groupValue}}"
 				
 			}

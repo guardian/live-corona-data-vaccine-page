@@ -14,7 +14,7 @@ import numpy as np
 # setup variables
 
 state = "VIC"
-start = '2021-09-01'
+start = '2021-11-01'
 end = '2022-01-07'
 
 # Get CovidLive data
@@ -100,7 +100,7 @@ def makeTestingLine(df):
     template = [
             {
                 "title": "Victorian Covid cases announced daily",
-                "subtitle": f"""Showing the number of cases announced daily by testing type and the trend of total cases as a 7-day rolling average. The annotation shows an approximate date for when significant testing capacity issues began. Cases after this point should be considered an underestimate. Testing criteria changed significantly on 5 January 2022. Last updated {display_date}.""",
+                "subtitle": f"""Showing the number of cases announced daily by testing type and the trend of total cases as a 7-day rolling average. The annotation (1) shows an approximate date for when significant testing capacity issues began. Cases after this point should be considered an underestimate and may contain duplicates from RAT reporting. Testing criteria (2) changed significantly on 5 January 2022. Last updated {display_date}.""",
                 "footnote": "",
                 "source": "| * 7 January case numbers includes a backlog of RAT tests reported for the first time. Sources: Vic DHHS, covid19data, Guardian Australia, CovidLive.com.au",
                 "dateFormat": "%Y-%m-%d",
@@ -119,7 +119,8 @@ def makeTestingLine(df):
         ]
     key = [{"key":"PCR","values":"","colour":"#fc9272", "colours":"", "scale":"linear", "source":"Test positivity"},
 		{"key":"RAT","colour":"#74add1"}]
-    periods = [{"label":"Testing issues→", "start":"2021-12-20", "end":"","labelAlign":"middle"}]
+    periods = [{"label":"1", "start":"2021-12-20", "end":"","labelAlign":"middle"},
+			   {"label":"2", "start":"2022-01-05", "end":"","labelAlign":"middle"}]
     labels = [{"x1":"2022-01-07", "y1":"51356", "y2":"51356", "text":"*", "align":"middle"}]
     df.fillna("", inplace=True)
     chartData = df.to_dict('records')
