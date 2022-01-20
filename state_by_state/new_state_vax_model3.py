@@ -322,7 +322,7 @@ newProjections = []
 
 for state in states:
 	# print(state)
-	for day in range(0,3):
+	for day in range(0,6):
 		# print("day",day)
 		cutoff_date = (latest_date - datetime.timedelta(days=day))
 		# print("cutoff", cutoff_date.strftime("%Y-%m-%d"))

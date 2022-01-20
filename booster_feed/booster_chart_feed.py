@@ -120,9 +120,9 @@ vax.rename(columns={'Second doses': f"{numberFormat(max_second)} Second doses",
 
 see = vax.loc[(vax['Date'] > "2022-01-10") & (vax['Date'] < "2022-01-15")]
 
-p = see
-print(p[['4.4m Boosters', 'Trend', 'Date']])
-print(p.columns.tolist())
+# p = see
+# print(p[['4.4m Boosters', 'Trend', 'Date']])
+# print(p.columns.tolist())
 # %%
 
 vax.fillna("", inplace=True)

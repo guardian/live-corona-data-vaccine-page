@@ -198,8 +198,11 @@ for juri in prok['CODE'].unique().tolist():
         inter['DEATH_SHIFTED'] = round(inter['NEW_DEATHS'].rolling(window=30).sum(),0)
 
         inter['HOSPITALISATION_SHIFTED'] = inter['MED_HOSP_CNT'].shift(7)
+        inter['HOSPITALISATION_SHIFTED'] = pd.to_numeric(inter['HOSPITALISATION_SHIFTED'])
 
         latest = inter.loc[inter['REPORT_DATE'] == inter['REPORT_DATE'].max()]
+
+        print(latest)
         
         two_doses_total = inter['Two_doses_total'].max()
         two_doses = inter['Two_doses'].max()
@@ -231,7 +234,8 @@ for juri in prok['CODE'].unique().tolist():
 
 
     else:
-
+        inter['MED_HOSP_CNT'] = pd.to_numeric(inter['MED_HOSP_CNT'])
+        inter['MED_HOSP_CNT'] = inter['MED_HOSP_CNT'].ffill()
         inter['HOSPITALISATION_SHIFTED'] = inter['MED_HOSP_CNT'].shift(7)
 
         latest = inter.loc[inter['REPORT_DATE'] == inter['REPORT_DATE'].max()]
