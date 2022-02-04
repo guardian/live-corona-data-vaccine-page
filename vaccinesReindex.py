@@ -146,7 +146,7 @@ cut_off = math.ceil(days_running/10) * 10
 
 upto = sinceDayZero[:cut_off].copy()
 
-upto.to_csv('country-comparison.csv')
+# upto.to_csv('country-comparison.csv')
 
 last_date = our_world.iloc[-1:]["date"].dt.strftime("%d %B %Y").values[0]
 

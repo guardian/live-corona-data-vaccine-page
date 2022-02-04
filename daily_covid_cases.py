@@ -6,8 +6,8 @@ import requests
 import os 
 import datetime
 
-test = ""
-# test = "-test"
+# test = ""
+test = "-test"
 
 #%%
 ## Read in existing Guardian Oz data
@@ -144,7 +144,7 @@ deaths.columns = ['Date', "Total"]
 #%%
 
 useLatest = True
-current = pd.DataFrame([{"Date":"2022-01-18", "Total":74}])
+current = pd.DataFrame([{"Date":"2022-01-21", "Total":80}])
 merged = pd.DataFrame()
 
 if useLatest:
@@ -160,6 +160,7 @@ merged = merged[~merged.index.duplicated()]
 
 merged = merged.sort_values(by='Date', ascending=True)
 
+merged['Total'] = pd.to_numeric(merged['Total'])
 
 #%%
 deaths_avg = merged.copy()
@@ -196,7 +197,7 @@ def makeTotalDeathBars(df):
 				"margin-left": "50",
 				"margin-top": "20",
 				"margin-bottom": "20",
-				"margin-right": "20",
+				"margin-right": "25",
 				"xAxisDateFormat": "%d %b, '%y",
 				"tooltip":"<strong>{{#nicerdate}}{{Date}}{{/nicerdate}}</strong><br><strong>{{group}}</strong>: {{groupValue}}"
 				

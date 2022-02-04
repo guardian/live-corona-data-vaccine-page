@@ -73,19 +73,20 @@ syncData(aus_cases_finalJson, "2021/02/coronavirus-widget-data", "oz-covid-cases
 
 #%%
 
-import thrasher_endpoint
-import vac_gap_goals_five
+
+
 import state_by_state.vac_state_projection_table
 import state_by_state.new_state_vax_model2
-import vac_state_charter
+
+
 import vaccinesReindex
 import daily_covid_cases
 import vac_global_per_hund
 import vac_global_bar
 import vaccineDosesState
-import hospitalised_percent_line
 import outbreaks_reindexed
-
+import stateHospCharts
+import stateCasesCharts
 
 
 #%%
@@ -96,9 +97,9 @@ import vaccine_availability.weekly_distribution
 ## This is the new table with 5+ % etc:
 import state_by_state.new_table_model4
 
-import state_outbreaks.act_out
-import state_outbreaks.vic_out
-import state_outbreaks.nsw_out
+# import state_outbreaks.act_out
+# import state_outbreaks.vic_out
+# import state_outbreaks.nsw_out
 
 import cases_and_hospo.cases_hosp_line
 

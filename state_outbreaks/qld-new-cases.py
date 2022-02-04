@@ -62,7 +62,7 @@ new_data = pd.read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSNljV81
 #%%
 new_data = new_data.loc[new_data['State'] == state].copy()
 new_data = new_data[['Date', 'PCR', 'RAT']]
-
+new_data = new_data.sort_values(by='Date', ascending=True)
 # Merge the data
 
 #%%
@@ -111,7 +111,7 @@ def makeTestingLine(df):
 				"includeCols":"PCR,RAT",
                 "x_axis_cross_y":"",
                 "periodDateFormat":"",
-                "margin-left": "50",
+                "margin-left": "30",
                 "margin-top": "30",
                 "margin-bottom": "20",
                 "margin-right": "15",

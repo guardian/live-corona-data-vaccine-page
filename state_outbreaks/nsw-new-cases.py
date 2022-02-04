@@ -15,7 +15,10 @@ import numpy as np
 
 state = "NSW"
 start = '2021-11-01'
-end = '2022-01-12'
+end = '2022-01-05'
+
+test = ""
+# test = "_test"
 
 # Get CovidLive data
 
@@ -57,11 +60,12 @@ clive = clive.loc[clive['Date'] < end]
 
 # Add new manual PCR and RAT data
 
-new_data = pd.read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSNljV81sJgmhQJnKHT4jvsZbqkdYHxaE0k7g5xaurBn0hHMujHEA47dDqELgwHRd4UGfpmRxV4kBkT/pub?gid=0&single=true&output=csv")
+new_data = pd.read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSNljV81sJgmhQJnKHT4jvsZbqkdYHxaE0k7g5xaurBn0hHMujHEA47dDqELgwHRd4UGfpmRxV4kBkT/pub?gid=521291477&single=true&output=csv")
 
 #%%
 new_data = new_data.loc[new_data['State'] == state].copy()
 new_data = new_data[['Date', 'PCR', 'RAT']]
+new_data = new_data.sort_values(by='Date', ascending=True)
 
 # Merge the data
 
@@ -103,7 +107,7 @@ def makeTestingLine(df):
                 "title": "NSW Covid cases announced daily",
                 "subtitle": f"""Showing the number of cases announced daily by testing type and the trend of total cases as a 7-day rolling average. The annotation (1) shows an approximate date for when significant testing capacity issues began. Cases after this point should be considered an underestimate and may contain duplicates from RAT reporting. Testing criteria (2) changed significantly on 5 January 2022. Last updated {display_date}.""",
                 "footnote": "",
-                "source": "| * 12 to 15 January case numbers include a backlog of RAT tests, and are not all from the past 24 hours. Sources: NSW Health, covid19data, Guardian Australia, CovidLive.com.au",
+                "source": "| Sources: NSW Health, covid19data, Guardian Australia, CovidLive.com.au",
                 "dateFormat": "%Y-%m-%d",
                 "xAxisDateFormat":"%b %d",
                 "minY": "0",
@@ -122,15 +126,12 @@ def makeTestingLine(df):
 		{"key":"RAT","colour":"#74add1"}]
     periods = [{"label":"1", "start":"2021-12-20", "end":"","labelAlign":"middle"},
 			   {"label":"2", "start":"2022-01-05", "end":"","labelAlign":"middle"}]
-    labels = [{"x1":"2022-01-12", "y1":"92264", "y2":"92264", "text":"*", "align":"middle"},
-			  {"x1":"2022-01-13", "y1":"63018", "y2":"63018", "text":"*", "align":"middle"},
-			  {"x1":"2022-01-14", "y1":"48768", "y2":"48768", "text":"*", "align":"middle"},
-			  {"x1":"2022-01-15", "y1":"34660", "y2":"34660", "text":"*", "align":"middle"}]
+    labels = []
     df.fillna("", inplace=True)
     chartData = df.to_dict('records')
 
 
     yachtCharter(template=template, labels=labels, key=key, periods=periods, trendline=roll, data=chartData, 		chartId=[{"type":"stackedbar"}],
-    options=[{"colorScheme":"guardian"}], chartName=f"{state}-new-cases-chart-2022")
+    options=[{"colorScheme":"guardian"}], chartName=f"{state}-new-cases-chart-2022{test}")
 
 makeTestingLine(final)

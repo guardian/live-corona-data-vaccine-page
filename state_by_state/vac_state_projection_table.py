@@ -195,7 +195,7 @@ makeTable(final_final)
 
 third = pd.read_json('https://vaccinedata.covid19nearme.com.au/data/air_residence.json')
 
-third.to_csv('air-residence.csv')
+# third.to_csv('air-residence.csv')
 # 'AIR_RESIDENCE_FIRST_DOSE_APPROX_COUNT',
 #        'AIR_RESIDENCE_SECOND_DOSE_APPROX_COUNT', 'ABS_ERP_JUN_2020_POP',
 #        'VALIDATED', 'URL', 'AIR_RESIDENCE_FIRST_DOSE_COUNT',

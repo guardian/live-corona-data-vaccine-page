@@ -6,7 +6,9 @@ import pandas as pd
 from yachtcharter import yachtCharter
 import datetime
 
-og = pd.read_json('https://covidlive.com.au/covid-live.json')
+
+# og = pd.read_json('https://covidlive.com.au/covid-live.json')
+og = pd.read_json('https://interactive.guim.co.uk/2022/01/oz-covid-health-data/cases.json')
 
 # 'REPORT_DATE', 'LAST_UPDATED_DATE', 'CODE', 'NAME', 'CASE_CNT',
 #        'TEST_CNT', 'DEATH_CNT', 'RECOV_CNT', 'MED_ICU_CNT', 'MED_VENT_CNT',
@@ -39,20 +41,26 @@ beds = {
 start = "2021-08-01"
 # start = "2021-12-01"
 
+# test = "-test"
+test= ""
+
 #%%
 
 # optionally manually add today's hosp numbers
 
-useLatest = False
+useLatest = True
 merge = og.copy()
 
 if useLatest:
+	print("yeah")
 	new_data = pd.read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSNljV81sJgmhQJnKHT4jvsZbqkdYHxaE0k7g5xaurBn0hHMujHEA47dDqELgwHRd4UGfpmRxV4kBkT/pub?gid=203642518&single=true&output=csv")
-	new_data = new_data.dropna()
+	new_data = new_data.dropna(subset=['MED_HOSP_CNT'])
 	merge = merge.append(new_data)
 
 
-test = merge.loc[merge['CODE'] == "NSW"]
+test_df = merge.loc[merge['CODE'] == "NSW"]
+
+test_df = test_df[['REPORT_DATE', 'MED_HOSP_CNT']]
 
 #%%
 
@@ -124,7 +132,7 @@ def makeChart(state):
 					"minY": "",
 					"maxY": f"{maxY}",
 					"tooltip":"<strong>{{#formatDate}}{{Date}}{{/formatDate}}</strong><br/> Hospitalised: {{Hospitalised cases}}",
-					"margin-left": "20",
+					"margin-left": "30",
 					"margin-top": "15",
 					"margin-bottom": "20",
 					"margin-right": "20",
@@ -140,7 +148,7 @@ def makeChart(state):
 		# df = df.reset_index()
 		chartData = df.to_dict('records')
 	
-		yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":"guardian", "lineLabelling":"FALSE"}], chartName=f"{state}-hospitalisation-thresholds", lines=lines)
+		yachtCharter(template=template, data=chartData, chartId=[{"type":"linechart"}], options=[{"colorScheme":"guardian", "lineLabelling":"FALSE"}], chartName=f"{state}-hospitalisation-thresholds{test}", lines=lines)
 	
 	makeLineChart(df)
 #%%

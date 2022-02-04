@@ -15,7 +15,7 @@ import numpy as np
 
 state = "VIC"
 start = '2021-11-01'
-end = '2022-01-07'
+end = '2022-01-01'
 
 # Get CovidLive data
 
@@ -53,7 +53,7 @@ clive.columns = ['Date', 'PCR', 'PCR_tests']
 
 clive["Test positivity"] = clive['PCR'] / clive['PCR_tests'] * 100
 
-clive = clive.loc[clive['Date'] >= start]
+
 clive = clive.loc[clive['Date'] < end]
 
 
@@ -61,11 +61,13 @@ clive = clive.loc[clive['Date'] < end]
 
 # Add new manual PCR and RAT data
 
-new_data = pd.read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSNljV81sJgmhQJnKHT4jvsZbqkdYHxaE0k7g5xaurBn0hHMujHEA47dDqELgwHRd4UGfpmRxV4kBkT/pub?gid=0&single=true&output=csv")
+new_data = pd.read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSNljV81sJgmhQJnKHT4jvsZbqkdYHxaE0k7g5xaurBn0hHMujHEA47dDqELgwHRd4UGfpmRxV4kBkT/pub?gid=44901063&single=true&output=csv")
 
 #%%
 new_data = new_data.loc[new_data['State'] == state].copy()
 new_data = new_data[['Date', 'PCR', 'RAT']]
+new_data = new_data.sort_values(by='Date', ascending=True)
+
 
 # Merge the data
 
@@ -81,7 +83,10 @@ merged['Total'] = merged['PCR'] + merged['RAT']
 roll = merged.copy()
 roll['Trend'] = roll['Total'].rolling(window=7).mean()
 roll = roll[['Date', 'Trend']]
+roll = roll.loc[roll['Date'] >= start]
 roll.fillna('', inplace=True)
+
+#%%
 roll = roll.to_dict(orient='records')
 
 #%%
@@ -93,6 +98,8 @@ display_date = datetime.datetime.strftime(last_updated, "%-d %B %Y")
 
 final = merged[['Date', 'PCR', 'RAT']]
 
+final = final.loc[final['Date'] >= start]
+
 #%%
 
 def makeTestingLine(df):
@@ -102,7 +109,7 @@ def makeTestingLine(df):
                 "title": "Victorian Covid cases announced daily",
                 "subtitle": f"""Showing the number of cases announced daily by testing type and the trend of total cases as a 7-day rolling average. The annotation (1) shows an approximate date for when significant testing capacity issues began. Cases after this point should be considered an underestimate and may contain duplicates from RAT reporting. Testing criteria (2) changed significantly on 5 January 2022. Last updated {display_date}.""",
                 "footnote": "",
-                "source": "| * 7 January case numbers includes a backlog of RAT tests reported for the first time. Sources: Vic DHHS, covid19data, Guardian Australia, CovidLive.com.au",
+                "source": "| Sources: Vic DHHS, covid19data, Guardian Australia, CovidLive.com.au",
                 "dateFormat": "%Y-%m-%d",
                 "xAxisDateFormat":"%b %d",
                 "minY": "0",
@@ -110,10 +117,10 @@ def makeTestingLine(df):
 				"includeCols":"PCR,RAT",
                 "x_axis_cross_y":"",
                 "periodDateFormat":"",
-                "margin-left": "50",
+                "margin-left": "30",
                 "margin-top": "30",
                 "margin-bottom": "20",
-                "margin-right": "10",
+                "margin-right": "15",
 				"tooltip":"<strong>{{#formatDate}}{{Date}}{{/formatDate}}</strong><br><strong>{{group}}</strong>: {{groupValue}}"
             }
         ]
