@@ -300,14 +300,15 @@ for state in states:
 
 
     latest = latest[['STATE', '16_PLUS_SECOND_DOSE_COUNT', '12_PLUS_SECOND',
-       '5_11_FIRST', 'THIRD_DOSE']]
+       '5_11_SECOND', '5_11_FIRST', 'THIRD_DOSE']]
 
     latest.columns = ['State', '16+ second dose %', '12+ second dose %',
-       '5-11 first dose %', 'Booster 18+ %']
+      '5-11 second dose %', '5-11 first dose %', 'Booster 18+ %']
 
     latest['16+ second dose %'] = round((latest['16+ second dose %']/sixteen_pop[state])*100,2)
     latest['12+ second dose %'] = round((latest['12+ second dose %']/twelve_pop[state])*100,2)
     latest['5-11 first dose %'] = round((latest['5-11 first dose %']/five_11_pop[state])*100,2)
+    latest['5-11 second dose %'] = round((latest['5-11 second dose %']/five_11_pop[state])*100,2)
     latest['Booster 18+ %'] = round((latest['Booster 18+ %']/eighteen_plus[state])*100,2)
     # print(latest)
     # print(latest.columns)
@@ -348,7 +349,7 @@ def makeTable(df):
     template = [
             {
                 "title": "Current vaccination levels by jurisdiction",
-                "subtitle": f"""Showing the percentage of the 16+ and 12+ populations with two doses of a vaccine, first doses for the 5-11 age group and booster doses for the 18+ population. Last updated {updated_date}.""",
+                "subtitle": f"""Showing the percentage of the 16+ and 12+ populations with two doses of a vaccine, first and second doses for the 5-11 age group and booster doses for the 18+ population. Last updated {updated_date}.""",
                 "footnote": "",
                 "source": "Department of Health, Ken Tsang, Guardian Australia analysis",
                 "yScaleType":"",
