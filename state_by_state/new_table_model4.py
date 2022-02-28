@@ -71,39 +71,42 @@ states =['NSW','VIC','QLD','WA','SA','TAS','NT','ACT','AUS']
 newData = pd.DataFrame()
 
 for state in states:
-    temp = air_data.copy()
+	temp = air_data.copy()
 
-    # temp = air_data[['DATE_AS_AT',f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT', f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT']]
-    temp['STATE'] = state
+	# temp = air_data[['DATE_AS_AT',f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT', f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT']]
+	temp['STATE'] = state
+	
+
+
+	temp[f'AIR_{state}_12_15_FIRST_DOSE_COUNT'] = pd.to_numeric(temp[f'AIR_{state}_12_15_FIRST_DOSE_COUNT'])
+	temp[f'AIR_{state}_12_15_SECOND_DOSE_COUNT'] = pd.to_numeric(temp[f'AIR_{state}_12_15_SECOND_DOSE_COUNT'])
+
+	temp[f'AIR_{state}_12_15_FIRST_DOSE_COUNT'].fillna(0, inplace=True)
+	temp[f'AIR_{state}_12_15_SECOND_DOSE_COUNT'].fillna(0, inplace=True)
+
+	temp['12_PLUS_FIRST'] = temp[f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT'] + temp[f'AIR_{state}_12_15_FIRST_DOSE_COUNT']
+	temp['12_PLUS_SECOND'] = temp[f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT'] + temp[f'AIR_{state}_12_15_SECOND_DOSE_COUNT']
+
+	temp['STATE'] = state
+	temp = temp.rename(columns={f'AIR_{state}_5_11_FIRST_DOSE_COUNT':'5_11_FIRST',
+	f'AIR_{state}_5_11_SECOND_DOSE_COUNT':'5_11_SECOND'})
+
+	temp = temp.rename(columns={f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT':'16_PLUS_FIRST_DOSE_COUNT',f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT':'16_PLUS_SECOND_DOSE_COUNT'}) 
+
+	if state == "AUS":
+		temp.rename(columns={f'AIR_{state}_16_PLUS_THIRD_DOSE_COUNT': 'THIRD_DOSE'}, inplace=True) 
+
+	else:
+		temp.rename(columns={f'AIR_{state}_18_PLUS_THIRD_DOSE_COUNT': 'THIRD_DOSE'}, inplace=True) 
+
+	temp['THIRD_DOSE'] = temp['THIRD_DOSE'].ffill()
+
+	temp = temp[['DATE_AS_AT','STATE', '16_PLUS_FIRST_DOSE_COUNT', '16_PLUS_SECOND_DOSE_COUNT', 
+	'12_PLUS_FIRST','12_PLUS_SECOND','5_11_FIRST', '5_11_SECOND', 'THIRD_DOSE']]
 
 
 
-    temp[f'AIR_{state}_12_15_FIRST_DOSE_COUNT'] = pd.to_numeric(temp[f'AIR_{state}_12_15_FIRST_DOSE_COUNT'])
-    temp[f'AIR_{state}_12_15_SECOND_DOSE_COUNT'] = pd.to_numeric(temp[f'AIR_{state}_12_15_SECOND_DOSE_COUNT'])
-
-    temp[f'AIR_{state}_12_15_FIRST_DOSE_COUNT'].fillna(0, inplace=True)
-    temp[f'AIR_{state}_12_15_SECOND_DOSE_COUNT'].fillna(0, inplace=True)
-
-    temp['12_PLUS_FIRST'] = temp[f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT'] + temp[f'AIR_{state}_12_15_FIRST_DOSE_COUNT']
-    temp['12_PLUS_SECOND'] = temp[f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT'] + temp[f'AIR_{state}_12_15_SECOND_DOSE_COUNT']
-
-    temp['STATE'] = state
-    temp = temp.rename(columns={f'AIR_{state}_5_11_FIRST_DOSE_COUNT':'5_11_FIRST',
-    f'AIR_{state}_5_11_SECOND_DOSE_COUNT':'5_11_SECOND'})
-
-    temp = temp.rename(columns={f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT':'16_PLUS_FIRST_DOSE_COUNT',f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT':'16_PLUS_SECOND_DOSE_COUNT'}) 
-
-    if state == "AUS":
-        temp.rename(columns={f'AIR_{state}_16_PLUS_THIRD_DOSE_COUNT': 'THIRD_DOSE'}, inplace=True) 
-    else:
-        temp.rename(columns={f'AIR_{state}_18_PLUS_THIRD_DOSE_COUNT': 'THIRD_DOSE'}, inplace=True) 
-
-    temp = temp[['DATE_AS_AT','STATE', '16_PLUS_FIRST_DOSE_COUNT', '16_PLUS_SECOND_DOSE_COUNT', 
-    '12_PLUS_FIRST','12_PLUS_SECOND','5_11_FIRST', '5_11_SECOND', 'THIRD_DOSE']]
-    
-    
-    
-    newData = newData.append(temp)
+	newData = newData.append(temp)
 
 #%%
 
