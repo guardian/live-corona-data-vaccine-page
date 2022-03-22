@@ -52,6 +52,16 @@ short_cols = ['DATE_AS_AT']
 
 newData = pd.DataFrame()
 
+cols = air_data.columns.tolist()
+boost = [x for x in cols if "THIRD_DOSE_COUNT" in x]
+
+p = air_data
+
+print(p)
+print(p.columns.tolist())
+
+print(boost)
+
 for state in states:
     temp = air_data.copy()
 
@@ -119,10 +129,13 @@ def makeProjection(state, cutoff_date, first_dose_name, second_dose_name, booste
 
 	last_doses = temp_state['daily_first_dose_avg'].iloc[-1]
 
-	current_second_doses = temp_state[second_dose_name].iloc[-1]
+	# current_second_doses = temp_state[second_dose_name].iloc[-1]
+	current_second_doses = temp_state[second_dose_name].max()
 	# print("current second", current_second_doses)
-	current_first_doses = temp_state[first_dose_name].iloc[-1]
-	current_boosters = temp_state[booster_name].iloc[-1]
+	# current_first_doses = temp_state[first_dose_name].iloc[-1]
+	current_first_doses = temp_state[first_dose_name].max()
+	# current_boosters = temp_state[booster_name].iloc[-1]
+	current_boosters = temp_state[booster_name].max()
 
 	current_date = temp_state['DATE_AS_AT'].iloc[-1]
 # 	print("currentdate", current_date)
@@ -139,6 +152,12 @@ def makeProjection(state, cutoff_date, first_dose_name, second_dose_name, booste
 		first_dose_eq_second = temp_state[temp_state[first_dose_name] >= current_second_doses]['DATE_AS_AT'].iloc[0]
 
 	current_lag = (current_date - first_dose_eq_second).days + 1
+
+	print(state, current_lag)
+	
+	print(temp_state[temp_state[second_dose_name] >= current_boosters])
+
+	print(current_boosters)
 
 	booster_eq_second = temp_state[temp_state[second_dose_name] >= current_boosters]['DATE_AS_AT'].iloc[0]
 	current_booster_lag = (current_date - booster_eq_second).days + 1
@@ -289,7 +308,7 @@ def makeProjection(state, cutoff_date, first_dose_name, second_dose_name, booste
 		second_doses_rate_needed = 0
 	else:
 		second_doses_rate_needed = int(round(eighty_vax_to_go_second / days_to_second_80,0))
-# 	print("eighty_finish", eighty_finish_second)
+# # 	print("eighty_finish", eighty_finish_second)
 	results = {"current_lag":current_lag, "current_rolling":current_rolling,  "second_doses_rate_needed":second_doses_rate_needed,
 	"eighty_finish_first": eighty_finish_first, "seventy_finish_first":seventy_finish_first, "ninety_finish_first": ninety_finish_first,
 	"eighty_finish_second":eighty_finish_second, "seventy_finish_second":seventy_finish_second, "ninety_finish_second": ninety_finish_second,
@@ -298,6 +317,7 @@ def makeProjection(state, cutoff_date, first_dose_name, second_dose_name, booste
 	"booster_reached_70":booster_reached_70, "booster_reached_80":booster_reached_80, "booster_reached_90":booster_reached_90,
 	"current_booster_lag":current_booster_lag, "current_booster_rolling":current_rolling_boosters,
 	"booster_finish_70":booster_finish_70, "booster_finish_80":booster_finish_80, "booster_finish_90":booster_finish_90}
+
   # 	print(results)
 	return results
 

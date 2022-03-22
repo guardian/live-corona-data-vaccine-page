@@ -49,7 +49,7 @@ ken.columns = ['Date', 'Second doses', 'Boosters']
 latest_date = ken['Date'].max()
 init_date = datetime.datetime.strptime(latest_date, "%Y-%m-%d")
 display_date = datetime.datetime.strftime(init_date, "%-d %B %Y")
-use_date = datetime.datetime.strftime((init_date + datetime.timedelta(days=2)), "%Y-%m-%d") 
+use_date = datetime.datetime.strftime((init_date + datetime.timedelta(days=2)), "%Y-%m-%d")
 
 # %%
 ## Append Ken's data to Anthony
@@ -97,13 +97,16 @@ max_boost = vax['Boosters'].max()
 vax['Trend'] = vax['Second doses'].shift(periods=current_lag, axis=0)
 
 max_trend = vax.loc[vax['Trend'] == vax['Trend'].max()]['Date'].values[0]
+max_booster_doses_date = vax.loc[vax['Boosters'] == max_boost]['Date'].values[0]
 
 vax.loc[vax['Date'] <= use_date, f'Trend'] = ''
 vax.loc[vax['Date'] <= "2021-11-08", f'Boosters'] = ''
 
 max_trend = datetime.datetime.strptime(max_trend, "%Y-%m-%d")
+max_booster_doses_date = datetime.datetime.strptime(max_booster_doses_date, "%Y-%m-%d")
 
-cut_off = max_trend + datetime.timedelta(days=14)
+cut_off = max_booster_doses_date + datetime.timedelta(days=14)
+# cut_off = max_trend + datetime.timedelta(days=14)
 cut_off = datetime.datetime.strftime(cut_off, "%Y-%m-%d")
 
 vax = vax.loc[vax['Date'] < cut_off]
@@ -116,7 +119,7 @@ vax.rename(columns={'Second doses': f"{numberFormat(max_second)} Second doses",
 'Boosters': f"{numberFormat(max_boost)} Boosters"}, inplace=True)
 # print(vax)
 
-# test 
+# test
 
 see = vax.loc[(vax['Date'] > "2022-01-10") & (vax['Date'] < "2022-01-15")]
 
@@ -133,7 +136,9 @@ final = vax.to_dict(orient='records')
 template = [
 	{
 	"title": "Tracking the rollout of second and booster doses in Australia",
-	"subtitle": f"""Showing the cumulative count of second and booster doses. The <b style="color:rgb(245, 189, 44)">trend</b> in booster doses is based on the current interval between when the equivalent number of second and booster doses were administered. Last updated {display_date}.""",
+	# "subtitle": f"""Showing the cumulative count of second and booster doses. The <b style="color:rgb(245, 189, 44)">trend</b> in booster doses is based on the current interval between when the equivalent number of second and booster doses were administered. Last updated {display_date}.""",
+	"subtitle": f"""Showing the cumulative count of second and booster doses, and the current interval between when an equivalent number of second and booster doses were administered. Last updated {display_date}.""",
+
 	"footnote": "Footnote",
 	"source": "CovidLive.com.au, Ken Tsang, Guardian Australia analysis",
 	"margin-left": "35",

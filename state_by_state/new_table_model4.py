@@ -71,39 +71,42 @@ states =['NSW','VIC','QLD','WA','SA','TAS','NT','ACT','AUS']
 newData = pd.DataFrame()
 
 for state in states:
-    temp = air_data.copy()
+	temp = air_data.copy()
 
-    # temp = air_data[['DATE_AS_AT',f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT', f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT']]
-    temp['STATE'] = state
+	# temp = air_data[['DATE_AS_AT',f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT', f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT']]
+	temp['STATE'] = state
+	
+
+
+	temp[f'AIR_{state}_12_15_FIRST_DOSE_COUNT'] = pd.to_numeric(temp[f'AIR_{state}_12_15_FIRST_DOSE_COUNT'])
+	temp[f'AIR_{state}_12_15_SECOND_DOSE_COUNT'] = pd.to_numeric(temp[f'AIR_{state}_12_15_SECOND_DOSE_COUNT'])
+
+	temp[f'AIR_{state}_12_15_FIRST_DOSE_COUNT'].fillna(0, inplace=True)
+	temp[f'AIR_{state}_12_15_SECOND_DOSE_COUNT'].fillna(0, inplace=True)
+
+	temp['12_PLUS_FIRST'] = temp[f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT'] + temp[f'AIR_{state}_12_15_FIRST_DOSE_COUNT']
+	temp['12_PLUS_SECOND'] = temp[f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT'] + temp[f'AIR_{state}_12_15_SECOND_DOSE_COUNT']
+
+	temp['STATE'] = state
+	temp = temp.rename(columns={f'AIR_{state}_5_11_FIRST_DOSE_COUNT':'5_11_FIRST',
+	f'AIR_{state}_5_11_SECOND_DOSE_COUNT':'5_11_SECOND'})
+
+	temp = temp.rename(columns={f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT':'16_PLUS_FIRST_DOSE_COUNT',f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT':'16_PLUS_SECOND_DOSE_COUNT'}) 
+
+	if state == "AUS":
+		temp.rename(columns={f'AIR_{state}_16_PLUS_THIRD_DOSE_COUNT': 'THIRD_DOSE'}, inplace=True) 
+
+	else:
+		temp.rename(columns={f'AIR_{state}_18_PLUS_THIRD_DOSE_COUNT': 'THIRD_DOSE'}, inplace=True) 
+
+	temp['THIRD_DOSE'] = temp['THIRD_DOSE'].ffill()
+
+	temp = temp[['DATE_AS_AT','STATE', '16_PLUS_FIRST_DOSE_COUNT', '16_PLUS_SECOND_DOSE_COUNT', 
+	'12_PLUS_FIRST','12_PLUS_SECOND','5_11_FIRST', '5_11_SECOND', 'THIRD_DOSE']]
 
 
 
-    temp[f'AIR_{state}_12_15_FIRST_DOSE_COUNT'] = pd.to_numeric(temp[f'AIR_{state}_12_15_FIRST_DOSE_COUNT'])
-    temp[f'AIR_{state}_12_15_SECOND_DOSE_COUNT'] = pd.to_numeric(temp[f'AIR_{state}_12_15_SECOND_DOSE_COUNT'])
-
-    temp[f'AIR_{state}_12_15_FIRST_DOSE_COUNT'].fillna(0, inplace=True)
-    temp[f'AIR_{state}_12_15_SECOND_DOSE_COUNT'].fillna(0, inplace=True)
-
-    temp['12_PLUS_FIRST'] = temp[f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT'] + temp[f'AIR_{state}_12_15_FIRST_DOSE_COUNT']
-    temp['12_PLUS_SECOND'] = temp[f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT'] + temp[f'AIR_{state}_12_15_SECOND_DOSE_COUNT']
-
-    temp['STATE'] = state
-    temp = temp.rename(columns={f'AIR_{state}_5_11_FIRST_DOSE_COUNT':'5_11_FIRST',
-    f'AIR_{state}_5_11_SECOND_DOSE_COUNT':'5_11_SECOND'})
-
-    temp = temp.rename(columns={f'AIR_{state}_16_PLUS_FIRST_DOSE_COUNT':'16_PLUS_FIRST_DOSE_COUNT',f'AIR_{state}_16_PLUS_SECOND_DOSE_COUNT':'16_PLUS_SECOND_DOSE_COUNT'}) 
-
-    if state == "AUS":
-        temp.rename(columns={f'AIR_{state}_16_PLUS_THIRD_DOSE_COUNT': 'THIRD_DOSE'}, inplace=True) 
-    else:
-        temp.rename(columns={f'AIR_{state}_18_PLUS_THIRD_DOSE_COUNT': 'THIRD_DOSE'}, inplace=True) 
-
-    temp = temp[['DATE_AS_AT','STATE', '16_PLUS_FIRST_DOSE_COUNT', '16_PLUS_SECOND_DOSE_COUNT', 
-    '12_PLUS_FIRST','12_PLUS_SECOND','5_11_FIRST', '5_11_SECOND', 'THIRD_DOSE']]
-    
-    
-    
-    newData = newData.append(temp)
+	newData = newData.append(temp)
 
 #%%
 
@@ -300,14 +303,15 @@ for state in states:
 
 
     latest = latest[['STATE', '16_PLUS_SECOND_DOSE_COUNT', '12_PLUS_SECOND',
-       '5_11_FIRST', 'THIRD_DOSE']]
+       '5_11_SECOND', '5_11_FIRST', 'THIRD_DOSE']]
 
     latest.columns = ['State', '16+ second dose %', '12+ second dose %',
-       '5-11 first dose %', 'Booster 18+ %']
+      '5-11 second dose %', '5-11 first dose %', 'Booster 18+ %']
 
     latest['16+ second dose %'] = round((latest['16+ second dose %']/sixteen_pop[state])*100,2)
     latest['12+ second dose %'] = round((latest['12+ second dose %']/twelve_pop[state])*100,2)
     latest['5-11 first dose %'] = round((latest['5-11 first dose %']/five_11_pop[state])*100,2)
+    latest['5-11 second dose %'] = round((latest['5-11 second dose %']/five_11_pop[state])*100,2)
     latest['Booster 18+ %'] = round((latest['Booster 18+ %']/eighteen_plus[state])*100,2)
     # print(latest)
     # print(latest.columns)
@@ -348,7 +352,7 @@ def makeTable(df):
     template = [
             {
                 "title": "Current vaccination levels by jurisdiction",
-                "subtitle": f"""Showing the percentage of the 16+ and 12+ populations with two doses of a vaccine, first doses for the 5-11 age group and booster doses for the 18+ population. Last updated {updated_date}.""",
+                "subtitle": f"""Showing the percentage of the 16+ and 12+ populations with two doses of a vaccine, first and second doses for the 5-11 age group and booster doses for the 18+ population. Last updated {updated_date}.""",
                 "footnote": "",
                 "source": "Department of Health, Ken Tsang, Guardian Australia analysis",
                 "yScaleType":"",

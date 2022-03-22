@@ -13,6 +13,9 @@ testo = ''
 
 df = pd.read_csv("https://vaccinedata.covid19nearme.com.au/data/all.csv")
 
+
+print(df.columns.tolist())
+
 #%%
 cols = list(df.columns)
 
