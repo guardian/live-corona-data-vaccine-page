@@ -1,14 +1,14 @@
 try:
-    import nsw_out
+    import nsw-new-cases
 except:
     pass
 
 try:
-    import vic_out
+    import vic-new-cases
 except:
     pass
 
 try:
-    import act_out
+    import qld-new-cases
 except:
     pass

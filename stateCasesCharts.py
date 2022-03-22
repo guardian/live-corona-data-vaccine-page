@@ -8,7 +8,7 @@ import datetime
 
 
 og = pd.read_json('https://covidlive.com.au/covid-live.json')
-# og = pd.read_json('https://interactive.guim.co.uk/2022/01/oz-covid-health-data/cases.json')
+# new = pd.read_json('https://interactive.guim.co.uk/2022/01/oz-covid-health-data/cases.json')
 
 # 'REPORT_DATE', 'LAST_UPDATED_DATE', 'CODE', 'NAME', 'CASE_CNT',
 #        'TEST_CNT', 'DEATH_CNT', 'RECOV_CNT', 'MED_ICU_CNT', 'MED_VENT_CNT',
@@ -25,6 +25,8 @@ og = pd.read_json('https://covidlive.com.au/covid-live.json')
 #        'VACC_GP_CNT', 'PREV_VACC_GP_CNT'
 
 states = ["NSW","VIC","QLD","SA","WA","TAS","ACT","NT","AUS"]
+
+og = og.dropna(subset=['CASE_CNT'])
 
 # "2021-08-01"
 start = "2021-08-01"
