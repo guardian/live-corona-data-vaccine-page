@@ -177,7 +177,7 @@ deaths_avg = deaths_avg.to_dict(orient='records')
 
 
 # merged.index.name = None
-
+print(merged)
 
 def makeTotalDeathBars(df):
 
@@ -199,8 +199,8 @@ def makeTotalDeathBars(df):
 				"margin-bottom": "20",
 				"margin-right": "25",
 				"xAxisDateFormat": "%d %b, '%y",
-				"tooltip":"<strong>{{#nicerdate}}{{Date}}{{/nicerdate}}</strong><br><strong>{{group}}</strong>: {{groupValue}}"
-				
+				# "tooltip":"<strong>{{#nicerdate}}{{Date}}{{/nicerdate}}</strong><br><strong>{{group}}</strong>: {{groupValue}}"
+				"tooltip":"<strong>{{#nicerdate}}Date{{/nicerdate}}</strong><br><strong>{{group}}</strong>: {{groupValue}}"
 			}
 		]
 
