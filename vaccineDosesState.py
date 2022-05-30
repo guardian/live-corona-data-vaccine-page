@@ -8,6 +8,7 @@ import ssl
 from datetime import timedelta
 import requests
 from modules.yachtCharter import yachtCharter
+import datetime 
 
 testo = ''
 # testo = '-testo'
@@ -210,6 +211,35 @@ data = r.json()
 #%%
 df = pd.read_json(r.text)
 df = df[['REPORT_DATE', 'CODE', 'VACC_DOSE_CNT']]
+
+## Drop rows only if they are blank within the past four weeks
+
+latest_date = df['REPORT_DATE'].max()
+
+init_date = datetime.datetime.strptime(latest_date, "%Y-%m-%d")
+
+last_two = datetime.datetime.strftime((init_date - datetime.timedelta(days=28)), "%Y-%m-%d")
+
+cope = df.loc[df['REPORT_DATE'] <= last_two].copy()
+cope2 = df.loc[df['REPORT_DATE'] > last_two].copy()
+
+cope2 = cope2.loc[cope2['VACC_DOSE_CNT'] != 0].copy()
+
+cope.fillna(0, inplace=True)
+cope2.dropna(subset=['VACC_DOSE_CNT'], inplace=True)
+
+ant = pd.concat([cope, cope2])
+ant.sort_values(by=['REPORT_DATE'], ascending=True, inplace=True)
+ant.reset_index(drop=True, inplace=True)
+ant.drop_duplicates(subset=['REPORT_DATE'], inplace=True)
+
+df = ant.copy()
+
+p = df 
+print(p)
+print(p.columns.tolist())
+print(p['CODE'].unique().tolist())
+
 
 states_daily = df.pivot(index='REPORT_DATE', columns = 'CODE', values='VACC_DOSE_CNT').reset_index()
 states_daily = states_daily[['REPORT_DATE', 'ACT', 'AUS', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA']]
