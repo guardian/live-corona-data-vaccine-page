@@ -6,7 +6,6 @@ import pandas as pd
 from yachtcharter import yachtCharter
 import datetime
 
-
 # og = pd.read_json('https://covidlive.com.au/covid-live.json')
 og = pd.read_json('https://interactive.guim.co.uk/2022/01/oz-covid-health-data/cases.json')
 
@@ -88,14 +87,15 @@ def makeChart(state):
 	today = datetime.datetime.strftime(today, "%Y-%m-%d")
 # 	startDate = '2021-08-01'
 	
-	thresholds = [
-		{"y1":beds[state] * 0.15,"y2":beds[state] * 0.15,"x1":start, "x2":today, "text":"Amber (> 15% of hospital beds)"},
-# 		{"y1":beds[state] * 0.30,"y2":beds[state] * 0.30,"x1":startDate, "x2":today, "text":"Red (> 30% of hospital beds) "},
-		]
+# 	thresholds = [
+# 		{"y1":beds[state] * 0.15,"y2":beds[state] * 0.15,"x1":start, "x2":today, "text":"Amber (> 15% of hospital beds)"},
+# # 		{"y1":beds[state] * 0.30,"y2":beds[state] * 0.30,"x1":startDate, "x2":today, "text":"Red (> 30% of hospital beds) "},
+# 		]
 	
 	# %%
 	
-	maxY = max(beds[state] * 0.2, df['Hospitalised cases'].max())
+	# maxY = max(beds[state] * 0.2, df['Hospitalised cases'].max())
+
 	print(df['Hospitalised cases'].max())
 	df['Date'] = pd.to_datetime(df['Date'])
 	df = df.sort_values(by='Date', ascending=True)
@@ -121,8 +121,9 @@ def makeChart(state):
 	
 		template = [
 				{
-					"title": f"Covid cases hospitalised in {state_text} v hospital capacity impact thresholds",
-					"subtitle": f"Showing the number of people hospitalised with Covid over time, along with the federal government's clinical capacity thresholds that indicate when action is required. The 'amber' or 15% hospital capacity threshold indicates 'targeted adjustments' are required or in progress, while the 'red' threshold of 30% – currently not shown – indicates a 'harder or wider' response is required. Last updated {updated_date}.",
+					# "title": f"Covid cases hospitalised in {state_text} v hospital capacity impact thresholds",	
+					"title": f"Covid cases hospitalised in {state_text}",
+					"subtitle": f"Showing the number of people hospitalised with Covid over time. Last updated {updated_date}.",
 					"footnote": "",
 					"source": f"CovidLive.com.au, Department of Health, AIHW, <a href='hhttps://www.health.gov.au/sites/default/files/documents/2022/01/coronavirus-covid-19-common-operating-picture-3-january-2022.pdf'>clinical capacity thresholds</a>, Guardian analysis{hosp_text}",
 					"dateFormat": "%Y-%m-%d",
@@ -130,7 +131,8 @@ def makeChart(state):
 					"xAxisLabel": "Date",
 					"yAxisLabel": "",
 					"minY": "",
-					"maxY": f"{maxY}",
+					# "maxY": f"{maxY}",
+					"maxY": "",
 					"tooltip":"<strong>{{#formatDate}}{{Date}}{{/formatDate}}</strong><br/> Hospitalised: {{Hospitalised cases}}",
 					"margin-left": "30",
 					"margin-top": "15",
@@ -142,7 +144,7 @@ def makeChart(state):
 		key = []
 		periods = []
 		labels = []
-		lines = thresholds
+		lines = []
 		chartId = [{"type":"linechart"}]
 		df.fillna('', inplace=True)
 		# df = df.reset_index()
