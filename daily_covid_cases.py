@@ -177,7 +177,7 @@ deaths_avg = deaths_avg.to_dict(orient='records')
 
 
 # merged.index.name = None
-
+print(merged)
 
 def makeTotalDeathBars(df):
 
@@ -187,7 +187,7 @@ def makeTotalDeathBars(df):
 				"title": "Deaths per day from Covid-19 in Australia",
 				"subtitle": "Showing the daily count of deaths as reported by states and territories. Dates used are the date of death where known, or the date reported. Last updated {date}".format(date=lastUpdated),
 				"footnote": "",
-				"source": " | Source: Covidlive.com.au",
+				"source": " | Source: Covidlive.com.au. NSW Health added 331 deaths to its total on the 1st of April 2022.",
 				"dateFormat": "%Y-%m-%d",
 				"xAxisLabel": "",
 				"yAxisLabel": "Deaths",
@@ -199,8 +199,8 @@ def makeTotalDeathBars(df):
 				"margin-bottom": "20",
 				"margin-right": "25",
 				"xAxisDateFormat": "%d %b, '%y",
-				"tooltip":"<strong>{{#nicerdate}}{{Date}}{{/nicerdate}}</strong><br><strong>{{group}}</strong>: {{groupValue}}"
-				
+				# "tooltip":"<strong>{{#nicerdate}}{{Date}}{{/nicerdate}}</strong><br><strong>{{group}}</strong>: {{groupValue}}"
+				"tooltip":"<strong>{{#nicerdate}}Date{{/nicerdate}}</strong><br><strong>{{group}}</strong>: {{groupValue}}"
 			}
 		]
 

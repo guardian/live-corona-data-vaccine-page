@@ -81,6 +81,10 @@ def makeChart(state):
 	
 	df.columns = ['Date', 'Hospitalised cases']
 	# print(df)
+	if state == "ACT":
+		df.loc[df['Date'] =="2022-04-17", 'Hospitalised cases'] = 60
+		df.loc[df['Date'] =="2022-04-15", 'Hospitalised cases'] = 56
+		# print(df)
 	
 	import datetime
 	today = datetime.datetime.today()
@@ -116,6 +120,8 @@ def makeChart(state):
 		hosp_text = ". Queensland and the NT previously had a policy of hospitalising all Covid cases. These policies were lifted in December 2021"
 	else:
 		hosp_text = ""
+
+
 	
 	def makeLineChart(df):
 	

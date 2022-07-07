@@ -89,12 +89,16 @@ for state in df['CODE'].unique().tolist():
     inter['Incremental'] = inter['PREV_VACC_PEOPLE_CNT'].diff(1)
     inter['Rolling'] = inter['Incremental'].rolling(window=7).mean()
 
-    # print(inter)
+    print(state)
+
+    print(inter)
 
     latest = inter.loc[inter['REPORT_DATE'] == inter['REPORT_DATE'].max()].copy()
 
     latest_count = latest['PREV_VACC_PEOPLE_CNT'].values[0]
     # latest_counts[state] = latest_count
+
+    print(latest_count)
 
     latest_rolling = latest['Rolling'].values[0]
 

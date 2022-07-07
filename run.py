@@ -75,14 +75,14 @@ syncData(aus_cases_finalJson, "2021/02/coronavirus-widget-data", "oz-covid-cases
 
 
 
-import state_by_state.vac_state_projection_table
+# import state_by_state.vac_state_projection_table
 import state_by_state.new_state_vax_model2
 
 import vaccinesReindex
 import daily_covid_cases
 import vac_global_per_hund
 import vac_global_bar
-import vaccineDosesState
+# import vaccineDosesState
 import outbreaks_reindexed
 import stateHospCharts
 import stateCasesCharts
@@ -90,8 +90,8 @@ import stateCasesCharts
 
 #%%
 # if day > 4:
-import vaccine_availability.weekly_state_utilisation
-import vaccine_availability.weekly_distribution
+# import vaccine_availability.weekly_state_utilisation
+# import vaccine_availability.weekly_distribution
 
 ## This is the new table with 5+ % etc:
 import state_by_state.new_table_model4
@@ -111,4 +111,4 @@ import booster_feed.booster_chart_feed
 import new_thrashers.scrape_data_feed
 
 ## New vax model with boosters:
-import state_by_state.new_state_vax_model3
+# import state_by_state.new_state_vax_model3

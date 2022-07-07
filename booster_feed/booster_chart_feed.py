@@ -23,44 +23,108 @@ chart_key = f"oz-live-corona-page-boosters-second-doses-tracker"
 
 # ant = pd.read_csv('booster_feed/Anthony_feed.csv')
 
-ant = pd.read_csv('https://raw.githubusercontent.com/joshnicholas/oz-covid-data/main/Anthony_feed.csv')
-ant = ant.loc[ant['CODE'] == "AUS"]
-ant = ant[['REPORT_DATE', 'VACC_PEOPLE_CNT']]
-ant = ant.loc[(ant['REPORT_DATE'] < "2021-07-01") & (ant['REPORT_DATE'] > "2021-03-01")]
+# ant = pd.read_csv('https://raw.githubusercontent.com/joshnicholas/oz-covid-data/main/Anthony_feed.csv')
+# ant = ant.loc[ant['CODE'] == "AUS"]
+# ant = ant[['REPORT_DATE', 'VACC_PEOPLE_CNT']]
+# ant = ant.loc[(ant['REPORT_DATE'] < "2021-07-01") & (ant['REPORT_DATE'] > "2021-03-01")]
 
-ant.columns = ['Date', 'Second doses']
-ant['Boosters'] = 0
+
+# ant.columns = ['Date', 'Second doses']
+# ant['Boosters'] = 0
+#%%
+
+### HAVE TO ADD BOOSTERS BACK INTO ANT DATA TO USE IT INSTEAD OF KEN
+
+headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+r = requests.get('https://covidlive.com.au/covid-live.json', headers=headers)
+
+data = r.json()
+ant = pd.read_json(r.text)
+ant.sort_values(by=['REPORT_DATE'], ascending=True, inplace=True)
+ant = ant.loc[ant['CODE'] == 'AUS']
+
+ant = ant[['REPORT_DATE', 'VACC_PEOPLE_CNT','VACC_BOOSTER_CNT']]
+
+ant = ant.loc[ant['REPORT_DATE'] > "2021-03-01"]
+
+ant.columns = ['Date', 'Second doses', 'Boosters']
+
+p = ant 
+print(p)
+print(p.columns.tolist())
+
+# # %%
+# ## Read in Ken's data
+# ken = pd.read_csv('https://vaccinedata.covid19nearme.com.au/data/air.csv')
+# ken = ken.sort_values(by='DATE_AS_AT', ascending=True)
+# ken = ken.loc[ken['DATE_AS_AT'] >= "2021-07-01"]
+# ken.fillna(0, inplace=True)
+
+# # p = ken 
+# # print(p)
+# # print(p.columns.tolist())
+
+# if 'AIR_5_11_SECOND_DOSE_COUNT' in ken.columns.tolist():
+# 	ken['Second'] = ken['AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'] + ken['AIR_12_15_SECOND_DOSE_COUNT'] + ken['AIR_5_11_SECOND_DOSE_COUNT']
+# else:
+# 	ken['Second'] = ken['AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'] + ken['AIR_12_15_SECOND_DOSE_COUNT']
+
+# ken = ken[['DATE_AS_AT','Second', 'AIR_AUS_16_PLUS_THIRD_DOSE_COUNT']]
+# ken.columns = ['Date', 'Second doses', 'Boosters']
+
+# # p = ken 
+# # p = p.loc[p['AIR_AUS_16_PLUS_THIRD_DOSE_COUNT'] > 0]
+# # print(p)
+# # print(p.columns.tolist())
+# # print(p['AIR_AUS_16_PLUS_THIRD_DOSE_COUNT'].unique().tolist())
+
 
 # %%
-## Read in Ken's data
-ken = pd.read_csv('https://vaccinedata.covid19nearme.com.au/data/air.csv')
-ken = ken.sort_values(by='DATE_AS_AT', ascending=True)
-ken = ken.loc[ken['DATE_AS_AT'] >= "2021-07-01"]
-ken.fillna(0, inplace=True)
 
-if 'AIR_5_11_SECOND_DOSE_COUNT' in ken.columns.tolist():
-	ken['Second'] = ken['AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'] + ken['AIR_12_15_SECOND_DOSE_COUNT'] + ken['AIR_5_11_SECOND_DOSE_COUNT']
-else:
-	ken['Second'] = ken['AIR_AUS_16_PLUS_SECOND_DOSE_COUNT'] + ken['AIR_12_15_SECOND_DOSE_COUNT']
-
-ken = ken[['DATE_AS_AT','Second', 'AIR_AUS_16_PLUS_THIRD_DOSE_COUNT']]
-ken.columns = ['Date', 'Second doses', 'Boosters']
-
-latest_date = ken['Date'].max()
+# latest_date = ken['Date'].max()
+latest_date = ant['Date'].max()
+print("Latest date: ", latest_date)
 init_date = datetime.datetime.strptime(latest_date, "%Y-%m-%d")
 display_date = datetime.datetime.strftime(init_date, "%-d %B %Y")
 use_date = datetime.datetime.strftime((init_date + datetime.timedelta(days=2)), "%Y-%m-%d")
 
+last_two = datetime.datetime.strftime((init_date - datetime.timedelta(days=14)), "%Y-%m-%d")
+
+## Drop rows only if they are blank within the past two weeks
+
+cope = ant.loc[ant['Date'] <= last_two].copy()
+cope2 = ant.loc[ant['Date'] > last_two].copy()
+cope2 = cope2.loc[cope2['Boosters'] != 0].copy()
+
+cope.fillna(0, inplace=True)
+cope2.dropna(subset=['Second doses', 'Boosters'], inplace=True)
+
+ant = pd.concat([cope, cope2])
+ant.sort_values(by=['Date'], ascending=True, inplace=True)
+ant.drop_duplicates(subset=['Date'], inplace=True)
+
+p = ant 
+print(p)
+print(p.columns.tolist())
+
 # %%
-## Append Ken's data to Anthony
 
-vax = ant.append(ken)
+# ## Append Ken's data to Anthony
 
+# vax = ant.append(ken)
+
+# vax.fillna(0, inplace=True)
+
+# ### Fill in the join between the Ken and Anthony datasets with interpolation
+# vax.loc[(vax['Date'] > "2021-06-28") & (vax['Date'] < "2021-07-02"), 'Second doses'] = np.nan
+# vax['Second doses'] = vax['Second doses'].interpolate(method='linear')
+
+### SOMETHING UP WITH KEN'S DATA SO I'M UNDOING THE JOIN AND ONLY USING ANT
+
+vax = ant.copy()
 vax.fillna(0, inplace=True)
 
-### Fill in the join between the Ken and Anthony datasets with interpolation
-vax.loc[(vax['Date'] > "2021-06-28") & (vax['Date'] < "2021-07-02"), 'Second doses'] = np.nan
-vax['Second doses'] = vax['Second doses'].interpolate(method='linear')
+# %%
 
 ## Work out the trend line for boosters based on current gap
 
@@ -121,11 +185,12 @@ vax.rename(columns={'Second doses': f"{numberFormat(max_second)} Second doses",
 
 # test
 
-see = vax.loc[(vax['Date'] > "2022-01-10") & (vax['Date'] < "2022-01-15")]
+# see = vax.loc[(vax['Date'] > "2022-01-10") & (vax['Date'] < "2022-01-15")]
+see = vax.copy()
 
-# p = see
-# print(p[['4.4m Boosters', 'Trend', 'Date']])
-# print(p.columns.tolist())
+p = see
+print(p)
+print(p.columns.tolist())
 # %%
 
 vax.fillna("", inplace=True)
