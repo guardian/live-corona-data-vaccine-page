@@ -24,7 +24,8 @@ og = pd.read_json('https://covidlive.com.au/covid-live.json')
 #        'PREV_VACC_PEOPLE_CNT', 'VACC_AGED_CARE_CNT', 'PREV_VACC_AGED_CARE_CNT',
 #        'VACC_GP_CNT', 'PREV_VACC_GP_CNT'
 
-states = ["NSW","VIC","QLD","SA","WA","TAS","ACT","NT","AUS"]
+# states = ["NSW","VIC","QLD","SA","WA","TAS","ACT","NT","AUS"]
+states = ["AUS"]
 
 og = og.dropna(subset=['CASE_CNT'])
 
@@ -113,7 +114,7 @@ def makeChart(state):
 	                "margin-top": "30",
 	                "margin-bottom": "20",
 	                "margin-right": "15",
-					"tooltip":"<strong>{{#nicerdate}}Date{{/nicerdate}}</strong><br><strong>{{group}}</strong>: {{groupValue}}"
+					"tooltip":"<strong>{{#nicerdate}}Date{{/nicerdate}}</strong><br> <strong>Cases</strong>: {{Confirmed cases}}"
 	            }
 	        ]
 	    key = [{"key":"PCR","values":"","colour":"#fc9272", "colours":"", "scale":"linear", "source":"Test positivity"},

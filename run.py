@@ -112,3 +112,5 @@ import new_thrashers.scrape_data_feed
 
 ## New vax model with boosters:
 # import state_by_state.new_state_vax_model3
+
+import oecd_total_bar
