@@ -154,13 +154,18 @@ else:
 	print("Not latest")
 	merged = deaths
 
+merged['Total'] = pd.to_numeric(merged['Total'])
+merged.loc[merged['Date'] == '2022-04-01', 'Total'] = 29
+merged.loc[((merged['Date'] > '2021-12-17') & (merged['Date'] <= '2022-04-01')), 'Total'] = merged.loc[((merged['Date'] > '2021-12-17') & (merged['Date'] <= '2022-04-01'))]['Total'] + 3
+
+
 merged.set_index('Date', inplace=True)
 
 merged = merged[~merged.index.duplicated()]
 
 merged = merged.sort_values(by='Date', ascending=True)
 
-merged['Total'] = pd.to_numeric(merged['Total'])
+
 
 #%%
 deaths_avg = merged.copy()
@@ -185,9 +190,9 @@ def makeTotalDeathBars(df):
 	template = [
 			{
 				"title": "Deaths per day from Covid-19 in Australia",
-				"subtitle": "Showing the daily count of deaths as reported by states and territories. Dates used are the date of death where known, or the date reported. Spike on the 1st of April 2022 due to a backlog of cases being reported. Last updated {date}".format(date=lastUpdated),
+				"subtitle": "Showing the daily count of deaths* as reported by states and territories. Dates used are the date of death where known, or the date reported. Spike on the 1st of April 2022 due to a backlog of cases being reported. Last updated {date}".format(date=lastUpdated),
 				"footnote": "",
-				"source": " | Source: Covidlive.com.au. NSW Health added 331 deaths to its total on the 1st of April 2022.",
+				"source": " | Source: Covidlive.com.au. *NSW Health added 331 backdated deaths to its total on the 1st of April 2022. Guardian Australia re-distributed these numbers over the preceding 104 days.",
 				"dateFormat": "%Y-%m-%d",
 				"xAxisLabel": "",
 				"yAxisLabel": "Deaths",
@@ -281,7 +286,7 @@ def makeCumulativeChart(df):
 
 	yachtCharter(template=template, data=chartData, chartId=chartId, chartName="australian-covid-cases-2020{test}".format(test=test), key=key)
 
-makeCumulativeChart(states)
+# makeCumulativeChart(states)
 
 
 
