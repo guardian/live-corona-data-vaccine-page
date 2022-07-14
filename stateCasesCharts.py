@@ -103,7 +103,7 @@ def makeChart(state):
 	    template = [
 	            {
 	                "title": f"{state_text} Covid cases announced daily",
-	                "subtitle": f"""Showing the number of cases announced daily  and the trend of total cases as a 7-day rolling average. Testing criteria (2) changed significantly on 5 January 2022, and cases after this point should be considered an underestimate. Last updated {updated_date}.""",
+	                "subtitle": f"""Showing the number of cases announced daily  and the trend of total cases as a 7-day rolling average. Testing criteria (1) changed significantly on 5 January 2022, and cases after this point should be considered an underestimate. Last updated {updated_date}.""",
 	                "footnote": "",
 	                "source": "| Sources: NSW Health, Covidlive.com.au, Guardian Australia",
 	                "dateFormat": "%Y-%m-%d",
