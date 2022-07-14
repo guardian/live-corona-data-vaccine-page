@@ -192,7 +192,7 @@ def makeTotalDeathBars(df):
 				"title": "Deaths per day from Covid-19 in Australia",
 				"subtitle": "Showing the daily count of deaths* as reported by states and territories. Dates used are the date of death where known, or the date reported. Spike on the 1st of April 2022 due to a backlog of cases being reported. Last updated {date}".format(date=lastUpdated),
 				"footnote": "",
-				"source": " | Source: Covidlive.com.au. *NSW Health added 331 backdated deaths to its total on the 1st of April 2022. Guardian Australia re-distributed these numbers over the preceding 104 days.",
+				"source": " | Source: Covidlive.com.au. *NSW Health added 331 backdated deaths to its total on the 1st of April 2022. Guardian Australia added the backdated data to the preceding 104 days.",
 				"dateFormat": "%Y-%m-%d",
 				"xAxisLabel": "",
 				"yAxisLabel": "Deaths",
