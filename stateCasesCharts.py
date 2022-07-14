@@ -30,8 +30,10 @@ states = ["AUS"]
 og = og.dropna(subset=['CASE_CNT'])
 
 # "2021-08-01"
-start = "2021-08-01"
+# start = "2021-08-01"
 # start = "2021-12-01"
+# start = '2020-03-01'
+start = '2021-06-01'
 
 test = "-test"
 # test= ""
@@ -103,9 +105,9 @@ def makeChart(state):
 	                "title": f"{state_text} Covid cases announced daily",
 	                "subtitle": f"""Showing the number of cases announced daily  and the trend of total cases as a 7-day rolling average. Testing criteria (2) changed significantly on 5 January 2022, and cases after this point should be considered an underestimate. Last updated {updated_date}.""",
 	                "footnote": "",
-	                "source": "| Sources: NSW Health, covidlive.com.au, Guardian Australia, CovidLive.com.au",
+	                "source": "| Sources: NSW Health, Covidlive.com.au, Guardian Australia",
 	                "dateFormat": "%Y-%m-%d",
-	                "xAxisDateFormat":"%b %d",
+	                "xAxisDateFormat":"%b %y",
 	                "minY": "0",
 	                "maxY": "",
 	                "x_axis_cross_y":"",
