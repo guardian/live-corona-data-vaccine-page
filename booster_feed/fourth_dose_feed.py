@@ -20,6 +20,9 @@ r = requests.get('https://covidlive.com.au/covid-live.json', headers=headers)
 
 #%%
 
+pop = 25766605
+
+
 ## Grab Covid Live Data
 
 data = r.json()
@@ -60,6 +63,9 @@ latest_date = oz['REPORT_DATE'].max()
 init_date = datetime.datetime.strptime(latest_date, "%Y-%m-%d")
 display_date = datetime.datetime.strftime(init_date, "%-d %B %Y")
 
+for col in oz.columns.tolist()[1:]:
+	oz[col] = round((oz[col] / pop)*100,2)
+
 
 max_second = oz['VACC_PEOPLE_CNT'].max()
 max_boost = oz['VACC_BOOSTER_CNT'].max()
@@ -71,9 +77,9 @@ oz.loc[oz['VACC_PEOPLE_CNT'] == 0, 'VACC_PEOPLE_CNT'] = ''
 oz.loc[oz['VACC_BOOSTER_CNT'] == 0, 'VACC_BOOSTER_CNT'] = ''
 
 oz.rename(columns={'REPORT_DATE': 'Date',
-'VACC_PEOPLE_CNT':f"{numberFormat(max_second)} Second doses",
-'VACC_BOOSTER_CNT':f"{numberFormat(max_boost)} Boosters",
-'VACC_WINTER_CNT':f"{numberFormat(max_fourth)} Fourth doses"}, inplace=True)
+'VACC_PEOPLE_CNT':f"{numberFormat(max_second)}% Second doses",
+'VACC_BOOSTER_CNT':f"{numberFormat(max_boost)}% Boosters",
+'VACC_WINTER_CNT':f"{numberFormat(max_fourth)}% Fourth doses"}, inplace=True)
 
 oz.fillna('', inplace=True)
 
@@ -81,9 +87,9 @@ final = oz.to_dict(orient='records')
 
 template = [
 	{
-	"title": "Tracking the rollout of second and booster doses in Australia",
+	"title": "Tracking the rollout of Covid vaccines in Australia",
 	# "subtitle": f"""Showing the cumulative count of second and booster doses. The <b style="color:rgb(245, 189, 44)">trend</b> in booster doses is based on the current interval between when the equivalent number of second and booster doses were administered. Last updated {display_date}.""",
-	"subtitle": f"""Showing the cumulative count of second and booster doses, and the current interval between when an equivalent number of second and booster doses were administered. Last updated {display_date}.""",
+	"subtitle": f"""Showing the percentage of the total Australian population that have received second, booster and fourth doses of a Covid vaccine. Last updated {display_date}.""",
 
 	"footnote": "Footnote",
 	"source": "CovidLive.com.au, Ken Tsang, Guardian Australia analysis",
