@@ -89,7 +89,7 @@ template = [
 	{
 	"title": "Tracking the rollout of Covid vaccines in Australia",
 	# "subtitle": f"""Showing the cumulative count of second and booster doses. The <b style="color:rgb(245, 189, 44)">trend</b> in booster doses is based on the current interval between when the equivalent number of second and booster doses were administered. Last updated {display_date}.""",
-	"subtitle": f"""Showing the percentage of the total Australian population that have received second, booster and fourth doses of a Covid vaccine. Last updated {display_date}.""",
+	"subtitle": f"""Showing the percentage of the total Australian population that have received second, booster and fourth doses of a Covid vaccine. Gaps in the data have been interpolated. Last updated {display_date}.""",
 
 	"footnote": "Footnote",
 	"source": "CovidLive.com.au, Ken Tsang, Guardian Australia analysis",
