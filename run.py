@@ -122,3 +122,5 @@ import new_table_incl_fourth
 import hospo_states_selector 
 
 import hospo_per_100k_line
+
+import deaths_state_selector

@@ -5,9 +5,7 @@ import os
 import requests
 import pandas as pd
 pd.set_option("display.max_rows", 100)
-# from modules.syncData import syncData
-# from modules.numberFormat import numberFormat
-from yachtcharter import yachtCharter
+
 import datetime
 
 day = datetime.datetime.today().weekday()
@@ -42,7 +40,7 @@ df = pd.read_json(r.text)
 #%%
 
 
-zdf = df[['REPORT_DATE',  'CODE','MED_HOSP_CNT', ]]
+zdf = df[['REPORT_DATE',  'CODE','DEATH_CNT']]
 
 latest_date = zdf['REPORT_DATE'].max()
 init_date = datetime.datetime.strptime(latest_date, "%Y-%m-%d")
@@ -50,17 +48,41 @@ display_date = datetime.datetime.strftime(init_date, "%-d %B %Y")
 
 # zdf.sort_values(by=['CODE'], key=lambda x: x.map(pops), inplace=True)
 
-piv = zdf.pivot(index='REPORT_DATE', columns='CODE', values='MED_HOSP_CNT').reset_index()
+piv = zdf.pivot(index='REPORT_DATE', columns='CODE', values='DEATH_CNT').reset_index()
+
+
+
+piv = piv[['REPORT_DATE', 'AUS', 'ACT', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA']]
+
+for col in piv.columns.tolist()[1:]:
+  piv[col] = pd.to_numeric( piv[col])
+  piv[col] = piv[col].diff()
+  piv.loc[piv[col] <0, col] = 0
+
+  print(col)
+
+  ### Need to adjust the deaths for NSW and Oz for the backdated deaths on April 1st 2022:
+  if col in ['AUS', 'NSW']:
+    actual_val = piv.loc[piv['REPORT_DATE'] == '2022-04-01'][col].values[0]
+
+    difference = actual_val - 300
+
+    piv.loc[piv['REPORT_DATE'] == '2022-04-01', col] = difference
+
+    piv.loc[((piv['REPORT_DATE'] >= '2021-12-22') & (piv['REPORT_DATE'] <= '2022-04-01')), col] += 3
+
+
+#%%
 
 piv.fillna('', inplace=True)
 
-with open('Archive/state_hospitalisations.csv', 'w') as f:
-  piv.to_csv(f, index=False, header=True)
+piv = piv[1:]
 
+p = piv 
 
-# print(piv.columns.tolist())
+print(p.head(100))
+print(p.columns.tolist())
 
-piv = piv[['REPORT_DATE', 'AUS', 'ACT', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA']]
 
 keyo = []
 
@@ -68,12 +90,7 @@ for juri in list(pops.keys()):
   keyo.append({'data': juri, 'display': juri})
 
 
-print(keyo)
-
-p = piv 
-
-print(p.head(100))
-print(p.columns.tolist())
+# print(keyo)
 
 
 # bye = piv 
@@ -99,7 +116,7 @@ print(p.columns.tolist())
 # from yachtcharter import yachtCharter
 # testo = "-testo"
 testo = ''
-chart_key = f"oz-datablogs-covid-page-juri-hospitalisation-selector{testo}"
+chart_key = f"oz-datablogs-covid-page-juri-deaths-selector{testo}"
 # yachtCharter(template=template, 
 #             data=final,
 #             key = [{"key":"Net internal migration", "colour":'#7d0068'}],
@@ -110,13 +127,13 @@ chart_key = f"oz-datablogs-covid-page-juri-hospitalisation-selector{testo}"
 
 
 
-
+from yachtcharter import yachtCharter
 def makeTestingLine(df):
 	
     template = [
             {
-                "title": "Covid hospitalisations by jurisidction",
-                "subtitle": f"""Showing the total number of Covid patients to hospital by jurisdiction. Some states previously mandated all Covid positive patients be admitted to hospital. Last updated {display_date}.""",
+                "title": "Covid deaths by jurisidction",
+                "subtitle": f"""Showing the total number of deaths by day* and jurisdiction. Last updated {display_date}.""",
                 "footnote": "",
                 "source": "Covidlive.com.au",
                 "dateFormat": "%Y-%m-%d",
@@ -141,9 +158,3 @@ def makeTestingLine(df):
     options=[{"colorScheme":"guardian", "lineLabelling":"FALSE"}], chartName=chart_key)
 
 makeTestingLine(piv)
-
-# p = piv 
-
-# print(p)
-# print(p.columns.tolist())
-# # %%
