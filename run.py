@@ -116,3 +116,5 @@ import new_thrashers.scrape_data_feed
 import oecd_total_bar
 
 import booster_feed.fourth_dose_feed
+
+import new_table_incl_fourth
