@@ -118,3 +118,7 @@ import oecd_total_bar
 import booster_feed.fourth_dose_feed
 
 import new_table_incl_fourth
+
+import hospo_states_selector 
+
+import hospo_per_100k_line

@@ -51,6 +51,10 @@ with open('Archive/state_hospitalisations.csv', 'w') as f:
   piv.to_csv(f, index=False, header=True)
 
 
+
+
+
+
 p = piv 
 
 print(p)
