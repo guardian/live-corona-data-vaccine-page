@@ -71,7 +71,7 @@ cat.sort_values(by=['Population'], ascending=False, inplace=True)
 
 cat = cat[['CODE', 'VACC_FIRST_DOSE_CNT', 'VACC_PEOPLE_CNT', 'VACC_BOOSTER_CNT',  'VACC_WINTER_CNT']]
 
-cat.columns = ['Jurisdiction', 'One dose', 'Two doses', 'Third dose', 'Fourth dose']
+cat.columns = ['Jurisdiction', 'One dose', 'Two doses', 'Three doses', 'Four doses']
 
 
 
