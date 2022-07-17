@@ -101,8 +101,8 @@ from yachtcharter import yachtCharter
 testo = ''
 chart_key = f"oz-datablogs-new-covid-cases-vax-page-jurisidction-table{testo}"
 yachtCharter(template=template, 
-            options=[{"colorScheme":"guardian","format": "truncated",
-            "enableSearch": "TRUE","enableSort": "TRUE"}],
+            options=[{"colorScheme":"guardian","format": "truncate",
+            "enableSearch": "FALSE","enableSort": "TRUE"}],
 			data=final,
 			chartId=[{"type":"table"}],
             key = [{'key': f'{x}','values':f'{cat[x].min()},{cat[x].max()}', 'colours': '#ffffff, #94b1ca', 'scale': 'linear'} if x != "Issues" else "" for x in cat.columns.tolist()[1:]],

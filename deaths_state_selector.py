@@ -141,8 +141,8 @@ def makeTestingLine(df):
                 "minY": "0",
                 "maxY": "",
                 "xColumn" : "REPORT_DATE",
-                "margin-left": "50",
-                "margin-top": "30",
+                "margin-left": "10",
+                "margin-top": "10",
                 "margin-bottom": "20",
                 "margin-right": "10"
             }
@@ -154,7 +154,7 @@ def makeTestingLine(df):
     chartData = df.to_dict('records')
     labels = []
 
-    yachtCharter(template=template, labels=labels,  dropdown= keyo, data=chartData, chartId=[{"type":"linechart"}], 
+    yachtCharter(template=template, labels=labels,  dropdown= keyo, data=chartData, chartId=[{"type":"prototype"}], 
     options=[{"colorScheme":"guardian", "lineLabelling":"FALSE"}], chartName=chart_key)
 
 makeTestingLine(piv)

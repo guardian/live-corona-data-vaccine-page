@@ -4,6 +4,8 @@ import boto3
 import os
 import requests
 import pandas as pd
+import numpy as np 
+
 pd.set_option("display.max_rows", 100)
 # from modules.syncData import syncData
 # from modules.numberFormat import numberFormat
@@ -52,6 +54,12 @@ display_date = datetime.datetime.strftime(init_date, "%-d %B %Y")
 
 piv = zdf.pivot(index='REPORT_DATE', columns='CODE', values='MED_HOSP_CNT').reset_index()
 
+### Fill in the nan value for ACT
+piv.loc[piv['REPORT_DATE'].isin(['2022-04-15', '2022-04-17']), 'ACT'] = np.nan
+
+for col in ['AUS', 'ACT', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA']:
+  piv[col] = piv[col].interpolate(method='linear', limit_direction='forward')
+
 piv.fillna('', inplace=True)
 
 with open('Archive/state_hospitalisations.csv', 'w') as f:
@@ -68,11 +76,14 @@ for juri in list(pops.keys()):
   keyo.append({'data': juri, 'display': juri})
 
 
+
+
+
 print(keyo)
 
 p = piv 
 
-print(p.head(100))
+print(p.tail(100))
 print(p.columns.tolist())
 
 
@@ -116,9 +127,9 @@ def makeTestingLine(df):
     template = [
             {
                 "title": "Covid hospitalisations by jurisidction",
-                "subtitle": f"""Showing the total number of Covid patients to hospital by jurisdiction. Some states previously mandated all Covid positive patients be admitted to hospital. Last updated {display_date}.""",
+                "subtitle": f"""Showing the total number of Covid patients to hospital by jurisdiction. Gaps in the data have been interpolated. Some states have at times mandated that all Covid positive patients be admitted to hospital. Last updated {display_date}.""",
                 "footnote": "",
-                "source": "Covidlive.com.au",
+                "source": "Federal and state health departments, CovidLive.com.au, Guardian Australia",
                 "dateFormat": "%Y-%m-%d",
                 "yScaleType":"",
                 "minY": "0",

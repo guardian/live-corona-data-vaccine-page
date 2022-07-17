@@ -90,7 +90,7 @@ final = piv.to_dict(orient='records')
 template = [
 	{
 	"title": "Covid hospitalisations per 100k population, by jurisdiction",
-	"subtitle": f"Showing the 7 day rolling average of Covid hospitalisations per 100k estimated resident population. Using the total population (aged 0+). Last updated {display_date}.",
+	"subtitle": f"Showing the 7-day rolling average of Covid hospitalisations per 100k estimated resident population. Using the total population (aged 0+). Last updated {display_date}.",
 	"footnote": "",
 	"source": "CovidLive.com.au, Australian Bureau of Statistics, Guardian Australia",
 	"margin-left": "20",
