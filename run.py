@@ -124,3 +124,7 @@ import hospo_states_selector
 import hospo_per_100k_line
 
 import deaths_state_selector
+
+import new_thrashers.covid_live_cases_feed
+import new_thrashers.covid_live_hospo_feed
+
