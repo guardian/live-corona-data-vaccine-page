@@ -126,7 +126,7 @@ def makeTestingLine(df):
 	
     template = [
             {
-                "title": "Covid hospitalisations by jurisidction",
+                "title": "Covid hospitalisations by jurisdiction",
                 "subtitle": f"""Showing the total number of Covid patients to hospital by jurisdiction. Gaps in the data have been interpolated. Some states have at times mandated that all Covid positive patients be admitted to hospital. Last updated {display_date}.""",
                 "footnote": "",
                 "source": "Federal and state health departments, CovidLive.com.au, Guardian Australia",
@@ -138,7 +138,9 @@ def makeTestingLine(df):
                 "margin-left": "50",
                 "margin-top": "30",
                 "margin-bottom": "20",
-                "margin-right": "10"
+                "margin-right": "10",
+                # "tooltip":"<strong>{{#formatDate}}{{Date}}{{/formatDate}}</strong><br/> In hospital: {{MED_HOSP_CNT}}<br/>",
+
             }
         ]
     key = []
