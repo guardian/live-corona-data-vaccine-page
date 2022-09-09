@@ -32,6 +32,9 @@ oecd = [
 
 df = df.loc[df['location'].isin(oecd)]
 
+# print(df.columns.tolist())
+# print(df['iso_code'].unique().tolist())
+
 cut_off = datetime.datetime.today().date()
 cut_off = cut_off - datetime.timedelta(days=30)
 cut_off = datetime.datetime.strftime(cut_off, '%Y-%m-%d')
