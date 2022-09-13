@@ -75,10 +75,10 @@ cat.columns = ['Jurisdiction', 'One dose', 'Two doses', 'Three doses', 'Four dos
 
 
 
-p = cat 
+# p = cat 
 
-print(p)
-print(p.columns.tolist())
+# print(p)
+# print(p.columns.tolist())
 # %%
 
 final = cat.to_dict(orient='records')

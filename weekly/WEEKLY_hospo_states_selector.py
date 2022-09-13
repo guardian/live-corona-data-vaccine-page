@@ -91,10 +91,10 @@ we = we.loc[we['WeekDay'] == 4]
 we.drop(columns={'WeekDay'}, inplace=True)
 
 
-p = we 
+# p = we 
 
-print(p.tail(100))
-print(p.columns.tolist())
+# print(p.tail(100))
+# print(p.columns.tolist())
 
 #%%
 

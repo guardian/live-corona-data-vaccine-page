@@ -32,8 +32,8 @@ oecd = [
 
 df = df.loc[df['location'].isin(oecd)]
 
-print(df)
-print(df.columns.tolist())
+# print(df)
+# print(df.columns.tolist())
 
 cut_off = datetime.datetime.today().date()
 cut_off = cut_off - datetime.timedelta(days=30)
