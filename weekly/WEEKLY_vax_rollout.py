@@ -93,7 +93,7 @@ from modules.numberFormat import numberFormat
 
 zdf.rename(columns={'REPORT_DATE': 'Date',
 'VACC_PEOPLE_CNT':f"{numberFormat(max_second)}% Second doses",
-'VACC_BOOSTER_CNT':f"{numberFormat(max_boost)}% Boosters",
+'VACC_BOOSTER_CNT':f"{numberFormat(max_boost)}% Third doses",
 'VACC_WINTER_CNT':f"{numberFormat(max_fourth)}% Fourth doses"}, inplace=True)
 
 #%%
@@ -105,7 +105,7 @@ template = [
 	{
 	"title": "Tracking the rollout of Covid vaccines in Australia",
 	# "subtitle": f"""Showing the cumulative count of second and booster doses. The <b style="color:rgb(245, 189, 44)">trend</b> in booster doses is based on the current interval between when the equivalent number of second and booster doses were administered. Last updated {display_date}.""",
-	"subtitle": f"""Showing the percentage of the total Australian population that have received second, booster and fourth doses of a Covid vaccine. Gaps in the data have been interpolated. Data is updated weekly. Latest data as of {display_date}.""",
+	"subtitle": f"""Showing the percentage of the total Australian population that have received second, third and fourth doses of a Covid vaccine. Gaps in the data have been interpolated. Data is updated weekly. Latest data as of {display_date}.""",
 
 	"footnote": "Footnote",
 	"source": "CovidLive.com.au, Ken Tsang, Guardian Australia analysis",
