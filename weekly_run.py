@@ -8,7 +8,7 @@ import oecd_total_bar
 import new_table_incl_fourth
 
 
-if day > 1:
+if day >= 5:
   import weekly.WEEKLY_cases_bar
   import weekly.WEEKLY_covid_hospo_per_100k
 
