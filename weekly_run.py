@@ -4,6 +4,8 @@ day = datetime.datetime.today().weekday()
 
 import oecd_total_bar
 
+# day = 5
+
 if day >= 5:
   import weekly.WEEKLY_cases_bar
   import weekly.WEEKLY_covid_hospo_per_100k
