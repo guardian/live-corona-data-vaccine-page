@@ -133,7 +133,7 @@ chart_key = f"oz-datablogs-covid-page-juri-hospitalisation-selector-weekly{testo
 #             chartName=f"{chart_key}{testo}")
 
 
-
+print(df)
 
 def makeTestingLine(df):
 	
