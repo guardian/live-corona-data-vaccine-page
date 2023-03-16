@@ -14,10 +14,36 @@ test = "-test"
 cl = 'https://covidlive.com.au/covid-live.json'
 cl = pd.read_json(cl)
 
+
+
+
+
+
 #%%
 
 oz = cl.loc[cl['CODE'] == 'AUS']
 oz = oz.loc[oz['REPORT_DATE'] > "2021-06-04"]
+
+
+
+
+#%%
+
+### Need to fix the March 10 data:
+
+no = cl.loc[cl['CODE'] != 'AUS'].copy()
+# no = no.loc[(no['REPORT_DATE'] > "2023-03-01") & (no['REPORT_DATE'] < "2023-03-20")]
+no = no.loc[no['REPORT_DATE'] == '2023-03-10']
+
+# p = no 
+# print(p)
+# print(p.columns.tolist())
+# print(no['NEW_CASE_CNT'].sum())
+
+march_10 = no['NEW_CASE_CNT'].sum()
+
+#%%
+
 
 def getweekly(frame, coller, out_name):
 	inter = frame.copy()
@@ -48,6 +74,9 @@ def getweekly(frame, coller, out_name):
 
 cases = getweekly(oz, 'CASE_CNT', 'Weekly cases')
 
+cases.loc[cases.index == '2023-03-10', 'Weekly cases'] = march_10
+
+print(cases)
 
 #%%
 
