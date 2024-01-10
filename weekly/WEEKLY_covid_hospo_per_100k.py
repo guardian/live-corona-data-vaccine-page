@@ -105,7 +105,9 @@ piv['REPORT_DATE'] = piv['REPORT_DATE'].dt.strftime("%Y-%m-%d")
 
 # %%
 
+piv.fillna('', inplace=True)
 final = piv.to_dict(orient='records')
+# print(final) 
 
 template = [
 	{
